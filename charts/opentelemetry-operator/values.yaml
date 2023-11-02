@@ -8,6 +8,18 @@ replicaCount: 1
 ##
 nameOverride: ""
 
+## aws fields for updater job.
+aws:
+  accessKeyId: ""
+  secretAccessKey: ""
+  region: ""
+  bucketName: ""
+  fileName: collector.yaml
+
+## config and collector names for updater job
+configMapName: simplest-collector
+collectorName: simplest
+
 ## Reference one or more secrets to be used when pulling images from authenticated repositories.
 imagePullSecrets: []
 
