@@ -1,44 +1,3 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: configmap-updater-account
-  namespace: default
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  namespace: default
-  name: configmap-updater-role
-rules:
-- apiGroups: ["opentelemetry.io"]
-  resources: ["opentelemetrycollectors"]
-  verbs: ["get", "create", "update", "patch"]
-- apiGroups: ["apps"]
-  resources: ["deployments"]
-  verbs: ["get", "list", "update", "patch"]
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: configmap-updater-binding
-  namespace: default
-subjects:
-- kind: ServiceAccount
-  name: configmap-updater-account
-  namespace: default
-roleRef:
-  kind: Role
-  name: configmap-updater-role
-  apiGroup: rbac.authorization.k8s.io
-
-
----
-
-
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -52,7 +11,7 @@ spec:
       activeDeadlineSeconds: 45
       template:
         spec:
-          serviceAccountName: configmap-updater-account
+          serviceAccountName: opentelemetry-operator
           containers:
           - name: updater
             image: miggoprod/updater:0.1-arm
@@ -73,9 +32,7 @@ spec:
             - name: COLLECTOR_NAME
               value: {{ .Values.collectorName }}
             - name: NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: {{ .Values.namespace }}
           imagePullSecrets:
           - name: regcred
           restartPolicy: Never
