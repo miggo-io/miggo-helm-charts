@@ -1,8 +1,8 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: configmap-updater
-  namespace: default
+  name: {{ .Release.Name }}-updater-cj
+  namespace: {{ .Values.namespace }}
 spec:
   schedule: "*/1 * * * *"
   jobTemplate:
@@ -11,9 +11,9 @@ spec:
       activeDeadlineSeconds: 45
       template:
         spec:
-          serviceAccountName: opentelemetry-operator
+          serviceAccountName: {{ .Values.operatorServiceAccount }}
           containers:
-          - name: updater
+          - name: {{ .Release.Name }}-updater-j
             image: miggoprod/updater:0.1-arm
             imagePullPolicy: Always
             env:
@@ -27,14 +27,12 @@ spec:
               value: {{ .Values.aws.bucketName }}
             - name: FILE_NAME
               value: {{ .Values.aws.fileName }}
-            - name: CONFIG_MAP_NAME
-              value: {{ .Values.configMapName }}
             - name: COLLECTOR_NAME
-              value: {{ .Values.collectorName }}
+              value: {{ .Release.Name }}
             - name: NAMESPACE
               value: {{ .Values.namespace }}
           imagePullSecrets:
-          - name: regcred
+          - name: miggo-dockerconfigjson
           restartPolicy: Never
   successfulJobsHistoryLimit: 0 # Number of successful jobs to keep
   failedJobsHistoryLimit: 0 # Keep only one failed job

@@ -1,0 +1,25 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  mode: deployment # This configuration is omittable.
+  imagePullPolicy: Always
+  config: |
+    receivers:
+      jaeger:
+        protocols:
+          grpc:
+    processors:
+
+    exporters:
+      debug:
+      ##
+
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger]
+          processors: []
+          exporters: [debug]

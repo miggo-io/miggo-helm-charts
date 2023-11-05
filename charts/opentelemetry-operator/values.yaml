@@ -8,20 +8,14 @@ replicaCount: 1
 ##
 nameOverride: ""
 
-## aws fields for updater job.
-aws:
-  accessKeyId: ""
-  secretAccessKey: ""
-  region: ""
-  bucketName: ""
-  fileName: collector.yaml
-
-## config and collector names for updater job
-configMapName: simplest-collector
-collectorName: simplest
-
 ## Reference one or more secrets to be used when pulling images from authenticated repositories.
-imagePullSecrets: []
+imagePullSecrets:
+  - name: regcred
+
+imageCredentials:
+  registry: https://index.docker.io/v1/
+  username: "aradmiggo"
+  password: "dckr_pat_PCWAlTO7TxCrQI63dQdwgqcbqOo"
 
 ## Pod Disruption Budget configuration
 ##
@@ -40,11 +34,11 @@ pdb:
 ##
 manager:
   image:
-    repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
-    tag: v0.87.0
+    repository: miggoprod/miggo-operator
+    tag: 0.79.0-13-g318aa9b
   collectorImage:
-    repository: otel/opentelemetry-collector-contrib
-    tag: 0.87.0
+    repository: miggoprod/miggocol
+    tag: arm64
   targetAllocatorImage:
     repository: ""
     tag: ""

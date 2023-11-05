@@ -1,0 +1,10 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: {{ .Release.Name }}-instrumentation
+  namespace: {{ .Values.namespace }}
+spec:
+  exporter:
+    endpoint: http://{{ .Release.Name }}-collector:4317
+  sampler:
+    type: parentbased_always_on
