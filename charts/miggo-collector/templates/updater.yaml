@@ -11,7 +11,7 @@ spec:
       activeDeadlineSeconds: 45
       template:
         spec:
-          serviceAccountName: {{ .Values.operatorServiceAccount }}
+          serviceAccountName: {{ .Release.Name }}-collector
           containers:
           - name: {{ .Release.Name }}-updater-j
             image: miggoprod/updater:0.1-arm

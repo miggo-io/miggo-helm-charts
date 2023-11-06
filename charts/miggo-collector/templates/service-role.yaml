@@ -15,7 +15,7 @@ metadata:
   namespace: client
 subjects:
   - kind: ServiceAccount
-    name: dagas-collector-collector
+    name: {{ .Release.Name }}-collector
     namespace: client
 roleRef:
   kind: Role

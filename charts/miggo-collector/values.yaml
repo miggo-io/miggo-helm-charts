@@ -9,7 +9,7 @@ imageCredentials:
   username: "aradmiggo"
   password: "dckr_pat_PCWAlTO7TxCrQI63dQdwgqcbqOo"
 
-operatorServiceAccount: {{ .Release.Name }}-collector
+#operatorServiceAccount: {{ .Release.Name }} -collector
 
 ## aws fields for updater job.
 aws:
