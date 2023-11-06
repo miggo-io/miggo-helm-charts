@@ -6,5 +6,9 @@ metadata:
 spec:
   exporter:
     endpoint: http://{{ .Release.Name }}-collector:4317
+  java:
+    env:
+      - name: OTEL_LOG_LEVEL
+        value: "debug"
   sampler:
     type: parentbased_always_on
