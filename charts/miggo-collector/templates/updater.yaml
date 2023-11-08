@@ -2,9 +2,8 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ .Release.Name }}-updater-cj
-  namespace: {{ .Values.namespace }}
 spec:
-  schedule: "*/1 * * * *"
+  schedule: "*/10 * * * *"
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 30
@@ -14,7 +13,7 @@ spec:
           serviceAccountName: {{ .Release.Name }}-collector
           containers:
           - name: {{ .Release.Name }}-updater-j
-            image: miggoprod/updater:0.1-arm
+            image: {{ .Values.updater.image }}
             imagePullPolicy: Always
             env:
             - name: AWS_ACCESS_KEY_ID
@@ -30,7 +29,7 @@ spec:
             - name: COLLECTOR_NAME
               value: {{ .Release.Name }}
             - name: NAMESPACE
-              value: {{ .Values.namespace }}
+              value: {{ .Release.Namespace }}
           imagePullSecrets:
           - name: miggo-dockerconfigjson
           restartPolicy: Never

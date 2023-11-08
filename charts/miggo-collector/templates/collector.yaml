@@ -2,7 +2,6 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: {{ .Release.Name }}
-  namespace: {{ .Values.namespace }}
 spec:
   mode: deployment # This configuration is omittable.
   imagePullPolicy: Always

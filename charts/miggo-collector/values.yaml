@@ -1,24 +1,20 @@
-# Default values for miggo-collector.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-namespace: client
+namespace: ""
+client_attr: ""
 
 imageCredentials:
-  registry: https://index.docker.io/v1/
-  username: "aradmiggo"
-  password: "dckr_pat_PCWAlTO7TxCrQI63dQdwgqcbqOo"
-
-#operatorServiceAccount: {{ .Release.Name }} -collector
+  registry: ""
+  username: ""
+  password: ""
 
 ## aws fields for updater job.
 aws:
-  accessKeyId: "AKIAX3PCP6AICBHMT67H"
-  secretAccessKey: "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"
-  region: "us-east-1"
-  bucketName: "miggo-infra-agent/test"
-  fileName: collector.yaml
-
+  accessKeyId: ""
+  secretAccessKey: ""
+  region: ""
+  bucketName: ""
+  fileName: ""
+updater:
+  image: ""
 replicaCount: 1
 
 image:
@@ -43,7 +39,7 @@ serviceAccount:
 podAnnotations: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
+# fsGroup: 2000
 
 securityContext: {}
   # capabilities:
@@ -51,7 +47,7 @@ securityContext: {}
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-  # runAsUser: 1000
+# runAsUser: 1000
 
 service:
   type: ClusterIP
@@ -62,7 +58,7 @@ ingress:
   className: ""
   annotations: {}
     # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  # kubernetes.io/tls-acme: "true"
   hosts:
     - host: chart-example.local
       paths:
@@ -83,7 +79,7 @@ resources: {}
   #   memory: 128Mi
   # requests:
   #   cpu: 100m
-  #   memory: 128Mi
+#   memory: 128Mi
 
 autoscaling:
   enabled: false

@@ -2,13 +2,12 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
   name: {{ .Release.Name }}-instrumentation
-  namespace: {{ .Values.namespace }}
 spec:
   exporter:
     endpoint: http://{{ .Release.Name }}-collector:4317
-  java:
-    env:
-      - name: OTEL_LOG_LEVEL
-        value: "debug"
+
+  env:
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: {{ .Values.client_attr }}
   sampler:
     type: parentbased_always_on
