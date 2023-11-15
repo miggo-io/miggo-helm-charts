@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: {{ .Release.Name }}-updater-cj
 spec:
-  schedule: "*/10 * * * *"
+  schedule: "*/{{ .Values.updater.cronjobSchedule }} * * * *"
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 30
@@ -31,7 +31,8 @@ spec:
             - name: NAMESPACE
               value: {{ .Release.Namespace }}
           imagePullSecrets:
-          - name: miggo-dockerconfigjson
+          - name: {{ .Values.miggoCollectorSecret }}
           restartPolicy: Never
   successfulJobsHistoryLimit: 0 # Number of successful jobs to keep
   failedJobsHistoryLimit: 0 # Keep only one failed job
+

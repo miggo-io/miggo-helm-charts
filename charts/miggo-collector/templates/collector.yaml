@@ -1,3 +1,4 @@
+{{- if .Values.deployCollector }}
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
@@ -7,18 +8,25 @@ spec:
   imagePullPolicy: Always
   config: |
     receivers:
-      jaeger:
+      otlp:
         protocols:
           grpc:
+            endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:4318"
     processors:
+      # Add any processors you need here.
 
     exporters:
-      debug:
-      ##
+      logging:
+        loglevel: debug
+      # Add any other exporters you need here.
 
     service:
       pipelines:
         traces:
-          receivers: [jaeger]
+          receivers: [otlp]
           processors: []
-          exporters: [debug]
+          exporters: [logging]
+{{- end }}
+

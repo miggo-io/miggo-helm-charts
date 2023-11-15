@@ -1,27 +1,33 @@
-namespace: ""
-client_attr: ""
+# Tenant and Project id, format:
+# io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
+customerAttr: ""
 
+# If one collector deployed for diff namesapces, specify false, and collector namespace
+deployCollector: true
+collectorNameSpace: ""
+
+# Default secret name (const in miggo-operator)
+miggoCollectorSecret:  miggo-dockerconfigjson
+
+# Container registry creds
 imageCredentials:
   registry: ""
   username: ""
   password: ""
 
-## aws fields for updater job.
+# aws fields for updater job.
 aws:
   accessKeyId: ""
   secretAccessKey: ""
   region: ""
   bucketName: ""
   fileName: ""
+
 updater:
   image: ""
-replicaCount: 1
+  cronjobSchedule: "10" # time in min
 
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+replicaCount: 1
 
 imagePullSecrets: []
 nameOverride: ""
@@ -36,60 +42,3 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
-
-podSecurityContext: {}
-# fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-# runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
-
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-  # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-#   memory: 128Mi
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
