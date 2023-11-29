@@ -1,0 +1,32 @@
+{{- if .Values.deployCollector }}
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  mode: deployment # This configuration is omittable.
+  imagePullPolicy: Always
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:4318"
+    processors:
+      # Add any processors you need here.
+
+    exporters:
+      logging:
+        loglevel: debug
+      # Add any other exporters you need here.
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: []
+          exporters: [logging]
+{{- end }}
+

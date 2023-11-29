@@ -1,0 +1,14 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: {{ .Release.Name }}-instrumentation
+spec:
+  exporter:
+    endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collectorNameSpace}}:4317
+
+  env:
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: {{ .Values.customerAttr}}
+  sampler:
+    type: parentbased_always_on
+

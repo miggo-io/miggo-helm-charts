@@ -1,0 +1,7 @@
+apiVersion: v2
+name: miggo-operator
+version: 0.1.0
+description: Miggo Operator Helm chart for Kubernetes
+type: application
+appVersion: 0.87.0
+
