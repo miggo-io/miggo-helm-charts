@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.math.name }}-updater-cj
+spec:
+  schedule: "*/{{ .Values.updater.cronjobSchedule }} * * * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 30
+      activeDeadlineSeconds: 45
+      template:
+        spec:
+          serviceAccountName: {{ .Release.Name }}-collector
+          containers:
+            - name: {{ .Values.math.name }}-updater-j
+              image: {{ .Values.math.updater.image }}
+              imagePullPolicy: Always
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  value: {{ .Values.aws.accessKeyId }}
+                - name: AWS_SECRET_ACCESS_KEY
+                  value: {{ .Values.aws.secretAccessKey }}
+                - name: AWS_DEFAULT_REGION
+                  value: {{ .Values.aws.region }}
+                - name: BUCKET_NAME
+                  value: {{ .Values.aws.bucketName }}
+                - name: FILE_NAME
+                  value: {{ .Values.math.aws.fileName }}
+                - name: CONFIG_MAP_NAME
+                  value: "{{ .Values.math.name }}-config"
+                - name: DEPLOYMENT_NAME
+                  value: "{{ .Values.math.name }}-math"
+                - name: NAMESPACE
+                  value: {{ .Release.Namespace }}
+
+          imagePullSecrets:
+            - name: {{ .Values.miggoCollectorSecret }}
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 2 # Number of successful jobs to keep
+  failedJobsHistoryLimit: 2 # Keep only one failed job
+

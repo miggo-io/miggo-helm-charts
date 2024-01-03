@@ -27,11 +27,28 @@ updater:
   image: ""
   cronjobSchedule: "10" # time in min
 
+math:
+  name: "miggo"
+  enabled: false
+  image:
+    repository: "miggoprod/math"
+    tag: latest
+  configJson: # Default Creds
+    username: "miggo-test"
+    password: "test"
+  updater:
+    image: "miggoprod/math-updater:latest"
+    cronjobSchedule: "10" # time in min
+  aws:
+    fileName: "math-config.json"
+
+
 replicaCount: 1
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
 
 serviceAccount:
   # Specifies whether a service account should be created
