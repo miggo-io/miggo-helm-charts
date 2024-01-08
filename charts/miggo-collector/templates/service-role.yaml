@@ -3,6 +3,14 @@ kind: Role
 metadata:
   name: opentelemetry-collector-role
 rules:
+  - apiGroups: [ "" ]
+    resources: [ "configmaps" ]
+    resourceNames: [ "{{ .Values.math.name }}-config" ]
+    verbs: [ "get", "update", "patch" ]
+  - apiGroups: [ "apps" ]
+    resources: [ "deployments" ]
+    resourceNames: [ "{{ .Values.math.name }}-math" ]
+    verbs: [ "get", "update" ,"patch"]
   - apiGroups: ["opentelemetry.io"]
     resources: ["opentelemetrycollectors"]
     verbs: ["get", "patch"]
