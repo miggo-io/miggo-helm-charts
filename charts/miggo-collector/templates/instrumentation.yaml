@@ -4,11 +4,17 @@ metadata:
   name: {{ .Release.Name }}-instrumentation
 spec:
   exporter:
-    endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collectorNameSpace}}:4317
+    endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collectorNameSpace}}:4318
 
   env:
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: {{ .Values.customerAttr}}
+
   sampler:
     type: parentbased_always_on
+  python:
+    env:
+      - name: OTEL_METRICS_EXPORTER
+        value: "none"
+
 
