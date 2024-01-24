@@ -1,9 +1,8 @@
-# OpenTelemetry Helm Charts
+# Miggo Helm Charts
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/opentelemetry-helm)](https://artifacthub.io/packages/search?repo=opentelemetry-helm)
 
-This repository contains [Helm](https://helm.sh/) charts for OpenTelemetry project.
+This repository contains [Helm](https://helm.sh/) charts for installing Miggo Helm charts, based onOpenTelemetry project.
 
 ## Usage
 
@@ -13,55 +12,28 @@ Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
 Once Helm is set up properly, add the repo as follows:
 
 ```console
-$ helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+$ helm repo add miggo-charts https://miggo-io.github.io/miggo-helm-charts
+$ helm repo update
 ```
 
 ## Helm Charts
 
-You can then run `helm search repo open-telemetry` to see the charts.
+You can then run `helm search repo miggo-helm-charts` to see the charts.
 
-### OpenTelemetry Collector
+### Miggo Operator
 
-The chart can be used to install [OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector)
+The chart can be used to install [Miggo Operator](https://miggo-io.github.io/miggo-helm-charts/miggo-operator)
 in a Kubernetes cluster. More detailed documentation can be found in
-[OpenTelemetry Collector chart directory](./charts/opentelemetry-collector).
+[Miggo Operator chart directory](./charts/Miggo-operator).
 
-### OpenTelemetry Demo
+## Acknowledgements
 
-The chart can be used to install [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
-in a Kubernetes cluster. More detailed documentation can be found in
-[OpenTelemetry Demo chart directory](./charts/opentelemetry-demo).
+This project is built upon or includes modifications of opentelemetry-operator, an open-source project available under the Apache 2.0. We are thankful to the contributors of opentelemetry-operator for their work, which has significantly aided the development of our project.
+The original project can be found at: [OpenTelemtry Helm Charts Github repo](https://github.com/open-telemetry/opentelemetry-operator)
 
-### OpenTelemetry Operator
+## Contribution
 
-The chart can be used to install [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator)
-in a Kubernetes cluster. More detailed documentation can be found in
-[OpenTelemetry Operator chart directory](./charts/opentelemetry-operator).
-
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-Approvers ([@open-telemetry/helm-approvers](https://github.com/orgs/open-telemetry/teams/helm-approvers)):
-
-- [Alex Birca](https://github.com/Allex1), Adobe
-- [Pierre Tessier](https://github.com/puckpuck), Honeycomb
-- [Povilas](https://github.com/povilasv), Coralogix
-
-Emeritus Approvers:
-
-- [Naseem K. Ullah](https://github.com/naseemkullah), Transit
-
-Maintainers ([@open-telemetry/helm-maintainers](https://github.com/orgs/open-telemetry/teams/helm-maintainers)):
-
-- [Dmitrii Anoshin](https://github.com/dmitryax), Splunk
-- [Tyler Helmuth](https://github.com/TylerHelmuth), Honeycomb
-
-Emeritus Maintainers:
-
-- [Tigran Najaryan](https://github.com/tigrannajaryan), Splunk
-
-Learn more about roles in the [community repository](https://github.com/open-telemetry/community/blob/main/community-membership.md).
+See Original contribution doc of OpenTelemtry [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## License
 
