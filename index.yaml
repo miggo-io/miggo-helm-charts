@@ -3,6 +3,16 @@ entries:
   miggo-collector:
   - apiVersion: v2
     appVersion: 0.87.0
+    created: "2024-01-24T20:32:34.322274377Z"
+    description: A Helm chart for Kubernetes
+    digest: ce6e188abec4e98baee1cb744f11f77d157b1258429a14da07e5219b40a7e836
+    name: miggo-collector
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-collector-0.1.5/miggo-collector-0.1.5.tgz
+    version: 0.1.5
+  - apiVersion: v2
+    appVersion: 0.87.0
     created: "2024-01-24T19:24:17.974360067Z"
     description: A Helm chart for Kubernetes
     digest: e45bfd9e6efe10da7175c2a230cb4ebd2b9e210f5e52a05d76716cadf03be8e4
@@ -79,4 +89,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/opentelemetry-operator-0.1.3/opentelemetry-operator-0.1.3.tgz
     version: 0.1.3
-generated: "2024-01-24T19:24:18.112735428Z"
+generated: "2024-01-24T20:32:34.322296017Z"
