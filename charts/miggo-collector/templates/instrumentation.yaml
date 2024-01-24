@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-instrumentation
 spec:
   exporter:
-    endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collectorNameSpace}}:4318
+    endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collectorNameSpace}}:4318/v1/traces
 
   env:
     - name: OTEL_RESOURCE_ATTRIBUTES
