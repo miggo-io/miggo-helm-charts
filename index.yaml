@@ -21,16 +21,6 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-collector-0.1.4/miggo-collector-0.1.4.tgz
     version: 0.1.4
-  - apiVersion: v2
-    appVersion: 0.87.0
-    created: "2024-01-17T12:11:19.545774593Z"
-    description: A Helm chart for Kubernetes
-    digest: 1b42ff4417b83b7174cf2e46fff598e21d6c60217780e588d1775f324ecd3ca5
-    name: miggo-collector
-    type: application
-    urls:
-    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-collector-0.1.3/miggo-collector-0.1.3.tgz
-    version: 0.1.3
   miggo-operator:
   - apiVersion: v2
     appVersion: 0.87.0
@@ -40,53 +30,6 @@ entries:
     name: miggo-operator
     type: application
     urls:
-    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-operator-0.1.3/miggo-operator-0.1.3.tgz
-    version: 0.1.3
-  - apiVersion: v2
-    appVersion: 0.87.0
-    created: "2024-01-17T12:07:33.810847358Z"
-    description: Miggo Operator Helm chart for Kubernetes
-    digest: 3065af5de581a4f194e090b9bc641aa97c937fb75579be93c8ac55053bb577bd
-    name: miggo-operator
-    type: application
-    urls:
-    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-operator-0.1.2/miggo-operator-0.1.2.tgz
-    version: 0.1.2
-  opentelemetry-operator:
-  - apiVersion: v2
-    appVersion: 0.90.0
-    created: "2024-01-24T19:24:18.112722674Z"
-    description: OpenTelemetry Operator Helm chart for Kubernetes
-    digest: 6884ad4debb7db78157ff0f5d4b8e5b8aa228bb8d057c3b43c1c29c3157d1393
-    home: https://opentelemetry.io/
-    icon: https://raw.githubusercontent.com/cncf/artwork/a718fa97fffec1b9fd14147682e9e3ac0c8817cb/projects/opentelemetry/icon/color/opentelemetry-icon-color.png
-    maintainers:
-    - name: Allex1
-    - name: dmitryax
-    - name: TylerHelmuth
-    name: opentelemetry-operator
-    sources:
-    - https://github.com/open-telemetry/opentelemetry-operator
-    type: application
-    urls:
-    - https://github.com/miggo-io/miggo-helm-charts/releases/download/opentelemetry-operator-0.1.4/opentelemetry-operator-0.1.4.tgz
+   - https://github.com/miggo-io/miggo-helm-charts/releases/download/opentelemetry-operator-0.1.4/opentelemetry-operator-0.1.4.tgz
     version: 0.1.4
-  - apiVersion: v2
-    appVersion: 0.90.0
-    created: "2024-01-17T12:11:19.996015033Z"
-    description: OpenTelemetry Operator Helm chart for Kubernetes
-    digest: 70bb96ec4720814d927fce95c402b4bd45cfd3562c85c12e9159d15860a6a9ed
-    home: https://opentelemetry.io/
-    icon: https://raw.githubusercontent.com/cncf/artwork/a718fa97fffec1b9fd14147682e9e3ac0c8817cb/projects/opentelemetry/icon/color/opentelemetry-icon-color.png
-    maintainers:
-    - name: Allex1
-    - name: dmitryax
-    - name: TylerHelmuth
-    name: opentelemetry-operator
-    sources:
-    - https://github.com/open-telemetry/opentelemetry-operator
-    type: application
-    urls:
-    - https://github.com/miggo-io/miggo-helm-charts/releases/download/opentelemetry-operator-0.1.3/opentelemetry-operator-0.1.3.tgz
-    version: 0.1.3
 generated: "2024-01-24T20:32:34.322296017Z"
