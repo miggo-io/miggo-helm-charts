@@ -5,6 +5,7 @@ customerAttr: ""
 # If one collector deployed for diff namesapces, specify false, and collector namespace
 deployCollector: true
 collectorNameSpace: ""
+collectorPort: ""
 
 # Default secret name (const in miggo-operator)
 miggoCollectorSecret:  miggo-dockerconfigjson

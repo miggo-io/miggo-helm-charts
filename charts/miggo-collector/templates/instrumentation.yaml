@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-instrumentation
 spec:
   exporter:
-    endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collectorNameSpace}}:4318/v1/traces
+    endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collectorNameSpace}}:{{ .Values.collectorPort}}
 
   env:
     - name: OTEL_RESOURCE_ATTRIBUTES
@@ -16,5 +16,11 @@ spec:
     env:
       - name: OTEL_METRICS_EXPORTER
         value: "none"
+  nodejs:
+    env:
+      - name: OTEL_TRACES_EXPORTER
+        value: "otlp"
+      - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+        value: "http/protobuf"
 
 
