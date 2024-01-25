@@ -30,6 +30,6 @@ entries:
     name: miggo-operator
     type: application
     urls:
-   - https://github.com/miggo-io/miggo-helm-charts/releases/download/opentelemetry-operator-0.1.4/opentelemetry-operator-0.1.4.tgz
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/opentelemetry-operator-0.1.4/opentelemetry-operator-0.1.4.tgz
     version: 0.1.4
 generated: "2024-01-24T20:32:34.322296017Z"
