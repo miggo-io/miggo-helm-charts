@@ -17,8 +17,8 @@ spec:
             imagePullPolicy: Always
             {{- if .Values.updater.secretName }}
             envFrom:
-              - secretRef:
-                  name: {{ .Values.updater.secretName }}
+            - secretRef:
+                name: {{ .Values.updater.secretName }}
             {{- else }}
             env:
             - name: AWS_ACCESS_KEY_ID
