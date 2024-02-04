@@ -27,6 +27,7 @@ aws:
 updater:
   image: ""
   cronjobSchedule: "10" # time in min
+  secretName: ""
 
 math:
   name: "miggo"
