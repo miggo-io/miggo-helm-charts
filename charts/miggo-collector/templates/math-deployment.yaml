@@ -1,0 +1,34 @@
+{{ if .Values.math.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.math.name }}-math
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: math-container
+          imagePullPolicy: Always
+          image: "{{ .Values.math.image.repository }}:{{ .Values.math.image.tag }}"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/src/app/config.json
+              subPath: config.json
+      serviceAccountName: miggo-operator
+      imagePullSecrets:
+        - name: "{{ .Values.miggoCollectorSecret }}"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Values.math.name }}-config
+            items:
+                - key: config.json
+                  path: config.json
+{{ end }}

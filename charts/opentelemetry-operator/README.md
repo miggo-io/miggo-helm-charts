@@ -18,10 +18,10 @@ certificate that the API server is configured to trust. There are a few differen
     In this way, cert-manager will generate a self-signed certificate. _See [cert-manager installation](https://cert-manager.io/docs/installation/kubernetes/) for more details._
   - You can provide your own Issuer by configuring the `admissionWebhooks.certManager.issuerRef` value. You will need
     to specify the `kind` (Issuer or ClusterIssuer) and the `name`. Note that this method also requires the installation of cert-manager.
-  - You can use an automatically generated self-signed certificate by setting `admissionWebhooks.certManager.enabled` to `false` and `admissionWebhooks.autoGenerateCert` to `true`. Helm will create a self-signd cert and a secret for you.
+  - You can use an automatically generated self-signed certificate by setting `admissionWebhooks.certManager.enabled` to `false` and `admissionWebhooks.autoGenerateCert` to `true`. Helm will create a self-signed cert and a secret for you.
   - You can use your own generated self-signed certificate by setting both `admissionWebhooks.certManager.enabled` and `admissionWebhooks.autoGenerateCert` to `false`. You should provide the necessary values to `admissionWebhooks.cert_file`, `admissionWebhooks.key_file`, and `admissionWebhooks.ca_file`.
   - You can sideload custom webhooks and certificate by disabling `.Values.admissionWebhooks.create` and `admissionWebhooks.certManager.enabled` while setting your custom cert secret name in `admissionWebhooks.secretName`
-  - You can disable webhooks alltogether by disabling `.Values.admissionWebhooks.create` and setting env var to `ENABLE_WEBHOOKS: "false"`
+  - You can disable webhooks altogether by disabling `.Values.admissionWebhooks.create` and setting env var to `ENABLE_WEBHOOKS: "false"`
 
 ## Add Repository
 
@@ -43,6 +43,13 @@ If you created a custom namespace, like in the TLS Certificate Requirement secti
 
 ```console
 $ helm install --namespace opentelemetry-operator-system \
+  opentelemetry-operator open-telemetry/opentelemetry-operator
+```
+
+If you wish for helm to create an automatically generated self-signed certificate, make sure to set the appropriate values when installing the chart:
+
+```console
+$ helm install  --set admissionWebhooks.certManager.enabled=false --set admissionWebhooks.certManager.autoGenerateCert=true \
   opentelemetry-operator open-telemetry/opentelemetry-operator
 ```
 
@@ -88,6 +95,8 @@ The following command will show all the configurable options with detailed comme
 $ helm show values open-telemetry/opentelemetry-operator
 ```
 
+When using this chart as a subchart, you may want to unset certain default values. Since Helm v3.13 values handling is improved and null can now consistently be used to remove values (e.g. to remove the default CPU limits).
+
 ## Install OpenTelemetry Collector
 
 _See [OpenTelemetry website](https://opentelemetry.io/docs/collector/) for more details about the Collector_
@@ -106,7 +115,7 @@ to an early version if anything unexpected happens, pause the Collector, etc. In
 instance just as an application.
 
 The following example configuration deploys the Collector as Deployment resource. The receiver is Jaeger receiver and
-the exporter is logging exporter.
+the exporter is [debug exporter](https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/debugexporter).
 
 ```console
 $ kubectl apply -f - <<EOF
@@ -124,24 +133,24 @@ spec:
     processors:
 
     exporters:
-      logging:
+      debug:
 
     service:
       pipelines:
         traces:
           receivers: [jaeger]
           processors: []
-          exporters: [logging]
+          exporters: [debug]
 EOF
 ```
 
 ### DaemonSet Mode
 
-DaemonSet should satisfy your needs if you want the Collector run as an agent in your Kubernetes nodes.
+DaemonSet should satisfy your needs if you want the Collector to run as an agent on your Kubernetes nodes.
 In this case, every Kubernetes node will have its own Collector copy which would monitor the pods in it.
 
 The following example configuration deploys the Collector as DaemonSet resource. The receiver is Jaeger receiver and
-the exporter is logging exporter.
+the exporter is debug exporter.
 
 ```console
 $ kubectl apply -f - <<EOF
@@ -151,6 +160,7 @@ metadata:
   name: my-collector
 spec:
   mode: daemonset
+  hostNetwork: true
   config: |
     receivers:
       jaeger:
@@ -159,15 +169,15 @@ spec:
     processors:
 
     exporters:
-      logging:
-        loglevel: debug
+      debug:
+        verbosity: detailed
 
     service:
       pipelines:
         traces:
           receivers: [jaeger]
           processors: []
-          exporters: [logging]
+          exporters: [debug]
 EOF
 ```
 
@@ -181,7 +191,7 @@ There are basically three main advantages to deploy the Collector as the Statefu
   to attach the same sticky identity (e.g., volumes) to the new pod.
 
 The following example configuration deploys the Collector as StatefulSet resource with three replicas. The receiver
-is Jaeger receiver and the exporter is logging exporter.
+is Jaeger receiver and the exporter is debug exporter.
 
 ```console
 $ kubectl apply -f - <<EOF
@@ -200,14 +210,14 @@ spec:
     processors:
 
     exporters:
-      logging:
+      debug:
 
     service:
       pipelines:
         traces:
           receivers: [jaeger]
           processors: []
-          exporters: [logging]
+          exporters: [debug]
 EOF
 ```
 
@@ -237,14 +247,14 @@ spec:
     processors:
 
     exporters:
-      logging:
+      debug:
 
     service:
       pipelines:
         traces:
           receivers: [jaeger]
           processors: []
-          exporters: [logging]
+          exporters: [debug]
 EOF
 
 $ kubectl apply -f - <<EOF

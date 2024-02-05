@@ -6,9 +6,9 @@ metadata:
   annotations:
     cert-manager.io/inject-ca-from: default/example-opentelemetry-operator-serving-cert
   labels:
-    helm.sh/chart: opentelemetry-operator-0.34.0
+    helm.sh/chart: opentelemetry-operator-0.44.3
     app.kubernetes.io/name: opentelemetry-operator
-    app.kubernetes.io/version: "0.81.0"
+    app.kubernetes.io/version: "0.90.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: example
     app.kubernetes.io/component: webhook
@@ -21,6 +21,7 @@ webhooks:
         name: example-opentelemetry-operator-webhook
         namespace: default
         path: /mutate-opentelemetry-io-v1alpha1-instrumentation
+        port: 443
     failurePolicy: Fail
     name: minstrumentation.kb.io
     rules:
@@ -33,6 +34,7 @@ webhooks:
         - UPDATE
       resources:
         - instrumentations
+      scope: Namespaced
     sideEffects: None
     timeoutSeconds: 10
   - admissionReviewVersions:
@@ -42,6 +44,7 @@ webhooks:
         name: example-opentelemetry-operator-webhook
         namespace: default
         path: /mutate-opentelemetry-io-v1alpha1-opentelemetrycollector
+        port: 443
     failurePolicy: Fail
     name: mopentelemetrycollector.kb.io
     rules:
@@ -54,6 +57,7 @@ webhooks:
           - UPDATE
         resources:
           - opentelemetrycollectors
+        scope: Namespaced
     sideEffects: None
     timeoutSeconds: 10
   - admissionReviewVersions:
@@ -63,6 +67,7 @@ webhooks:
         name: example-opentelemetry-operator-webhook
         namespace: default
         path: /mutate-v1-pod
+        port: 443
     failurePolicy: Ignore
     name: mpod.kb.io
     rules:
@@ -75,6 +80,7 @@ webhooks:
           - UPDATE
         resources:
           - pods
+        scope: Namespaced
     sideEffects: None
     timeoutSeconds: 10
 ---
@@ -85,9 +91,9 @@ metadata:
   annotations:
     cert-manager.io/inject-ca-from: default/example-opentelemetry-operator-serving-cert
   labels:
-    helm.sh/chart: opentelemetry-operator-0.34.0
+    helm.sh/chart: opentelemetry-operator-0.44.3
     app.kubernetes.io/name: opentelemetry-operator
-    app.kubernetes.io/version: "0.81.0"
+    app.kubernetes.io/version: "0.90.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: example
     app.kubernetes.io/component: webhook
@@ -100,6 +106,7 @@ webhooks:
         name: example-opentelemetry-operator-webhook
         namespace: default
         path: /validate-opentelemetry-io-v1alpha1-instrumentation
+        port: 443
     failurePolicy: Fail
     name: vinstrumentationcreateupdate.kb.io
     rules:
@@ -112,6 +119,7 @@ webhooks:
         - UPDATE
       resources:
         - instrumentations
+      scope: Namespaced
     sideEffects: None
     timeoutSeconds: 10
   - admissionReviewVersions:
@@ -121,6 +129,7 @@ webhooks:
         name: example-opentelemetry-operator-webhook
         namespace: default
         path: /validate-opentelemetry-io-v1alpha1-instrumentation
+        port: 443
     failurePolicy: Ignore
     name: vinstrumentationdelete.kb.io
     rules:
@@ -132,6 +141,7 @@ webhooks:
           - DELETE
         resources:
           - instrumentations
+        scope: Namespaced
     sideEffects: None
     timeoutSeconds: 10
   - admissionReviewVersions:
@@ -141,6 +151,7 @@ webhooks:
         name: example-opentelemetry-operator-webhook
         namespace: default
         path: /validate-opentelemetry-io-v1alpha1-opentelemetrycollector
+        port: 443
     failurePolicy: Fail
     name: vopentelemetrycollectorcreateupdate.kb.io
     rules:
@@ -153,6 +164,7 @@ webhooks:
           - UPDATE
         resources:
           - opentelemetrycollectors
+        scope: Namespaced
     sideEffects: None
     timeoutSeconds: 10
   - admissionReviewVersions:
@@ -162,6 +174,7 @@ webhooks:
         name: example-opentelemetry-operator-webhook
         namespace: default
         path: /validate-opentelemetry-io-v1alpha1-opentelemetrycollector
+        port: 443
     failurePolicy: Ignore
     name: vopentelemetrycollectordelete.kb.io
     rules:
@@ -173,5 +186,6 @@ webhooks:
           - DELETE
         resources:
           - opentelemetrycollectors
+        scope: Namespaced
     sideEffects: None
     timeoutSeconds: 10
