@@ -1,11 +1,11 @@
-# Tenant and Project id, format:
-# io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
-customerAttr: ""
-
 # If one collector deployed for diff namesapces, specify false, and collector namespace
 deployCollector: true
 collectorNameSpace: ""
 collectorPort: ""
+
+# Tenant and Project id, format:
+# io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
+customerAttr: ""
 
 # Default secret name (const in miggo-operator)
 miggoCollectorSecret:  miggo-dockerconfigjson
@@ -30,8 +30,9 @@ updater:
   secretName: ""
 
 math:
-  name: "miggo"
   enabled: false
+  name: "miggo"
+  serviceAccountName: "opentelemetry-operator"
   image:
     repository: "miggoprod/math"
     tag: latest
