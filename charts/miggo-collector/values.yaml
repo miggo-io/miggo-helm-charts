@@ -3,6 +3,10 @@ deployCollector: true
 collectorNameSpace: ""
 collectorPort: ""
 
+# Tenant and Project id, format:
+# io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
+customerAttr: ""
+
 # Default secret name (const in miggo-operator)
 miggoCollectorSecret:  miggo-dockerconfigjson
 
