@@ -5,7 +5,7 @@ metadata:
 spec:
   exporter:
     endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collectorNameSpace}}:{{ .Values.collectorPort}}
-
+    #endpoint: http://collector-opentelemetry-collector.{{ .Values.collectorNameSpace}}:{{ .Values.collectorPort}}
   env:
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: {{ .Values.customerAttr}}
