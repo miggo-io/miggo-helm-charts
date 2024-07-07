@@ -1,4 +1,4 @@
-{{- if .Values.deployCollector }}
+{{- if .Values.collector.deployCollector }}
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:

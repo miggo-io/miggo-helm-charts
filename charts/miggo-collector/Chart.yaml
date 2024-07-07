@@ -1,6 +1,0 @@
-apiVersion: v2
-name: miggo-collector
-version: 0.1.7
-description: A Helm chart for Kubernetes
-type: application
-appVersion: 0.87.0

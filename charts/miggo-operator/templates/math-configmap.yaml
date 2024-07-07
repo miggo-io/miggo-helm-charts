@@ -1,0 +1,12 @@
+{{ if .Values.collector.math.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.collector.math.name }}-config
+data:
+  config.json: |
+    {
+      "username": "{{ .Values.collector.math.configJson.username }}",
+      "password": "{{ .Values.collector.math.configJson.password }}"
+    }
+{{ end }}

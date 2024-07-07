@@ -5,11 +5,11 @@ metadata:
 rules:
   - apiGroups: [ "" ]
     resources: [ "configmaps" ]
-    resourceNames: [ "{{ .Values.math.name }}-config" ]
+    resourceNames: [ "{{ .Values.collector.math.name }}-config" ]
     verbs: [ "get", "update", "patch" ]
   - apiGroups: [ "apps" ]
     resources: [ "deployments" ]
-    resourceNames: [ "{{ .Values.math.name }}-math" ]
+    resourceNames: [ "{{ .Values.collector.math.name }}-math" ]
     verbs: [ "get", "update" ,"patch"]
   - apiGroups: ["opentelemetry.io"]
     resources: ["opentelemetrycollectors"]

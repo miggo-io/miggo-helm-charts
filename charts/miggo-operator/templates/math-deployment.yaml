@@ -1,8 +1,8 @@
-{{ if .Values.math.enabled }}
+{{ if .Values.collector.math.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.math.name }}-math
+  name: {{ .Values.collector.math.name }}-math
 spec:
   replicas: 1
   selector:
@@ -16,18 +16,18 @@ spec:
       containers:
         - name: math-container
           imagePullPolicy: Always
-          image: "{{ .Values.math.image.repository }}:{{ .Values.math.image.tag }}"
+          image: "{{ .Values.collector.math.image.repository }}:{{ .Values.collector.math.image.tag }}"
           volumeMounts:
             - name: config-volume
               mountPath: /usr/src/app/config.json
               subPath: config.json
       serviceAccountName: miggo-operator
       imagePullSecrets:
-        - name: "{{ .Values.miggoCollectorSecret }}"
+        - name: "{{ .Values.collector.miggoCollectorSecret }}"
       volumes:
         - name: config-volume
           configMap:
-            name: {{ .Values.math.name }}-config
+            name: {{ .Values.collector.math.name }}-config
             items:
                 - key: config.json
                   path: config.json

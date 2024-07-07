@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: {{ .Release.Name }}-updater-cj
 spec:
-  schedule: "*/{{ .Values.updater.cronjobSchedule }} * * * *"
+  schedule: "*/{{ .Values.collector.updater.cronjobSchedule }} * * * *"
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 30
@@ -13,32 +13,31 @@ spec:
           serviceAccountName: {{ .Release.Name }}-collector
           containers:
           - name: {{ .Release.Name }}-updater-j
-            image: {{ .Values.updater.image }}
+            image: {{ .Values.collector.updater.image }}
             imagePullPolicy: Always
-            {{- if .Values.updater.secretName }}
+            {{- if .Values.collector.updater.secretName }}
             envFrom:
             - secretRef:
-                name: {{ .Values.updater.secretName }}
+                name: {{ .Values.collector.updater.secretName }}
             {{- else }}
             env:
             - name: AWS_ACCESS_KEY_ID
-              value: {{ .Values.aws.accessKeyId }}
+              value: {{ .Values.collector.aws.accessKeyId }}
             - name: AWS_SECRET_ACCESS_KEY
-              value: {{ .Values.aws.secretAccessKey }}
+              value: {{ .Values.collector.aws.secretAccessKey }}
             - name: AWS_DEFAULT_REGION
-              value: {{ .Values.aws.region }}
+              value: {{ .Values.collector.aws.region }}
             - name: BUCKET_NAME
-              value: {{ .Values.aws.bucketName }}
+              value: {{ .Values.collector.aws.bucketName }}
             - name: FILE_NAME
-              value: {{ .Values.aws.fileName }}
+              value: {{ .Values.collector.aws.fileName }}
             - name: COLLECTOR_NAME
               value: {{ .Release.Name }}
             - name: NAMESPACE
               value: {{ .Release.Namespace }}
           {{- end }}
           imagePullSecrets:
-          - name: {{ .Values.miggoCollectorSecret }}
+          - name: {{ .Values.collector.miggoCollectorSecret }}
           restartPolicy: Never
   successfulJobsHistoryLimit: 0 # Number of successful jobs to keep
   failedJobsHistoryLimit: 0 # Keep only one failed job
-
