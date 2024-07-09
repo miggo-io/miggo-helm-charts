@@ -11,4 +11,4 @@ rules:
   verbs: ["get"]
 - apiGroups: ["opentelemetry.io"]
   resources: ["opentelemetrycollectors", "instrumentations"]
-  verbs: ["get", "list", "create"]
+  verbs: ["get", "list", "create", "patch"]
