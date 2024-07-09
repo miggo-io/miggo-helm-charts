@@ -8,10 +8,13 @@ replicaCount: 1
 ##
 nameOverride: ""
 
-## Reference one or more secrets to be used when pulling images from authenticated repositories.
+## List of secrets to use for pulling images from authenticated repositories.
+## Only one of imagePullSecrets or imageCredentials should be specified.
 imagePullSecrets:
   - name: ""
 
+## Credentials to create a secret for image pulling.
+## Only one of imagePullSecrets or imageCredentials should be specified.
 imageCredentials:
   registry: ""
   username: ""
@@ -282,15 +285,6 @@ collector:
   collectorNameSpace: ""
   collectorPort: ""
 
-  # Default secret name (const in miggo-operator)
-  miggoCollectorSecret:  miggo-dockerconfigjson
-
-  # Container registry creds
-  imageCredentials:
-    registry: ""
-    username: ""
-    password: ""
-
   math:
     name: "miggo"
     enabled: false
@@ -303,7 +297,6 @@ collector:
 
   replicaCount: 1
 
-  imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
 

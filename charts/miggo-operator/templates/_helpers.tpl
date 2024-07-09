@@ -79,3 +79,13 @@ Create an ordered name of the MutatingWebhookConfiguration
 {{- define "opentelemetry-operator.MutatingWebhookName" -}}
 {{- printf "%s-%s" (.Values.admissionWebhooks.namePrefix | toString) (include "opentelemetry-operator.fullname" .) | trimPrefix "-" }}
 {{- end }}
+
+{{- define "imagePullSecrets" -}}
+{{- if (empty (index .Values.imagePullSecrets 0).name) }}
+imagePullSecrets:
+  - name: regcred
+{{- else }}
+imagePullSecrets:
+  {{- toYaml .Values.imagePullSecrets | nindent 2 }}
+{{- end }}
+{{- end -}}

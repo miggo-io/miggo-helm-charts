@@ -22,8 +22,7 @@ spec:
               mountPath: /usr/src/app/config.json
               subPath: config.json
       serviceAccountName: miggo-operator
-      imagePullSecrets:
-        - name: "{{ .Values.collector.miggoCollectorSecret }}"
+      {{- include "imagePullSecrets" . | nindent 6 }}
       volumes:
         - name: config-volume
           configMap:
