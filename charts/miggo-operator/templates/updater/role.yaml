@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: updater-role
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "configmaps" ]
+    resourceNames: [ "{{ .Values.collector.math.name }}-config" ]
+    verbs: [ "get", "update", "patch" ]
+  - apiGroups: [ "apps" ]
+    resources: [ "deployments" ]
+    resourceNames: [ "{{ .Values.collector.math.name }}-math" ]
+    verbs: [ "get", "update" ,"patch"]
+  - apiGroups: ["opentelemetry.io"]
+    resources: ["opentelemetrycollectors"]
+    verbs: ["get", "patch"]

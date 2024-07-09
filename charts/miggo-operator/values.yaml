@@ -291,19 +291,6 @@ collector:
     username: ""
     password: ""
 
-  # aws fields for updater job.
-  aws:
-    accessKeyId: ""
-    secretAccessKey: ""
-    region: ""
-    bucketName: ""
-    fileName: ""
-
-  updater:
-    image: ""
-    cronjobSchedule: "10" # time in min
-    secretName: ""
-
   math:
     name: "miggo"
     enabled: false
@@ -313,19 +300,12 @@ collector:
     configJson: # Default Creds
       username: "miggo-test"
       password: "test"
-    updater:
-      image: "miggoprod/math-updater:latest"
-      cronjobSchedule: "10" # time in min
-    aws:
-      fileName: "math-config.json"
-
 
   replicaCount: 1
 
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
-
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -335,3 +315,22 @@ collector:
     # The name of the service account to use.
     # If not set and create is true, a name is generated using the fullname template
     name: ""
+
+updater:
+  image: ""
+  cronjobSchedule: "1" # time in min
+  collectorFileName: "config.yaml"
+  mathFileName: "config.json"
+  
+  aws:
+    bucketName: "" 
+
+    # Leave empty if you want to create default secrets based on the below params.
+    #    
+    existingSecret: ""
+    
+    # Ignored when existingAwsSecret specified
+    # 
+    accessKeyId: ""
+    secretAccessKey: ""
+    region: ""

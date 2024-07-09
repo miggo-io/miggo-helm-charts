@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: config-updater
+spec:
+  schedule: "*/{{ .Values.updater.cronjobSchedule }} * * * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 30
+      activeDeadlineSeconds: 45
+      template:
+        spec:
+          serviceAccountName: updater-service-account
+          containers:
+          - name: config-updater
+            image: {{ .Values.updater.image }}
+            imagePullPolicy: Always
+            {{- if .Values.updater.aws.existingSecret }}
+            envFrom:
+            - secretRef:
+                name: {{ .Values.updater.aws.existingSecret }}
+            {{- else }}
+            envFrom:
+            - secretRef:
+                name: updater-aws-secret
+            {{- end }}
+            command:
+            - /bin/sh
+            - -c
+            - |
+              BUCKET={{ .Values.updater.aws.bucketName }}
+              COLLECTOR_FILE_NAME={{ .Values.updater.collectorFileName }}
+              MATH_FILE_NAME={{ .Values.updater.mathFileName }}
+              NAMESPACE={{ .Release.Namespace }}
+              MATH_NAME={{ .Values.collector.math.name }}
+              
+              aws s3 cp s3://$BUCKET/$COLLECTOR_FILE_NAME .
+              kubectl patch opentelemetrycollector {{ .Release.Name }} -n $NAMESPACE --type=merge --patch-file $COLLECTOR_FILE_NAME
+              
+              aws s3 cp s3://$BUCKET/$MATH_FILE_NAME .
+              kubectl get configmap $MATH_NAME-config -n $NAMESPACE -o=jsonpath='{.data.config\.json}' > existing-config.json
+              
+              if ! diff -q $MATH_FILE_NAME existing-config.json > /dev/null; then
+                kubectl create configmap "$MATH_NAME-config" --from-file=config.json=$MATH_FILE_NAME -n $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+                kubectl rollout restart deployment/$MATH_NAME-math -n $NAMESPACE
+              fi
+          imagePullSecrets:
+          - name: {{ .Values.collector.miggoCollectorSecret }}
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 0 # Number of successful jobs to keep
+  failedJobsHistoryLimit: 0 # Keep only one failed job
