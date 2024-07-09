@@ -33,6 +33,59 @@ pdb:
   ##
   maxUnavailable: ""
 
+collector:
+  # Tenant and Project id, format:
+  # io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
+  customerAttr: ""
+
+  # If one collector deployed for diff namesapces, specify false, and collector namespace
+  deployCollector: true
+  collectorNameSpace: ""
+  collectorPort: ""
+
+  math:
+    name: "miggo"
+    enabled: false
+    image:
+      repository: "miggoprod/math"
+      tag: latest
+    configJson: # Default Creds
+      username: "miggo-test"
+      password: "test"
+
+  replicaCount: 1
+
+  nameOverride: ""
+  fullnameOverride: ""
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+updater:
+  image: ""
+  cronjobSchedule: "1" # time in min
+  collectorFileName: "config.yaml"
+  mathFileName: "config.json"
+  
+  aws:
+    bucketName: "" 
+
+    # Leave empty if you want to create default secrets based on the below params.
+    #    
+    existingSecret: ""
+    
+    # Ignored when existingAwsSecret specified
+    # 
+    accessKeyId: ""
+    secretAccessKey: ""
+    region: ""
+
 ## Provide OpenTelemetry Operator manager container image and resources.
 ##
 manager:
@@ -274,56 +327,3 @@ testFramework:
   image:
     repository: busybox
     tag: latest
-
-collector:
-  # Tenant and Project id, format:
-  # io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
-  customerAttr: ""
-
-  # If one collector deployed for diff namesapces, specify false, and collector namespace
-  deployCollector: true
-  collectorNameSpace: ""
-  collectorPort: ""
-
-  math:
-    name: "miggo"
-    enabled: false
-    image:
-      repository: "miggoprod/math"
-      tag: latest
-    configJson: # Default Creds
-      username: "miggo-test"
-      password: "test"
-
-  replicaCount: 1
-
-  nameOverride: ""
-  fullnameOverride: ""
-
-  serviceAccount:
-    # Specifies whether a service account should be created
-    create: true
-    # Annotations to add to the service account
-    annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
-    name: ""
-
-updater:
-  image: ""
-  cronjobSchedule: "1" # time in min
-  collectorFileName: "config.yaml"
-  mathFileName: "config.json"
-  
-  aws:
-    bucketName: "" 
-
-    # Leave empty if you want to create default secrets based on the below params.
-    #    
-    existingSecret: ""
-    
-    # Ignored when existingAwsSecret specified
-    # 
-    accessKeyId: ""
-    secretAccessKey: ""
-    region: ""
