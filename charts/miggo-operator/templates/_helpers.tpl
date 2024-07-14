@@ -89,3 +89,11 @@ imagePullSecrets:
   {{- toYaml .Values.imagePullSecrets | nindent 2 }}
 {{- end }}
 {{- end -}}
+
+{{- define "imagePullSecretName" -}}
+{{- if (empty (index .Values.imagePullSecrets 0).name) }}
+regcred
+{{- else }}
+{{- (index .Values.imagePullSecrets 0).name }}
+{{- end }}
+{{- end -}}

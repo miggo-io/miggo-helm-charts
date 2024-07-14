@@ -37,6 +37,7 @@ spec:
               aws s3 cp s3://$BUCKET/$COLLECTOR_FILE_NAME .
               kubectl patch opentelemetrycollector {{ .Release.Name }} -n $NAMESPACE --type=merge --patch-file $COLLECTOR_FILE_NAME
               
+              {{- if .Values.collector.math.enabled }}
               aws s3 cp s3://$BUCKET/$MATH_FILE_NAME .
               kubectl get configmap $MATH_NAME-config -n $NAMESPACE -o=jsonpath='{.data.config\.json}' > existing-config.json
               
@@ -44,6 +45,7 @@ spec:
                 kubectl create configmap "$MATH_NAME-config" --from-file=config.json=$MATH_FILE_NAME -n $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
                 kubectl rollout restart deployment/$MATH_NAME-math -n $NAMESPACE
               fi
+              {{- end }}
           {{- include "imagePullSecrets" . | nindent 10 }}
           restartPolicy: Never
   successfulJobsHistoryLimit: 0 # Number of successful jobs to keep

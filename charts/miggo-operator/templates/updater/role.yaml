@@ -6,7 +6,7 @@ rules:
   - apiGroups: [ "" ]
     resources: [ "configmaps" ]
     resourceNames: [ "{{ .Values.collector.math.name }}-config" ]
-    verbs: [ "get", "update", "patch" ]
+    verbs: [ "get", "update", "patch", "create" ]
   - apiGroups: [ "apps" ]
     resources: [ "deployments" ]
     resourceNames: [ "{{ .Values.collector.math.name }}-math" ]
