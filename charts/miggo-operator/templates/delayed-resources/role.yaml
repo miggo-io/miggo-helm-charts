@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: delayed-resources-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get"]
+- apiGroups: ["opentelemetry.io"]
+  resources: ["opentelemetrycollectors", "instrumentations"]
+  verbs: ["get", "list", "create", "patch"]

@@ -28,6 +28,7 @@ spec:
         {{- include "opentelemetry-operator.podLabels" . | nindent 8 }}
         {{- end }}
         app.kubernetes.io/component: controller-manager
+        miggo.io/component: operator
     spec:
       hostNetwork: {{ .Values.hostNetwork }}
       {{- if .Values.priorityClassName }}

@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: delayed-resources-creator-job
+spec:
+  ttlSecondsAfterFinished: 1
+  template:
+    spec:
+      serviceAccountName: delayed-resources-service-account
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: create-delayed-resources
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Wait until the operator is ready before creating the Collector and Instrumentation.
+          # If we try to create them before the operator is ready, the webhook admission will fail,
+          # resulting in nothing working and no clear indication of the failure.
+
+          while ! kubectl get pods -l miggo.io/component=operator -o jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}' | grep True; do
+            echo "Waiting for operator to be ready..."
+            kubectl get pods -l miggo.io/component=operator
+            sleep 1
+          done
+
+          # Adding an extra sleep to ensure stability.
+          # We have observed instances where the webhook fails a second or two after the operator is marked as ready.
+          sleep 5
+          
+          kubectl get pods -l miggo.io/component=operator
+          echo "Operator is ready."
+
+          # The operator is in a ready state; it's time to create the resources.
+          cd /delayed-resources || exit 1
+          
+          {{- if .Values.collector.deployCollector }}
+          kubectl apply -f collector.yaml || exit 1
+          {{- end }}
+
+          kubectl apply -f instrumentation.yaml || exit 1
+        volumeMounts:
+        - name: delayed-resources
+          mountPath: /delayed-resources
+      restartPolicy: Never
+      volumes:
+      - name: delayed-resources
+        configMap:
+          name: delayed-resources-configmap
