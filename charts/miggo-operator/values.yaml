@@ -62,11 +62,6 @@ collector:
     bucketName: ""
     fileName: ""
 
-  updater:
-    image: ""
-    cronjobSchedule: "10" # time in min
-    secretName: ""
-
   math:
     name: "miggo"
     enabled: false
@@ -93,7 +88,7 @@ collector:
 
 updater:
   image: ""
-  cronjobSchedule: "1" # time in min
+  cronjobSchedule: "10" # time in min
   collectorFileName: "config.yaml"
   mathFileName: "config.json"
   
