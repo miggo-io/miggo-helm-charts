@@ -33,6 +33,8 @@ pdb:
   ##
   maxUnavailable: ""
 
+# Collector configuration
+# 
 collector:
   # Tenant and Project id, format:
   # io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
@@ -42,6 +44,28 @@ collector:
   deployCollector: true
   collectorNameSpace: ""
   collectorPort: ""
+
+  # Default secret name (const in miggo-operator)
+  miggoCollectorSecret:  miggo-dockerconfigjson
+
+  # Container registry creds
+  imageCredentials:
+    registry: ""
+    username: ""
+    password: ""
+
+  # aws fields for updater job.
+  aws:
+    accessKeyId: ""
+    secretAccessKey: ""
+    region: ""
+    bucketName: ""
+    fileName: ""
+
+  updater:
+    image: ""
+    cronjobSchedule: "10" # time in min
+    secretName: ""
 
   math:
     name: "miggo"
