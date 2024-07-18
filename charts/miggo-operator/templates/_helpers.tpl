@@ -91,9 +91,7 @@ imagePullSecrets:
 {{- end -}}
 
 {{- define "imagePullSecretName" -}}
-{{- if (empty (index .Values.imagePullSecrets 0).name) }}
-regcred
-{{- else }}
+{{- if (empty (index .Values.imagePullSecrets 0).name) }}regcred{{- else }}
 {{- (index .Values.imagePullSecrets 0).name }}
 {{- end }}
 {{- end -}}
