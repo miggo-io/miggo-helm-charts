@@ -11,6 +11,11 @@ rules:
       - ""
     resources:
       - configmaps
+      - persistentvolumeclaims
+      - persistentvolumes
+      - pods
+      - serviceaccounts
+      - services
     verbs:
       - create
       - delete
@@ -34,64 +39,10 @@ rules:
       - list
       - watch
   - apiGroups:
-      - ""
-    resources:
-      - serviceaccounts
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - services
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
       - apps
     resources:
       - daemonsets
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - apps
-    resources:
       - deployments
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - apps
-    resources:
-      - replicasets
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - apps
-    resources:
       - statefulsets
     verbs:
       - create
@@ -100,6 +51,15 @@ rules:
       - list
       - patch
       - update
+      - watch
+  - apiGroups:
+      - apps
+      - extensions
+    resources:
+      - replicasets
+    verbs:
+      - get
+      - list
       - watch
   - apiGroups:
       - autoscaling
@@ -113,6 +73,47 @@ rules:
       - patch
       - update
       - watch
+  {{- if .Values.manager.createRbacPermissions }}
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterroles
+      - clusterrolebindings
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+  {{- end }}
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - config.openshift.io
+    resources:
+      - infrastructures
+      - infrastructures/status
+    verbs:
+      - get
+      - list
+      - watch
   - apiGroups:
       - coordination.k8s.io
     resources:
@@ -125,6 +126,7 @@ rules:
   - apiGroups:
       - monitoring.coreos.com
     resources:
+      - podmonitors
       - servicemonitors
     verbs:
       - create
@@ -159,6 +161,32 @@ rules:
   - apiGroups:
       - opentelemetry.io
     resources:
+      - opampbridges
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - opentelemetry.io
+    resources:
+      - opampbridges/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - opentelemetry.io
+    resources:
+      - opampbridges/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - opentelemetry.io
+    resources:
       - opentelemetrycollectors
     verbs:
       - get
@@ -183,30 +211,22 @@ rules:
       - patch
       - update
   - apiGroups:
-    - route.openshift.io
-    resources:
-    - routes
-    - routes/custom-host
-    verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
-  - apiGroups:
-    - discovery.k8s.io
-    resources:
-    - endpointslices
-    verbs:
-    - get
-    - list
-    - watch
-  - apiGroups:
       - policy
     resources:
       - poddisruptionbudgets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+      - routes/custom-host
     verbs:
       - create
       - delete

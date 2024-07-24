@@ -30,14 +30,14 @@ data:
             value: "http/protobuf"
 
   collector.yaml: |
-    apiVersion: opentelemetry.io/v1alpha1
+    apiVersion: opentelemetry.io/v1beta1
     kind: OpenTelemetryCollector
     metadata:
       name: {{ .Release.Name }}
     spec:
       mode: deployment # This configuration is omittable.
       imagePullPolicy: Always
-      config: |
+      config:
         receivers:
           otlp:
             protocols:
