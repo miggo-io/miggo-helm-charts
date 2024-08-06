@@ -30,14 +30,14 @@ data:
             value: "http/protobuf"
 
   collector.yaml: |
-    apiVersion: opentelemetry.io/v1alpha1
+    apiVersion: opentelemetry.io/v1beta1
     kind: OpenTelemetryCollector
     metadata:
       name: {{ .Release.Name }}
     spec:
-      mode: deployment # This configuration is omittable.
+      mode: deployment
       imagePullPolicy: Always
-      config: |
+      config:
         receivers:
           otlp:
             protocols:
@@ -46,16 +46,15 @@ data:
               http:
                 endpoint: "0.0.0.0:4318"
         processors:
-          # Add any processors you need here.
+          batch: {}
 
         exporters:
           logging:
             loglevel: debug
-          # Add any other exporters you need here.
 
         service:
           pipelines:
             traces:
               receivers: [otlp]
-              processors: []
               exporters: [logging]
+              processors: [batch]
