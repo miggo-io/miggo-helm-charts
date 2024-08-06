@@ -32,6 +32,8 @@
         },
         "imageCredentials":{
         },
+        "updater":{
+        },
         "enabled": {
             "description": "Usually used when using Opentelemetry-operator as a subchart.",
             "type": "boolean"
