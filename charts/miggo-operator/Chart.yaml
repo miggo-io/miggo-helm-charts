@@ -3,5 +3,4 @@ name: miggo-operator
 version: 0.64.4
 description: Miggo Operator Helm chart for Kubernetes
 type: application
-home: https://opentelemetry.io/
 appVersion: 0.105.0

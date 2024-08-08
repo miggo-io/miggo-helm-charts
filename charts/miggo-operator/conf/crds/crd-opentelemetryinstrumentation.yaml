@@ -183,6 +183,18 @@ spec:
                     type: array
                   image:
                     type: string
+                  imagePullSecrets:
+                    items:
+                      properties:
+                        name:
+                          default: ""
+                          type: string
+                      type: object
+                      x-kubernetes-map-type: atomic
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - name
+                    x-kubernetes-list-type: map
                   resourceRequirements:
                     properties:
                       claims:
@@ -293,6 +305,18 @@ spec:
                     type: array
                   image:
                     type: string
+                  imagePullSecrets:
+                    items:
+                      properties:
+                        name:
+                          default: ""
+                          type: string
+                      type: object
+                      x-kubernetes-map-type: atomic
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - name
+                    x-kubernetes-list-type: map
                   resourceRequirements:
                     properties:
                       claims:
@@ -472,6 +496,18 @@ spec:
                     type: array
                   image:
                     type: string
+                  imagePullSecrets:
+                    items:
+                      properties:
+                        name:
+                          default: ""
+                          type: string
+                      type: object
+                      x-kubernetes-map-type: atomic
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - name
+                    x-kubernetes-list-type: map
                   resourceRequirements:
                     properties:
                       claims:
@@ -592,6 +628,18 @@ spec:
                     type: array
                   image:
                     type: string
+                  imagePullSecrets:
+                    items:
+                      properties:
+                        name:
+                          default: ""
+                          type: string
+                      type: object
+                      x-kubernetes-map-type: atomic
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - name
+                    x-kubernetes-list-type: map
                   resources:
                     properties:
                       claims:
@@ -768,6 +816,18 @@ spec:
                     type: array
                   image:
                     type: string
+                  imagePullSecrets:
+                    items:
+                      properties:
+                        name:
+                          default: ""
+                          type: string
+                      type: object
+                      x-kubernetes-map-type: atomic
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - name
+                    x-kubernetes-list-type: map
                   resourceRequirements:
                     properties:
                       claims:
@@ -876,6 +936,18 @@ spec:
                     type: array
                   image:
                     type: string
+                  imagePullSecrets:
+                    items:
+                      properties:
+                        name:
+                          default: ""
+                          type: string
+                      type: object
+                      x-kubernetes-map-type: atomic
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - name
+                    x-kubernetes-list-type: map
                   resourceRequirements:
                     properties:
                       claims:
@@ -997,6 +1069,18 @@ spec:
                     type: array
                   image:
                     type: string
+                  imagePullSecrets:
+                    items:
+                      properties:
+                        name:
+                          default: ""
+                          type: string
+                      type: object
+                      x-kubernetes-map-type: atomic
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - name
+                    x-kubernetes-list-type: map
                   resourceRequirements:
                     properties:
                       claims:
