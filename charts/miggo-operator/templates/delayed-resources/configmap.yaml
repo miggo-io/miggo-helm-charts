@@ -10,7 +10,7 @@ data:
       name: {{ .Release.Name }}-instrumentation
     spec:
       exporter:
-        endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collector.collectorNameSpace}}:{{ .Values.collector.collectorPort}}
+        endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collector.collectorNameSpace | default .Release.Namespace }}:{{ .Values.collector.collectorPort }}
 
       env:
         - name: OTEL_RESOURCE_ATTRIBUTES
