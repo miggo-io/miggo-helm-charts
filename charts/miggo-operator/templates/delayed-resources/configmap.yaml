@@ -19,10 +19,12 @@ data:
       sampler:
         type: parentbased_always_on
       python:
+        {{- include "imagePullSecrets" . | nindent 8 }}
         env:
           - name: OTEL_METRICS_EXPORTER
             value: "none"
       nodejs:
+        {{- include "imagePullSecrets" . | nindent 8 }}
         env:
           - name: OTEL_TRACES_EXPORTER
             value: "otlp"
@@ -37,6 +39,7 @@ data:
     spec:
       mode: deployment
       imagePullPolicy: {{ .Values.collector.imagePullPolicy }}
+      {{- include "imagePullSecrets" . | nindent 6 }}
       config:
         receivers:
           otlp:

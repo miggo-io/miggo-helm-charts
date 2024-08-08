@@ -58,23 +58,6 @@ collector:
 
   imagePullPolicy: Always
 
-  # Default secret name (const in miggo-operator)
-  miggoCollectorSecret:  miggo-dockerconfigjson
-  
-  # Container registry creds
-  imageCredentials:
-    registry: ""
-    username: ""
-    password: ""
-
-  # aws fields for updater job.
-  aws:
-    accessKeyId: ""
-    secretAccessKey: ""
-    region: ""
-    bucketName: ""
-    fileName: ""
-
   math:
     name: "miggo"
     enabled: false
@@ -101,6 +84,7 @@ collector:
     name: ""
 
 updater:
+  enabled: true
   image: ""
   imagePullPolicy: Always
   cronjobSchedule: "10" # time in min

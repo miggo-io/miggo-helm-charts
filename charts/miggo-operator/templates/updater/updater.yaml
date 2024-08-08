@@ -1,3 +1,4 @@
+{{ if and .Values.updater.enabled  }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -50,3 +51,4 @@ spec:
           restartPolicy: Never
   successfulJobsHistoryLimit: 0 # Number of successful jobs to keep
   failedJobsHistoryLimit: 0 # Keep only one failed job
+{{ end }}
