@@ -14,7 +14,7 @@ spec:
           containers:
           - name: config-updater
             image: {{ .Values.updater.image }}
-            imagePullPolicy: Always
+            imagePullPolicy: {{ .Values.updater.imagePullPolicy }}
             {{- if .Values.updater.aws.existingSecret }}
             envFrom:
             - secretRef:

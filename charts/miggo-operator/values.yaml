@@ -56,9 +56,11 @@ collector:
   collectorNameSpace: ""
   collectorPort: ""
 
+  imagePullPolicy: Always
+
   # Default secret name (const in miggo-operator)
   miggoCollectorSecret:  miggo-dockerconfigjson
-
+  
   # Container registry creds
   imageCredentials:
     registry: ""
@@ -76,6 +78,7 @@ collector:
   math:
     name: "miggo"
     enabled: false
+    imagePullPolicy: Always
     image:
       repository: "miggoprod/math"
       tag: latest
@@ -99,6 +102,7 @@ collector:
 
 updater:
   image: ""
+  imagePullPolicy: Always
   cronjobSchedule: "10" # time in min
   collectorFileName: "config.yaml"
   mathFileName: "config.json"
@@ -119,6 +123,7 @@ updater:
 ## Provide OpenTelemetry Operator manager container image and resources.
 ##
 manager:
+  imagePullPolicy: Always
   image:
     repository: miggoprod/miggo-operator
     tag: 0.79.0-13-g318aa9b

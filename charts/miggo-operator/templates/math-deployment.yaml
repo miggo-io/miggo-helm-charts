@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: math-container
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.collector.math.imagePullPolicy }}
           image: "{{ .Values.collector.math.image.repository }}:{{ .Values.collector.math.image.tag }}"
           volumeMounts:
             - name: config-volume
