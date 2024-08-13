@@ -150,3 +150,19 @@ The image to use for opentelemetry-operator.
 {{- define "opentelemetry-operator.image" -}}
 {{- printf "%s:%s" .Values.manager.image.repository (default .Chart.AppVersion .Values.manager.image.tag) }}
 {{- end }}
+
+{{- define "imagePullSecrets" -}}
+{{- if (empty (index .Values.imagePullSecrets 0).name) }}
+imagePullSecrets:
+  - name: regcred
+{{- else }}
+imagePullSecrets:
+  {{- toYaml .Values.imagePullSecrets | nindent 2 }}
+{{- end }}
+{{- end -}}
+
+{{- define "imagePullSecretName" -}}
+{{- if (empty (index .Values.imagePullSecrets 0).name) }}regcred{{- else }}
+{{- (index .Values.imagePullSecrets 0).name }}
+{{- end }}
+{{- end -}}

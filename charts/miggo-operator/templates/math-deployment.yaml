@@ -15,15 +15,14 @@ spec:
     spec:
       containers:
         - name: math-container
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.collector.math.imagePullPolicy }}
           image: "{{ .Values.collector.math.image.repository }}:{{ .Values.collector.math.image.tag }}"
           volumeMounts:
             - name: config-volume
               mountPath: /usr/src/app/config.json
               subPath: config.json
       serviceAccountName: miggo-operator
-      imagePullSecrets:
-        - name: "{{ .Values.collector.miggoCollectorSecret }}"
+      {{- include "imagePullSecrets" . | nindent 6 }}
       volumes:
         - name: config-volume
           configMap:

@@ -12,9 +12,14 @@ nameOverride: ""
 ##
 fullnameOverride: ""
 
-## Reference one or more secrets to be used when pulling images from authenticated repositories.
-imagePullSecrets: []
 
+## List of secrets to use for pulling images from authenticated repositories.
+## Only one of imagePullSecrets or imageCredentials should be specified.
+imagePullSecrets:
+  - name: ""
+
+## Credentials to create a secret for image pulling.
+## Only one of imagePullSecrets or imageCredentials should be specified.
 imageCredentials:
   registry: ""
   username: ""
@@ -51,50 +56,23 @@ collector:
   collectorNameSpace: ""
   collectorPort: ""
 
-  # Default secret name (const in miggo-operator)
-  miggoCollectorSecret:  miggo-dockerconfigjson
-
-  # Container registry creds
-  imageCredentials:
-    registry: ""
-    username: ""
-    password: ""
-
-  # aws fields for updater job.
-  aws:
-    accessKeyId: ""
-    secretAccessKey: ""
-    region: ""
-    bucketName: ""
-    fileName: ""
-
-  updater:
-    image: ""
-    cronjobSchedule: "10" # time in min
-    secretName: ""
+  imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
 
   math:
     name: "miggo"
     enabled: false
+    imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
     image:
       repository: "miggoprod/math"
       tag: latest
     configJson: # Default Creds
       username: "miggo-test"
       password: "test"
-    updater:
-      image: "miggoprod/math-updater:latest"
-      cronjobSchedule: "10" # time in min
-    aws:
-      fileName: "math-config.json"
-
 
   replicaCount: 1
 
-  imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
-
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -105,9 +83,31 @@ collector:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
 
+updater:
+  enabled: true
+  image: ""
+  imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
+  cronjobSchedule: "10" # time in min
+  collectorFileName: "config.yaml"
+  mathFileName: "config.json"
+  
+  aws:
+    bucketName: "" 
+
+    # Leave empty if you want to create default secrets based on the below params.
+    #    
+    existingSecret: ""
+    
+    # Ignored when existingAwsSecret specified
+    # 
+    accessKeyId: ""
+    secretAccessKey: ""
+    region: ""
+
 ## Provide OpenTelemetry Operator manager container image and resources.
 ##
 manager:
+  imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
   image:
     repository: miggoprod/miggo-operator
     tag: 0.79.0-13-g318aa9b
