@@ -124,13 +124,13 @@ manager:
       repository: "miggoprod/autoinstrumentation-java"
       tag: "latest"
     nodejs:
-      repository: ""
+      repository: "miggoprod/autoinstrumentation-nodejs"
       tag: ""
     python:
       repository: "miggoprod/autoinstrumentation-python"
       tag: "latest"
     dotnet:
-      repository: ""
+      repository: "miggoprod/autoinstrumentation-dotnet"
       tag: ""
     apacheHttpd:
       repository: ""
