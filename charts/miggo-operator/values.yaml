@@ -55,12 +55,12 @@ collector:
   collectorNameSpace: ""
   collectorPort: 4318
 
-  imagePullPolicy: Always
+  imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
 
   math:
     name: "miggo"
     enabled: false
-    imagePullPolicy: Always
+    imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
     image:
       repository: "miggoprod/math"
       tag: latest
@@ -85,7 +85,7 @@ collector:
 updater:
   enabled: true
   image: "miggoprod/updater:latest"
-  imagePullPolicy: Always
+  imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
   cronjobSchedule: "10" # time in min
   collectorFileName: "config.yaml"
   mathFileName: "config.json"
@@ -106,7 +106,7 @@ updater:
 ## Provide OpenTelemetry Operator manager container image and resources.
 ##
 manager:
-  imagePullPolicy: Always
+  imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
   image:
     repository: miggoprod/miggo-operator
     tag: latest
