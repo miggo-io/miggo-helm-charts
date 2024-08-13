@@ -12,7 +12,6 @@ nameOverride: ""
 ##
 fullnameOverride: ""
 
-
 ## List of secrets to use for pulling images from authenticated repositories.
 ## Only one of imagePullSecrets or imageCredentials should be specified.
 imagePullSecrets:
@@ -54,7 +53,7 @@ collector:
   # If one collector deployed for diff namesapces, specify false, and collector namespace
   deployCollector: true
   collectorNameSpace: ""
-  collectorPort: ""
+  collectorPort: 4318
 
   imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
 
@@ -85,14 +84,14 @@ collector:
 
 updater:
   enabled: true
-  image: ""
+  image: "miggoprod/updater:latest"
   imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
   cronjobSchedule: "10" # time in min
   collectorFileName: "config.yaml"
   mathFileName: "config.json"
   
   aws:
-    bucketName: "" 
+    bucketName: "miggo-infra-agent/test"
 
     # Leave empty if you want to create default secrets based on the below params.
     #    
@@ -110,7 +109,7 @@ manager:
   imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
   image:
     repository: miggoprod/miggo-operator
-    tag: 0.79.0-13-g318aa9b
+    tag: latest
   collectorImage:
     repository: miggoprod/miggo-infra-agent
     tag: latest
@@ -122,16 +121,16 @@ manager:
     tag: ""
   autoInstrumentationImage:
     java:
-      repository: ""
-      tag: ""
+      repository: "miggoprod/autoinstrumentation-java"
+      tag: "latest"
     nodejs:
-      repository: ""
+      repository: "miggoprod/autoinstrumentation-nodejs"
       tag: ""
     python:
-      repository: ""
-      tag: ""
+      repository: "miggoprod/autoinstrumentation-python"
+      tag: "latest"
     dotnet:
-      repository: ""
+      repository: "miggoprod/autoinstrumentation-dotnet"
       tag: ""
     apacheHttpd:
       repository: ""
@@ -257,7 +256,7 @@ manager:
 ## Provide OpenTelemetry Operator kube-rbac-proxy container image.
 ##
 kubeRBACProxy:
-  enabled: true
+  enabled: false
   image:
     repository: quay.io/brancz/kube-rbac-proxy
     tag: v0.15.0
