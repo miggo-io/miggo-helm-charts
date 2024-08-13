@@ -99,6 +99,7 @@ spec:
             {{- end }}
           {{- end }}
           image: {{ include "opentelemetry-operator.image" . | quote }}
+          imagePullPolicy: {{ .Values.manager.imagePullPolicy }}
           name: manager
           ports:
             - containerPort: {{ .Values.manager.ports.metricsPort }}

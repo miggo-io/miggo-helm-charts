@@ -30,6 +30,9 @@
     "properties": {
         "collector":{
         },
+        "updater":{
+            
+        },
         "imageCredentials":{
         },
         "updater":{
@@ -154,6 +157,7 @@
             ],
             "additionalProperties": false,
             "properties": {
+                "imagePullPolicy":{},
                 "image": {
                     "type": "object",
                     "default": {},
