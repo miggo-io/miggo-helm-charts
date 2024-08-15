@@ -86,7 +86,7 @@ updater:
   enabled: true
   image: "miggoprod/updater:latest"
   imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
-  cronjobSchedule: "10" # time in min
+  cronjobSchedule: "1" # time in min
   collectorFileName: "config.yaml"
   mathFileName: "config.json"
   
