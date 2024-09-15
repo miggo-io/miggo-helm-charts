@@ -125,13 +125,13 @@ manager:
       tag: "latest"
     nodejs:
       repository: "miggoprod/autoinstrumentation-nodejs"
-      tag: ""
+      tag: "latest"
     python:
       repository: "miggoprod/autoinstrumentation-python"
       tag: "latest"
     dotnet:
       repository: "miggoprod/autoinstrumentation-dotnet"
-      tag: ""
+      tag: "latest"
     apacheHttpd:
       repository: ""
       tag: ""
