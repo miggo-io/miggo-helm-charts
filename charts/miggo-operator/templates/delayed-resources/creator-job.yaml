@@ -3,7 +3,7 @@ kind: Job
 metadata:
   name: delayed-resources-creator-job
 spec:
-  ttlSecondsAfterFinished: 1
+  ttlSecondsAfterFinished: 300
   template:
     spec:
       serviceAccountName: delayed-resources-service-account
