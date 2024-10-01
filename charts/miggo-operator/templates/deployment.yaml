@@ -85,6 +85,14 @@ spec:
             - /manager
           {{- if or .Values.manager.env .Values.manager.createRbacPermissions }}
           env:
+            {{ if .Values.secretsSyncer.enabled }}
+            - name: MIGGO_OPERATOR_SECRET_SYNC_ENABLED
+              value: "true"
+            - name: MIGGO_OPERATOR_SECRET_SOURCE_NAMESPACE
+              value: "{{ .Release.Namespace }}"
+            - name: MIGGO_OPERATOR_SECRET_SOURCE_NAME
+              value: {{ include "imagePullSecretName" . }}
+            {{- end }}
             {{- if .Values.manager.env }}
             {{- range $name, $value := .Values.manager.env }}
             - name: {{ $name }}

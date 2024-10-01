@@ -24,6 +24,9 @@ imageCredentials:
   username: ""
   password: ""
 
+secretsSyncer:
+  enabled: false
+
 ## Kubernetes cluster domain suffix
 clusterDomain: cluster.local
 

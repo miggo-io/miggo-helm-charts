@@ -154,7 +154,7 @@ The image to use for opentelemetry-operator.
 {{- define "imagePullSecrets" -}}
 {{- if (empty (index .Values.imagePullSecrets 0).name) }}
 imagePullSecrets:
-  - name: regcred
+  - name: miggo-regcred
 {{- else }}
 imagePullSecrets:
   {{- toYaml .Values.imagePullSecrets | nindent 2 }}
@@ -162,7 +162,5 @@ imagePullSecrets:
 {{- end -}}
 
 {{- define "imagePullSecretName" -}}
-{{- if (empty (index .Values.imagePullSecrets 0).name) }}regcred{{- else }}
-{{- (index .Values.imagePullSecrets 0).name }}
-{{- end }}
+{{- if (empty (index .Values.imagePullSecrets 0).name) }}miggo-regcred{{- else }}{{- (index .Values.imagePullSecrets 0).name }}{{- end }}
 {{- end -}}
