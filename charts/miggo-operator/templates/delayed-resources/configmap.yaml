@@ -7,7 +7,7 @@ data:
     apiVersion: opentelemetry.io/v1alpha1
     kind: Instrumentation
     metadata:
-      name: {{ .Release.Name }}-instrumentation
+      name: miggo-instrumentation
     spec:
       exporter:
         endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collector.collectorNameSpace | default .Release.Namespace }}:{{ .Values.collector.collectorPort }}
