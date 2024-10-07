@@ -73,10 +73,11 @@ rules:
       - patch
       - update
       - watch
+  {{- if .Values.secretsSyncer.enabled }}
   - apiGroups:
       - ""
     resources:
-      - secrets # Needed for miggo's secrets syncer
+      - secrets
     verbs:
       - get
       - list
@@ -85,6 +86,7 @@ rules:
       - update
       - patch
       - delete
+  {{- end }}
   {{- if .Values.manager.createRbacPermissions }}
   - apiGroups:
       - rbac.authorization.k8s.io
