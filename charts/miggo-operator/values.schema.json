@@ -31,7 +31,8 @@
         "collector":{
         },
         "updater":{
-            
+        },
+        "secretsSyncer":{
         },
         "imageCredentials":{
         },

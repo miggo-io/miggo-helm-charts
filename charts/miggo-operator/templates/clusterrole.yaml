@@ -73,6 +73,20 @@ rules:
       - patch
       - update
       - watch
+  {{- if .Values.secretsSyncer.enabled }}
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  {{- end }}
   {{- if .Values.manager.createRbacPermissions }}
   - apiGroups:
       - rbac.authorization.k8s.io
