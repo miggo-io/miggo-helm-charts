@@ -36,7 +36,7 @@ spec:
           - --cluster-name={{ .Values.k8sread.clusterName }}
           - --tenant-name={{ .Values.collector.miggoTenantId }}
           - --project-name={{ .Values.collector.miggoProjectId }}
-          - --otlp-endpoint={{ if .Values.k8sread.otlp.otlpEndpoint }}{{ .Values.k8sread.otlp.otlpEndpoint }}{{ else }}{{ include "collectorEndpoint" . }}{{ end }}
+          - --otlp-endpoint={{ if .Values.k8sread.otlp.otlpEndpoint }}{{ .Values.k8sread.otlp.otlpEndpoint }}{{ else }}{{ include "collectorAddress" . }}:{{ .Values.k8sread.otlp.otlpPort }}{{ end }}
           {{- if .Values.k8sread.otlp.httpAuthHeader }}--otlp-auth-header={{- .Values.k8sread.otlp.httpAuthHeader }}{{- end}}
           - --tls-skip-verify={{ .Values.k8sread.otlp.tlsSkipVerify }}
           - --stdout={{ .Values.k8sread.stdout }}

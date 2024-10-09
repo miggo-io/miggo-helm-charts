@@ -121,6 +121,7 @@ k8sread:
     tag: latest
   otlp:
     otlpEndpoint: ""
+    otlpPort: 4317 # used only if otlpEndpoint is missing
     httpAuthHeader: ""
     tlsSkipVerify: true
   healthcheck:

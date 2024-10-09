@@ -19,7 +19,7 @@ data:
       name: miggo-instrumentation
     spec:
       exporter:
-        endpoint: {{ include "collectorEndpoint" . }}
+        endpoint: {{ include "collectorAddress" . }}:{{ .Values.collector.collectorPort }}
 
       env:
         - name: OTEL_RESOURCE_ATTRIBUTES
