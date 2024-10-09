@@ -1,3 +1,12 @@
+{{- define "otelResourceAttributes" -}}
+  {{- if .Values.collector.customerAttr -}}
+    {{ .Values.collector.customerAttr }}
+  {{- else -}}
+    io.miggo.tenant.id={{ .Values.collector.miggoTenantId }},io.miggo.project.id={{ .Values.collector.miggoProjectId }}
+  {{- end -}}
+  {{- if .Values.collector.extraOtelAttributes }},{{ .Values.collector.extraOtelAttributes }}{{- end -}}
+{{- end -}}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,11 +19,11 @@ data:
       name: miggo-instrumentation
     spec:
       exporter:
-        endpoint: http://{{ .Release.Name }}-collector.{{ .Values.collector.collectorNameSpace | default .Release.Namespace }}:{{ .Values.collector.collectorPort }}
+        endpoint: {{ include "collectorEndpoint" . }}
 
       env:
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: {{ .Values.collector.customerAttr}}
+          value: {{ include "otelResourceAttributes" . }}
 
       sampler:
         type: parentbased_always_on

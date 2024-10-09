@@ -30,6 +30,8 @@
     "properties": {
         "collector":{
         },
+        "k8sread":{
+        },
         "updater":{
         },
         "secretsSyncer":{

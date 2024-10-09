@@ -164,3 +164,7 @@ imagePullSecrets:
 {{- define "imagePullSecretName" -}}
 {{- if (empty (index .Values.imagePullSecrets 0).name) }}miggo-regcred{{- else }}{{- (index .Values.imagePullSecrets 0).name }}{{- end }}
 {{- end -}}
+
+{{- define "collectorEndpoint" -}}
+http://{{ .Release.Name }}-collector.{{ .Values.collector.collectorNameSpace | default .Release.Namespace }}:{{ .Values.collector.collectorPort }}
+{{- end -}}
