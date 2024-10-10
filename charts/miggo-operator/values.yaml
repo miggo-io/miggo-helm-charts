@@ -49,9 +49,14 @@ pdb:
 # Collector configuration
 # 
 collector:
+  
   # Tenant and Project id, format:
   # io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
-  customerAttr: ""
+  customerAttr: ""  # deprecated - use miggoTenantId, miggoProjectId, extraOtelAttributes instead
+  
+  miggoTenantId: ""
+  miggoProjectId: ""
+  extraOtelAttributes: ""
 
   # If one collector deployed for diff namesapces, specify false, and collector namespace
   deployCollector: true
@@ -105,6 +110,34 @@ updater:
     accessKeyId: ""
     secretAccessKey: ""
     region: ""
+
+k8sread:
+  enabled: false
+  stdout: false
+  clusterName: "kubernetes-cluster"
+  imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
+  image:
+    repository: miggoprod/k8s-read
+    tag: latest
+  otlp:
+    otlpEndpoint: ""
+    otlpPort: 4317 # used only if otlpEndpoint is missing
+    httpAuthHeader: ""
+    tlsSkipVerify: true
+  healthcheck:
+    port: 6666
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  serviceAccount:
+    create: true
+    annotations: {}
 
 ## Provide OpenTelemetry Operator manager container image and resources.
 ##
