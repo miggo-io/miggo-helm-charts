@@ -46,6 +46,12 @@ pdb:
   ##
   maxUnavailable: ""
 
+# Miggo configuration
+# 
+miggo:
+  tenantId: ""
+  projectId: ""
+
 # Collector configuration
 # 
 collector:
@@ -53,9 +59,6 @@ collector:
   # Tenant and Project id, format:
   # io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
   customerAttr: ""  # deprecated - use miggoTenantId, miggoProjectId, extraOtelAttributes instead
-  
-  miggoTenantId: ""
-  miggoProjectId: ""
   extraOtelAttributes: ""
 
   # If one collector deployed for diff namesapces, specify false, and collector namespace

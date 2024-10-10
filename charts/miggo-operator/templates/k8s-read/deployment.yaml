@@ -34,8 +34,8 @@ spec:
         imagePullPolicy: {{ .Values.k8sread.imagePullPolicy }}
         args:
           - --cluster-name={{ .Values.k8sread.clusterName }}
-          - --tenant-name={{ .Values.collector.miggoTenantId }}
-          - --project-name={{ .Values.collector.miggoProjectId }}
+          - --tenant-name={{ .Values.miggo.tenantId }}
+          - --project-name={{ .Values.miggo.projectId }}
           - --otlp-endpoint={{ if .Values.k8sread.otlp.otlpEndpoint }}{{ .Values.k8sread.otlp.otlpEndpoint }}{{ else }}{{ include "collectorAddress" . }}:{{ .Values.k8sread.otlp.otlpPort }}{{ end }}
           - --tls-skip-verify={{ .Values.k8sread.otlp.tlsSkipVerify }}
           - --stdout={{ .Values.k8sread.stdout }}

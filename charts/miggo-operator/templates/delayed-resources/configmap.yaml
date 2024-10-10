@@ -2,7 +2,7 @@
   {{- if .Values.collector.customerAttr -}}
     {{ .Values.collector.customerAttr }}
   {{- else -}}
-    io.miggo.tenant.id={{ .Values.collector.miggoTenantId }},io.miggo.project.id={{ .Values.collector.miggoProjectId }}
+    io.miggo.tenant.id={{ .Values.miggo.tenantId }},io.miggo.project.id={{ .Values.miggo.projectId }}
   {{- end -}}
   {{- if .Values.collector.extraOtelAttributes }},{{ .Values.collector.extraOtelAttributes }}{{- end -}}
 {{- end -}}
