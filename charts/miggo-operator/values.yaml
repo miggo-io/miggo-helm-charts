@@ -108,7 +108,7 @@ updater:
     #    
     existingSecret: ""
     
-    # Ignored when existingAwsSecret specified
+    # Ignored when existingSecret specified
     # 
     accessKeyId: ""
     secretAccessKey: ""
@@ -125,8 +125,15 @@ k8sread:
   otlp:
     otlpEndpoint: ""
     otlpPort: 4317 # used only if otlpEndpoint is missing
-    httpAuthHeader: ""
     tlsSkipVerify: true
+    
+    # Leave empty if you want to create default secrets based on the httpAuthHeader param.
+    #
+    existingSecret: ""
+    
+    # Ignored when existingSecret specified
+    # 
+    httpAuthHeader: ""
   healthcheck:
     port: 6666
   deploymentAnnotations: {}

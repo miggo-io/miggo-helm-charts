@@ -40,11 +40,15 @@ spec:
           - --tls-skip-verify={{ .Values.k8sread.otlp.tlsSkipVerify }}
           - --stdout={{ .Values.k8sread.stdout }}
           - --port={{ .Values.k8sread.healthcheck.port }}
-        env:
-          {{ if .Values.k8sread.otlp.httpAuthHeader }}
-          - name: K8S_READ_OTLP_AUTH_HEADER
-            value: "{{ .Values.k8sread.otlp.httpAuthHeader }}"
-          {{ end}}
+        {{- if .Values.k8sread.otlp.existingSecret }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.k8sread.otlp.existingSecret }}
+        {{- else }}
+        envFrom:
+        - secretRef:
+            name: k8s-secret
+        {{- end }}
         ports:
         - containerPort: {{ .Values.k8sread.healthcheck.port }}
         livenessProbe:
