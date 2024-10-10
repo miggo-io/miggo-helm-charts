@@ -28,6 +28,8 @@
     ],
     "additionalProperties": false,
     "properties": {
+        "miggo":{
+        },
         "collector":{
         },
         "k8sread":{
@@ -160,6 +162,7 @@
             ],
             "additionalProperties": false,
             "properties": {
+                "enabled": { "type": "boolean" },
                 "imagePullPolicy":{},
                 "image": {
                     "type": "object",

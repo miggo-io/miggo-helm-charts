@@ -46,16 +46,19 @@ pdb:
   ##
   maxUnavailable: ""
 
+# Miggo configuration
+# 
+miggo:
+  tenantId: ""
+  projectId: ""
+
 # Collector configuration
 # 
 collector:
   
   # Tenant and Project id, format:
   # io.miggo.tenant.id=<id>,io.miggo.project.id=<id>
-  customerAttr: ""  # deprecated - use miggoTenantId, miggoProjectId, extraOtelAttributes instead
-  
-  miggoTenantId: ""
-  miggoProjectId: ""
+  customerAttr: ""  # deprecated - use miggo.tenantId, miggo.projectId, extraOtelAttributes instead
   extraOtelAttributes: ""
 
   # If one collector deployed for diff namesapces, specify false, and collector namespace
@@ -142,6 +145,7 @@ k8sread:
 ## Provide OpenTelemetry Operator manager container image and resources.
 ##
 manager:
+  enabled: true
   imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
   image:
     repository: miggoprod/miggo-operator
