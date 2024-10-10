@@ -160,6 +160,7 @@
             ],
             "additionalProperties": false,
             "properties": {
+                "enabled": { "type": "boolean" },
                 "imagePullPolicy":{},
                 "image": {
                     "type": "object",

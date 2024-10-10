@@ -6,7 +6,7 @@
   {{- end -}}
   {{- if .Values.collector.extraOtelAttributes }},{{ .Values.collector.extraOtelAttributes }}{{- end -}}
 {{- end -}}
-
+{{ if .Values.manager.enabled  }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -70,3 +70,4 @@ data:
               receivers: [otlp]
               exporters: [logging]
               processors: [batch]
+{{ end }}

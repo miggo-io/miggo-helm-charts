@@ -1,3 +1,4 @@
+{{ if .Values.manager.enabled  }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -49,3 +50,4 @@ spec:
       {{- include "opentelemetry-operator.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: controller-manager
 {{- end }}
+{{ end }}

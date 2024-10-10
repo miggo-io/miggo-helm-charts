@@ -142,6 +142,7 @@ k8sread:
 ## Provide OpenTelemetry Operator manager container image and resources.
 ##
 manager:
+  enabled: true
   imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
   image:
     repository: miggoprod/miggo-operator

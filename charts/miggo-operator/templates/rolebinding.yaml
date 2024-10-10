@@ -1,4 +1,4 @@
-{{- if and .Values.role.create .Values.manager.leaderElection.enabled }}
+{{- if and .Values.manager.enabled .Values.role.create .Values.manager.leaderElection.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
