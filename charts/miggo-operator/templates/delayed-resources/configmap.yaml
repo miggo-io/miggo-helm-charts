@@ -61,13 +61,13 @@ data:
           batch: {}
 
         exporters:
-          logging:
-            loglevel: debug
+          debug:
+            verbosity: basic
 
         service:
           pipelines:
             traces:
               receivers: [otlp]
-              exporters: [logging]
+              exporters: [debug]
               processors: [batch]
 {{ end }}
