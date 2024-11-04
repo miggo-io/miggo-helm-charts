@@ -44,6 +44,16 @@ entries:
   miggo-operator:
   - apiVersion: v2
     appVersion: 0.105.0
+    created: "2024-11-04T10:28:50.086145552Z"
+    description: Miggo Operator Helm chart for Kubernetes
+    digest: 7b732ef492e0f7791a4640ad18761c5c2b38626122c1a3075a2a52ada75c3fe3
+    name: miggo-operator
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-operator-0.64.14/miggo-operator-0.64.14.tgz
+    version: 0.64.14
+  - apiVersion: v2
+    appVersion: 0.105.0
     created: "2024-10-10T11:53:24.625829249Z"
     description: Miggo Operator Helm chart for Kubernetes
     digest: 29470852ba3404879779461c7979da92777f3dc59cf63145ba87f825d420ab0f
@@ -163,4 +173,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-operator-0.1.4/miggo-operator-0.1.4.tgz
     version: 0.1.4
-generated: "2024-10-10T11:53:24.625882788Z"
+generated: "2024-11-04T10:28:50.086265044Z"
