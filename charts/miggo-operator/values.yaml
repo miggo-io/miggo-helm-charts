@@ -51,6 +51,7 @@ pdb:
 miggo:
   tenantId: ""
   projectId: ""
+  name: ""
 
 # Collector configuration
 # 
