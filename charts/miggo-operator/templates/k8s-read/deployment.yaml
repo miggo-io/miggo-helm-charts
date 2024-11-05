@@ -39,6 +39,7 @@ spec:
           - --otlp-endpoint={{ if .Values.k8sread.otlp.otlpEndpoint }}{{ .Values.k8sread.otlp.otlpEndpoint }}{{ else }}{{ include "collectorAddress" . }}:{{ .Values.k8sread.otlp.otlpPort }}{{ end }}
           - --tls-skip-verify={{ .Values.k8sread.otlp.tlsSkipVerify }}
           - --stdout={{ .Values.k8sread.stdout }}
+          - --interval={{ .Values.k8sread.interval }}
           - --port={{ .Values.k8sread.healthcheck.port }}
         {{- if .Values.k8sread.otlp.existingSecret }}
         envFrom:

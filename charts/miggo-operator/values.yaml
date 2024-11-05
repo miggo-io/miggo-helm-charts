@@ -117,6 +117,7 @@ updater:
 k8sread:
   enabled: false
   stdout: false
+  interval: "60s"
   clusterName: "kubernetes-cluster"
   imagePullPolicy: Always # Keep always, for other options contact us (miggo.io)
   image:
