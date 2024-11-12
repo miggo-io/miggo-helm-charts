@@ -1,0 +1,6 @@
+apiVersion: v2
+name: static-sbom
+description: A Helm chart for miggo's static-sbom
+type: application
+version: 0.0.1
+appVersion: "0.0.1"
