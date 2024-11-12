@@ -1,0 +1,78 @@
+## List of secrets to use for pulling images from authenticated repositories.
+## Only one of imagePullSecrets or imageCredentials should be specified.
+imagePullSecrets:
+  - name: ""
+
+## Credentials to create a secret for image pulling.
+## Only one of imagePullSecrets or imageCredentials should be specified.
+imageCredentials:
+  registry: ""
+  username: ""
+  password: ""
+
+image:
+  repository: miggoprod/static-sbom
+  tag: latest
+  pullPolicy: Always
+
+miggo:
+  tenantId: ""
+  projectId: ""
+  clusterName: "kubernetes-cluster"
+
+config:
+  queueSize: 10000
+  disableCompression: false
+  metrics:
+    interval: 60s
+  cache:
+    maxEntries: 10000
+    configMap:
+      enabled: true
+      name: ""
+
+output:
+  stdout: false
+  otlp:
+    otlpEndpoint: ""
+    tlsSkipVerify: true
+    
+    # Leave empty if you want to create default secrets based on the httpAuthHeader param.
+    #
+    existingSecret: ""
+    
+    # Ignored when existingSecret specified
+    # 
+    httpAuthHeader: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 500Mi
+
+healthcheck:
+  port: 6666
+
+volumes: []
+volumeMounts: []
+nodeSelector: {}
+tolerations: []
+affinity: {}
