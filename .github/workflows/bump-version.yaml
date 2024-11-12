@@ -41,11 +41,14 @@ jobs:
             echo "$major.$minor.$((patch + 1))"
           }
 
-          echo "Base SHA: ${{ github.event.pull_request.base.sha }}"
-          echo "Current SHA: ${{ github.sha }}"
+          BASE_COMMIT_SHA=${{ github.event.pull_request.base.sha }}
+          PR_COMMIT_SHA=$(git rev-parse HEAD)
+
+          echo "Base SHA: BASE_COMMIT_SHA"
+          echo "Current SHA: PR_COMMIT_SHA"
 
           # Get list of changed files
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
+          CHANGED_FILES=$(git diff --name-only $BASE_COMMIT_SHA $PR_COMMIT_SHA)
           
           # Track which charts need bumping
           NEEDS_BUMP=false
@@ -72,7 +75,7 @@ jobs:
                   echo "Current version: $CURRENT_VERSION"
                   
                   # Get version from base branch
-                  BASE_VERSION=$(git show ${{ github.event.pull_request.base.sha }}:"$CHART_YAML" | yq eval '.version' -)
+                  BASE_VERSION=$(git show $BASE_COMMIT_SHA:"$CHART_YAML" | yq eval '.version' -)
                   echo "Base version: $BASE_VERSION"
 
                   if [ "$CURRENT_VERSION" == "$BASE_VERSION" ]; then
