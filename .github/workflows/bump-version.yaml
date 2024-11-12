@@ -17,8 +17,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Configure Git
         run: |
@@ -44,13 +42,10 @@ jobs:
           }
 
           BASE_COMMIT_SHA=${{ github.event.pull_request.base.sha }}
-          PR_COMMIT_SHA=$(git rev-parse HEAD)
-
           echo "Base SHA: BASE_COMMIT_SHA"
-          echo "Current SHA: PR_COMMIT_SHA"
 
           # Get list of changed files
-          CHANGED_FILES=$(git diff --name-only $BASE_COMMIT_SHA $PR_COMMIT_SHA)
+          CHANGED_FILES=$(git diff --name-only $BASE_COMMIT_SHA HEAD)
           
           # Track which charts need bumping
           NEEDS_BUMP=false
