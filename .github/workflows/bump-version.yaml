@@ -2,10 +2,9 @@ name: Verify Chart Versions
 on:
   pull_request:
     types: [opened, synchronize]
-    paths:
-      - 'charts/**/templates/**'
-      - 'charts/**/values.yaml'
-      - 'charts/**/values.schema.json'
+    branches:
+      - main
+
 jobs:
   verify-and-bump:
     runs-on: ubuntu-latest
@@ -41,11 +40,8 @@ jobs:
             echo "$major.$minor.$((patch + 1))"
           }
 
-          BASE_COMMIT_SHA=${{ github.event.pull_request.base.sha }}
-          echo "Base SHA: BASE_COMMIT_SHA"
-
           # Get list of changed files
-          CHANGED_FILES=$(git diff --name-only $BASE_COMMIT_SHA HEAD)
+          CHANGED_FILES=$(git diff --name-only main HEAD)
           
           # Track which charts need bumping
           NEEDS_BUMP=false
@@ -72,7 +68,7 @@ jobs:
                   echo "Current version: $CURRENT_VERSION"
                   
                   # Get version from base branch
-                  BASE_VERSION=$(git show $BASE_COMMIT_SHA:"$CHART_YAML" | yq eval '.version' -)
+                  BASE_VERSION=$(git show main:"$CHART_YAML" | yq eval '.version' -)
                   echo "Base version: $BASE_VERSION"
 
                   if [ "$CURRENT_VERSION" == "$BASE_VERSION" ]; then
