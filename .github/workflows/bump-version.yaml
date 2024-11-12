@@ -58,7 +58,6 @@ jobs:
           # Track which charts need bumping
           NEEDS_BUMP=false
           CHANGED_CHARTS=""
-          VERSIONS_BUMPED=false
           
           # Check each changed file
           echo "$CHANGED_FILES" | while read -r file; do
@@ -89,7 +88,9 @@ jobs:
                     echo "Bumping to new version: $NEW_VERSION"
                     yq eval ".version = \"$NEW_VERSION\"" -i "$CHART_YAML"
                     echo "Bumped $CHART_NAME version from $CURRENT_VERSION to $NEW_VERSION"
-                    VERSIONS_BUMPED=true
+                    
+                    # Set output for next step
+                    echo "versions_bumped=true" >> $GITHUB_OUTPUT
                   else
                     echo "Chart $CHART_NAME version has already been bumped from $BASE_VERSION to $CURRENT_VERSION"
                   fi
@@ -97,10 +98,6 @@ jobs:
               fi
             fi
           done
-
-          # Set output for next step
-          echo "versions_bumped=$VERSIONS_BUMPED" >> $GITHUB_OUTPUT
-
       - name: Commit and push changes
         if: steps.version_check.outputs.versions_bumped == 'true'
         run: |
