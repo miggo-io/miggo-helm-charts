@@ -1,6 +1,6 @@
 apiVersion: v2
 name: miggo-operator
-version: 0.64.18
+version: 0.64.19
 description: Miggo Operator Helm chart for Kubernetes
 type: application
 appVersion: 0.105.0
