@@ -2,8 +2,6 @@ name: Verify Chart Versions
 on:
   pull_request:
     types: [opened, synchronize]
-    branches:
-      - main
 
 jobs:
   verify-and-bump:
