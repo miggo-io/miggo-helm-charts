@@ -223,4 +223,15 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-operator-0.1.4/miggo-operator-0.1.4.tgz
     version: 0.1.4
-generated: "2024-11-12T12:35:39.377633158Z"
+  static-sbom:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-11-12T13:16:00.612677487Z"
+    description: A Helm chart for miggo's static-sbom
+    digest: 83a40a3015cb07afcc1075237fa3130a78e474b51f53b809497184f56790f93b
+    name: static-sbom
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.1/static-sbom-0.0.1.tgz
+    version: 0.0.1
+generated: "2024-11-12T13:16:00.612740766Z"
