@@ -35,11 +35,11 @@ spec:
             - --cluster-name={{ .Values.miggo.clusterName }}
             - --tenant-name={{ .Values.miggo.tenantId }}
             - --project-name={{ .Values.miggo.projectId }}
-            - --otlp-endpoint={{ if .Values.output.otlp.otlpEndpoint }}{{ .Values.output.otlp.otlpEndpoint }}{{ else }}{{ include "collectorAddress" . }}:{{ .Values.output.otlp.otlpPort }}{{ end }}
+            - --otlp-endpoint={{ .Values.output.otlp.otlpEndpoint }}
             - --tls-skip-verify={{ .Values.output.otlp.tlsSkipVerify }}
             - --stdout={{ .Values.output.stdout }}
             - --port={{ .Values.healthcheck.port }}
-            - --metric-otlp-endpoint={{ if .Values.output.otlp.otlpEndpoint }}{{ .Values.output.otlp.otlpEndpoint }}{{ else }}{{ include "collectorAddress" . }}:{{ .Values.output.otlp.otlpPort }}{{ end }}
+            - --metric-otlp-endpoint={{ .Values.output.otlp.otlpEndpoint }}
             - --metric-tls-skip-verify={{ .Values.output.otlp.tlsSkipVerify }}
             - --metric-interval={{ .Values.config.metrics.interval }}
             - --queue-size={{ .Values.config.queueSize }}
