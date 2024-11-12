@@ -2,6 +2,12 @@ name: Verify Chart Versions
 on:
   pull_request:
     types: [opened, synchronize]
+    branches:
+      - main
+    paths:
+      - 'charts/**/templates/**'
+      - 'charts/**/values.yaml'
+      - 'charts/**/values.schema.json'
 
 jobs:
   verify-and-bump:
