@@ -1,0 +1,98 @@
+name: Verify Chart Versions
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - 'charts/**/templates/**'
+      - 'charts/**/values.yaml'
+      - 'charts/**/values.schema.json'
+
+jobs:
+  verify-and-bump:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Check and bump versions if needed
+        id: version_check
+        run: |
+          # Function to bump patch version
+          bump_version() {
+            local version=$1
+            local major minor patch
+            IFS='.' read -r major minor patch <<< "$version"
+            echo "$major.$minor.$((patch + 1))"
+          }
+
+          # Get list of changed files
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
+
+          # Track which charts need bumping
+          NEEDS_BUMP=false
+          CHANGED_CHARTS=""
+
+          # Check each changed file
+          echo "$CHANGED_FILES" | while read -r file; do
+            if [[ $file == charts/*/templates/* ]] || [[ $file == charts/*/values.yaml ]] || [[ $file == charts/*/values.schema.json ]]; then
+              # Extract chart name from path
+              CHART_NAME=$(echo "$file" | cut -d'/' -f2)
+              CHART_YAML="charts/$CHART_NAME/Chart.yaml"
+
+              # Only check if we haven't already checked this chart
+              if [[ ! $CHANGED_CHARTS =~ $CHART_NAME ]]; then
+                CHANGED_CHARTS="$CHANGED_CHARTS $CHART_NAME"
+                
+                if [ -f "$CHART_YAML" ]; then
+                  # Get current version in PR
+                  CURRENT_VERSION=$(yq eval '.version' "$CHART_YAML")
+                  
+                  # Get version from base branch
+                  BASE_VERSION=$(git show ${{ github.event.pull_request.base.sha }}:"$CHART_YAML" | yq eval '.version' -)
+                  
+                  if [ "$CURRENT_VERSION" == "$BASE_VERSION" ]; then
+                    echo "::error::Chart $CHART_NAME version ($CURRENT_VERSION) has not been bumped despite template changes"
+                    NEEDS_BUMP=true
+                    
+                    # Bump version
+                    NEW_VERSION=$(bump_version "$CURRENT_VERSION")
+                    yq eval ".version = \"$NEW_VERSION\"" -i "$CHART_YAML"
+                    echo "Bumped $CHART_NAME version from $CURRENT_VERSION to $NEW_VERSION"
+                  else
+                    echo "Chart $CHART_NAME version has already been bumped from $BASE_VERSION to $CURRENT_VERSION"
+                  fi
+                fi
+              fi
+            fi
+          done
+
+          # If any versions were bumped, commit and push
+          if [ -n "$(git status --porcelain)" ]; then
+            git add charts/*/Chart.yaml
+            git commit -m "chore: Bump chart versions for template changes [skip ci]"
+            git push
+            echo "Pushed version bumps to PR"
+          fi
+
+          # Fail the check if we needed to bump versions
+          if [ "$NEEDS_BUMP" = true ]; then
+            echo "Some chart versions needed to be bumped. Changes have been committed to the PR."
+            exit 1
+          fi
