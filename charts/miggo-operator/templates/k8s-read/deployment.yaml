@@ -27,6 +27,7 @@ spec:
       labels:
         app: k8s-read
     spec:
+      {{- include "imagePullSecrets" . | nindent 6 }}
       serviceAccountName: k8s-read-sa
       containers:
       - name: k8s-read
