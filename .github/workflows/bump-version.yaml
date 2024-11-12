@@ -45,7 +45,7 @@ jobs:
           }
 
           # Get list of changed files
-          CHANGED_FILES=$(git diff --name-only origin/main HEAD)
+          CHANGED_FILES=$(git diff --name-only -r HEAD^1 HEAD)
           
           # Track which charts need bumping
           NEEDS_BUMP=false
@@ -72,7 +72,7 @@ jobs:
                   echo "Current version: $CURRENT_VERSION"
                   
                   # Get version from base branch
-                  BASE_VERSION=$(git show origin/main:"$CHART_YAML" | yq eval '.version' -)
+                  BASE_VERSION=$(git show HEAD^1:"$CHART_YAML" | yq eval '.version' -)
                   echo "Base version: $BASE_VERSION"
 
                   if [ "$CURRENT_VERSION" == "$BASE_VERSION" ]; then
