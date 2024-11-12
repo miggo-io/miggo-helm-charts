@@ -31,6 +31,8 @@ jobs:
       - name: Check and bump versions
         id: version_check
         run: |
+          set -x 
+          
           # Function to bump patch version
           bump_version() {
             local version=$1
@@ -38,6 +40,9 @@ jobs:
             IFS='.' read -r major minor patch <<< "$version"
             echo "$major.$minor.$((patch + 1))"
           }
+
+          echo "Base SHA: ${{ github.event.pull_request.base.sha }}"
+          echo "Current SHA: ${{ github.sha }}"
 
           # Get list of changed files
           CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
@@ -49,27 +54,31 @@ jobs:
           
           # Check each changed file
           echo "$CHANGED_FILES" | while read -r file; do
+            echo "Processing file: $file"
             if [[ $file == charts/*/templates/* ]] || [[ $file == charts/*/values.yaml ]] || [[ $file == charts/*/values.schema.json ]]; then
               # Extract chart name from path
               CHART_NAME=$(echo "$file" | cut -d'/' -f2)
               CHART_YAML="charts/$CHART_NAME/Chart.yaml"
-              
+              echo "Found chart: $CHART_NAME"
+
               # Only check if we haven't already checked this chart
               if [[ ! $CHANGED_CHARTS =~ $CHART_NAME ]]; then
+                echo "Processing Chart.yaml: $CHART_YAML"
                 CHANGED_CHARTS="$CHANGED_CHARTS $CHART_NAME"
                 
                 if [ -f "$CHART_YAML" ]; then
                   # Get current version in PR
                   CURRENT_VERSION=$(yq eval '.version' "$CHART_YAML")
+                  echo "Current version: $CURRENT_VERSION"
                   
                   # Get version from base branch
                   BASE_VERSION=$(git show ${{ github.event.pull_request.base.sha }}:"$CHART_YAML" | yq eval '.version' -)
-                  
+                  echo "Base version: $BASE_VERSION"
+
                   if [ "$CURRENT_VERSION" == "$BASE_VERSION" ]; then
-                    echo "::Chart $CHART_NAME version ($CURRENT_VERSION) has not been bumped despite template changes"
-                    
                     # Bump version
                     NEW_VERSION=$(bump_version "$CURRENT_VERSION")
+                    echo "Bumping to new version: $NEW_VERSION"
                     yq eval ".version = \"$NEW_VERSION\"" -i "$CHART_YAML"
                     echo "Bumped $CHART_NAME version from $CURRENT_VERSION to $NEW_VERSION"
                     VERSIONS_BUMPED=true
