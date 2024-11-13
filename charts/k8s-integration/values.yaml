@@ -27,13 +27,19 @@ global:
 
 k8s-read:
   enabled: true
+  
   miggo:
-    clusterName: ""
+    clusterName: "" # Set empty to allow global value inheritance or user override
   
   config:
     metrics:
-      interval: ""
+      interval: "" # Set empty to allow global value inheritance or user override
 
 static-sbom:
   enabled: true
-  # TBD
+  miggo:
+    clusterName: "" # Set empty to allow global value inheritance or user override
+  
+  config:
+    metrics:
+      interval: "" # Set empty to allow global value inheritance or user override
