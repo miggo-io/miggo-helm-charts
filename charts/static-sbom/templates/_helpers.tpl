@@ -62,12 +62,17 @@ Create the name of the service account to use
 {{- end }}
 
 {{- define "imagePullSecrets" -}}
-{{- if (empty (index .Values.imagePullSecrets 0).name) }}
-imagePullSecrets:
-  - name: static-sbom-miggo-regcred
-{{- else }}
+{{- $emptyImagePullSecrets := list (dict "name" "") }}
+{{- $globalImagePullSecrets := dig "imagePullSecrets" $emptyImagePullSecrets .Values.global }}
+{{- if (not (empty (index .Values.imagePullSecrets 0).name)) }}
 imagePullSecrets:
   {{- toYaml .Values.imagePullSecrets | nindent 2 }}
+{{- else if (not (empty (index $globalImagePullSecrets 0).name)) }}
+imagePullSecrets:
+  {{- toYaml .Values.global.imagePullSecrets | nindent 2 }}
+{{- else }}
+imagePullSecrets:
+  - name: static-sbom-miggo-regcred
 {{- end }}
 {{- end -}}
 

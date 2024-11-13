@@ -1,6 +1,15 @@
 global:
+  ## List of secrets to use for pulling images from authenticated repositories.
+  ## Only one of imagePullSecrets or imageCredentials should be specified.
   imagePullSecrets:
-    - name: 
+    - name: ""
+
+  ## Credentials to create a secret for image pulling.
+  ## Only one of imagePullSecrets or imageCredentials should be specified.
+  imageCredentials:
+    registry: ""
+    username: ""
+    password: ""
   
   miggo:
     tenantId: ""
