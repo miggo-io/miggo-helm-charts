@@ -63,7 +63,8 @@ Create the name of the service account to use
 
 {{- define "imagePullSecrets" -}}
 {{- $emptyImagePullSecrets := list (dict "name" "") }}
-{{- $globalImagePullSecrets := dig "imagePullSecrets" $emptyImagePullSecrets .Values.global }}
+{{- $global := .Values.global | default dict }}
+{{- $globalImagePullSecrets := dig "global" "imagePullSecrets" $emptyImagePullSecrets $global }}
 {{- if (not (empty (index .Values.imagePullSecrets 0).name)) }}
 imagePullSecrets:
   {{- toYaml .Values.imagePullSecrets | nindent 2 }}
@@ -72,7 +73,7 @@ imagePullSecrets:
   {{- toYaml .Values.global.imagePullSecrets | nindent 2 }}
 {{- else }}
 imagePullSecrets:
-  - name: static-sbom-miggo-regcred
+  - name: k8s-read-miggo-regcred
 {{- end }}
 {{- end -}}
 
