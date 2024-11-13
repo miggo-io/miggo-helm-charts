@@ -1,0 +1,39 @@
+global:
+  imagePullSecrets:
+    - name: 
+  
+  miggo:
+    tenantId: ""
+    projectId: ""
+    clusterName: "kubernetes-cluster"
+
+  config:
+    metrics:
+      interval: 60s
+
+  output:
+    stdout: false
+    otlp:
+      otlpEndpoint: ""
+      tlsSkipVerify: true
+      
+      # Leave empty if you want to create default secrets based on the httpAuthHeader param.
+      #
+      existingSecret: ""
+      
+      # Ignored when existingSecret specified
+      # 
+      httpAuthHeader: ""
+
+k8s-read:
+  enabled: true
+  miggo:
+    clusterName: ""
+  
+  config:
+    metrics:
+      interval: ""
+
+static-sbom:
+  enabled: true
+  # TBD
