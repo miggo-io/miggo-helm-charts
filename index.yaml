@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  k8s-read:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-11-13T10:00:14.327326209Z"
+    description: A Helm chart for miggo's k8s-read
+    digest: 6938b8946164aaa552a7801f435672a3da09f8b8b46b4941a59edbe85a752c17
+    name: k8s-read
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/k8s-read-0.0.1/k8s-read-0.0.1.tgz
+    version: 0.0.1
   miggo-collector:
   - apiVersion: v2
     appVersion: 0.87.0
@@ -226,6 +237,16 @@ entries:
   static-sbom:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2024-11-13T10:00:14.492065329Z"
+    description: A Helm chart for miggo's static-sbom
+    digest: 62e770128dbdc5ab449d3b922025dc6fc68ab45815bb59d5192365699395412b
+    name: static-sbom
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.4/static-sbom-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2024-11-12T16:56:22.88054907Z"
     description: A Helm chart for miggo's static-sbom
     digest: fcf3c2f01ad79f31929f3691d80ff0130749e260fbd28641e8bff3d0fbde353e
@@ -254,4 +275,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.1/static-sbom-0.0.1.tgz
     version: 0.0.1
-generated: "2024-11-12T16:56:22.88061306Z"
+generated: "2024-11-13T10:00:14.492113138Z"
