@@ -11,7 +11,7 @@ imageCredentials:
   password: ""
 
 image:
-  repository: miggoprod/static-sbom
+  repository: miggoprod/k8s-read
   tag: latest
   pullPolicy: Always
 
@@ -21,15 +21,9 @@ miggo:
   clusterName: "kubernetes-cluster"
 
 config:
-  queueSize: 10000
-  disableCompression: false
+  interval: 6h
   metrics:
     interval: 60s
-  cache:
-    maxEntries: 10000
-    configMap:
-      enabled: true
-      name: ""
 
 output:
   stdout: false
@@ -62,11 +56,11 @@ securityContext: {}
 
 resources:
   limits:
-    cpu: 2000m
-    memory: 2Gi
-  requests:
     cpu: 500m
-    memory: 500Mi
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 512Mi
 
 healthcheck:
   port: 6666

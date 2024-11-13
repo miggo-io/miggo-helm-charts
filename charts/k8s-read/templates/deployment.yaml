@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "static-sbom.fullname" . }}
+  name: {{ include "k8s-read.fullname" . }}
   labels:
-    {{- include "static-sbom.labels" . | nindent 4 }}
+    {{- include "k8s-read.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "static-sbom.selectorLabels" . | nindent 6 }}
+      {{- include "k8s-read.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -16,25 +16,25 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "static-sbom.labels" . | nindent 8 }}
+        {{- include "k8s-read.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       {{- include "imagePullSecrets" . | nindent 6 }}
-      serviceAccountName: {{ include "static-sbom.serviceAccountName" . }}
+      serviceAccountName: {{ include "k8s-read.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: static-sbom
+        - name: k8s-read
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             {{- $globalClusterName := dig "miggo" "clusterName" "" .Values.global }}
-            {{- $globalTenantId := dig "miggo" "tenantId" "" .Values.global }}
-            {{- $globalProjectId := dig "miggo" "projectId" "" .Values.global }}
+            {{- $globalTenantId := dig "miggo" "projectId" "" .Values.global }}
+            {{- $globalProjectId := dig "miggo" "tenantId" "" .Values.global }}
             {{- $globalOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" .Values.global }}
             {{- $globalTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" .Values.global }}
             {{- $globalStdout := dig "output" "stdout" "" .Values.global }}
@@ -52,15 +52,7 @@ spec:
             - --metric-otlp-endpoint={{ coalesce .Values.output.otlp.otlpEndpoint $globalMetricOtlpEndpoint }}
             - --metric-tls-skip-verify={{ default .Values.output.otlp.tlsSkipVerify $globalMetricTlsSkipVerify }}
             - --metric-interval={{ coalesce .Values.config.metrics.interval $globalMetricInterval }}
-            - --queue-size={{ .Values.config.queueSize }}
-            {{ if .Values.config.disableCompression }}
-            - --disable-compression
-            {{ end }}
-            - --cache-size={{ .Values.config.cache.maxEntries }}
-            {{ if .Values.config.cache.configMap.enabled }}
-            - --cache-cm-name={{ include "static-sbom.configMapCacheName" . }}
-            - --cache-cm-namespace={{ .Release.Namespace }}
-            {{ end }}
+            - --interval={{ .Values.config.interval }}
           {{- if .Values.output.otlp.existingSecret }}
           envFrom:
           - secretRef:
@@ -68,7 +60,7 @@ spec:
           {{- else }}
           envFrom:
           - secretRef:
-              name: static-sbom-otlp-secret
+              name: k8s-read-otlp-secret
           {{- end }}
           ports:
           - containerPort: {{ .Values.healthcheck.port }}
