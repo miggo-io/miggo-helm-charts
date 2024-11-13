@@ -73,7 +73,7 @@ imagePullSecrets:
   {{- toYaml .Values.global.imagePullSecrets | nindent 2 }}
 {{- else }}
 imagePullSecrets:
-  - name: k8s-read-miggo-regcred
+  - name: static-sbom-miggo-regcred
 {{- end }}
 {{- end -}}
 
