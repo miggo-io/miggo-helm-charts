@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "k8s-read.fullname" . }}
+  labels:
+    {{- include "k8s-read.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "k8s-read.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "k8s-read.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- include "imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "k8s-read.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: k8s-read
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --cluster-name={{ .Values.miggo.clusterName }}
+            - --tenant-name={{ .Values.miggo.tenantId }}
+            - --project-name={{ .Values.miggo.projectId }}
+            - --otlp-endpoint={{ .Values.output.otlp.otlpEndpoint }}
+            - --tls-skip-verify={{ .Values.output.otlp.tlsSkipVerify }}
+            - --stdout={{ .Values.output.stdout }}
+            - --port={{ .Values.healthcheck.port }}
+            - --metric-otlp-endpoint={{ .Values.output.otlp.otlpEndpoint }}
+            - --metric-tls-skip-verify={{ .Values.output.otlp.tlsSkipVerify }}
+            - --metric-interval={{ .Values.config.metrics.interval }}
+            - --interval={{ .Values.config.interval }}
+          {{- if .Values.output.otlp.existingSecret }}
+          envFrom:
+          - secretRef:
+              name: {{ .Values.output.otlp.existingSecret }}
+          {{- else }}
+          envFrom:
+          - secretRef:
+              name: k8s-read-otlp-secret
+          {{- end }}
+          ports:
+          - containerPort: {{ .Values.healthcheck.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
