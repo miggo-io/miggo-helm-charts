@@ -32,16 +32,17 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            {{- $globalClusterName := dig "miggo" "clusterName" "" .Values.global }}
-            {{- $globalTenantId := dig "miggo" "tenantId" "" .Values.global }}
-            {{- $globalProjectId := dig "miggo" "projectId" "" .Values.global }}
-            {{- $globalOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" .Values.global }}
-            {{- $globalTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" .Values.global }}
-            {{- $globalStdout := dig "output" "stdout" "" .Values.global }}
-            {{- $globalHealthPort := dig "healthcheck" "port" "" .Values.global }}
-            {{- $globalMetricOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" .Values.global }}
-            {{- $globalMetricTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" .Values.global }}
-            {{- $globalMetricInterval := dig "config" "metrics" "interval" "" .Values.global }}
+            {{- $global := .Values.global | default dict }}
+            {{- $globalClusterName := dig "global" "miggo" "clusterName" "" $global }}
+            {{- $globalTenantId := dig "global" "miggo" "projectId" "" $global }}
+            {{- $globalProjectId := dig "global" "miggo" "tenantId" "" $global }}
+            {{- $globalOtlpEndpoint := dig "global" "output" "otlp" "otlpEndpoint" "" $global }}
+            {{- $globalTlsSkipVerify := dig "global" "output" "otlp" "tlsSkipVerify" "" $global }}
+            {{- $globalStdout := dig "global" "output" "stdout" "" $global }}
+            {{- $globalHealthPort := dig "global" "healthcheck" "port" "" $global }}
+            {{- $globalMetricOtlpEndpoint := dig "global" "output" "otlp" "otlpEndpoint" "" $global }}
+            {{- $globalMetricTlsSkipVerify := dig "global" "output" "otlp" "tlsSkipVerify" "" $global }}
+            {{- $globalMetricInterval := dig "global" "config" "metrics" "interval" "" $global }}
             - --cluster-name={{ coalesce .Values.miggo.clusterName $globalClusterName }}
             - --tenant-name={{ coalesce .Values.miggo.tenantId $globalTenantId }}  
             - --project-name={{ coalesce .Values.miggo.projectId $globalProjectId }}
