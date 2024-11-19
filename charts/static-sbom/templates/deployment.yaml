@@ -62,14 +62,20 @@ spec:
             - --cache-cm-name={{ include "static-sbom.configMapCacheName" . }}
             - --cache-cm-namespace={{ .Release.Namespace }}
             {{ end }}
-          {{- if .Values.output.otlp.existingSecret }}
           envFrom:
+          {{- if .Values.output.otlp.existingSecret }}
           - secretRef:
               name: {{ .Values.output.otlp.existingSecret }}
           {{- else }}
-          envFrom:
           - secretRef:
               name: static-sbom-otlp-secret
+          {{- end }}
+          {{- with .Values.extraEnvsFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          env:
+          {{- with .Values.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
           - containerPort: {{ .Values.healthcheck.port }}
