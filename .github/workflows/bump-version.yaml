@@ -55,6 +55,10 @@ jobs:
             for umbrella_chart in ${UMBRELLA_CHARTS[@]}; do
               local chart_file="charts/$umbrella_chart/Chart.yaml"
               
+              CURRENT_VERSION=$(yq eval '.version' "$chart_file")
+              NEW_VERSION=$(bump_version "$CURRENT_VERSION")
+              
+              yq eval ".version = \"$NEW_VERSION\"" -i "$chart_file"
               yq e "(.dependencies[] | select(.name == \"$chart\").version) = \"$new_version\"" -i $chart_file
             done
           }
