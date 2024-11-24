@@ -33,16 +33,16 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             {{- $global := .Values.global | default dict }}
-            {{- $globalClusterName := dig "global" "miggo" "clusterName" "" $global }}
-            {{- $globalTenantId := dig "global" "miggo" "projectId" "" $global }}
-            {{- $globalProjectId := dig "global" "miggo" "tenantId" "" $global }}
-            {{- $globalOtlpEndpoint := dig "global" "output" "otlp" "otlpEndpoint" "" $global }}
-            {{- $globalTlsSkipVerify := dig "global" "output" "otlp" "tlsSkipVerify" "" $global }}
-            {{- $globalStdout := dig "global" "output" "stdout" "" $global }}
-            {{- $globalHealthPort := dig "global" "healthcheck" "port" "" $global }}
-            {{- $globalMetricOtlpEndpoint := dig "global" "output" "otlp" "otlpEndpoint" "" $global }}
-            {{- $globalMetricTlsSkipVerify := dig "global" "output" "otlp" "tlsSkipVerify" "" $global }}
-            {{- $globalMetricInterval := dig "global" "config" "metrics" "interval" "" $global }}
+            {{- $globalClusterName := dig "miggo" "clusterName" "" $global }}
+            {{- $globalTenantId := dig "miggo" "projectId" "" $global }}
+            {{- $globalProjectId := dig "miggo" "tenantId" "" $global }}
+            {{- $globalOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" $global }}
+            {{- $globalTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" $global }}
+            {{- $globalStdout := dig "output" "stdout" "" $global }}
+            {{- $globalHealthPort := dig "healthcheck" "port" "" $global }}
+            {{- $globalMetricOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" $global }}
+            {{- $globalMetricTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" $global }}
+            {{- $globalMetricInterval := dig "config" "metrics" "interval" "" $global }}
             - --cluster-name={{ coalesce .Values.miggo.clusterName $globalClusterName }}
             - --tenant-name={{ coalesce .Values.miggo.tenantId $globalTenantId }}  
             - --project-name={{ coalesce .Values.miggo.projectId $globalProjectId }}
