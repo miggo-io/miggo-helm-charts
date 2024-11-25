@@ -23,9 +23,11 @@ miggo:
 config:
   queueSize: 10000
   disableCompression: false
+  flushInterval: 168h
   metrics:
     interval: 60s
   cache:
+    
     maxEntries: 10000
     configMap:
       enabled: true
@@ -53,6 +55,9 @@ serviceAccount:
   automount: true
   annotations: {}
   name: ""
+
+labels: {}
+annotations: {}
 
 podAnnotations: {}
 podLabels: {}
