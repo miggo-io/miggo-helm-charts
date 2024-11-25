@@ -35,7 +35,7 @@ global:
       httpAuthHeader: ""
 
 k8s-read:
-  enabled: true
+  enabled: false
   
   miggo:
     clusterName: "" # Set empty to allow global value inheritance or user override
@@ -45,7 +45,8 @@ k8s-read:
       interval: "" # Set empty to allow global value inheritance or user override
 
 static-sbom:
-  enabled: true
+  enabled: false
+  
   miggo:
     clusterName: "" # Set empty to allow global value inheritance or user override
   
