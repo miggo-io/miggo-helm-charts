@@ -6,10 +6,10 @@ version: 0.0.6
 appVersion: "0.0.1"
 dependencies:
   - name: k8s-read
-    repository: https://miggo-io.github.io/miggo-helm-charts
-    version: 0.0.6
     condition: k8s-read.enabled
+    repository: file://../k8s-read
+    version: "*"
   - name: static-sbom
-    repository: https://miggo-io.github.io/miggo-helm-charts
-    version: 0.0.9
     condition: static-sbom.enabled
+    repository: file://../static-sbom
+    version: "*"
