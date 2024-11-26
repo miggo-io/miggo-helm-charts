@@ -4,6 +4,13 @@ metadata:
   name: {{ include "static-sbom.fullname" . }}
   labels:
     {{- include "static-sbom.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 spec:
   replicas: 1
   selector:
@@ -13,12 +20,12 @@ spec:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       labels:
         {{- include "static-sbom.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
     spec:
       {{- include "imagePullSecrets" . | nindent 6 }}
@@ -57,6 +64,7 @@ spec:
             {{ if .Values.config.disableCompression }}
             - --disable-compression
             {{ end }}
+            - --cache-flush-interval={{ .Values.config.cache.flushInterval }}
             - --cache-size={{ .Values.config.cache.maxEntries }}
             {{ if .Values.config.cache.configMap.enabled }}
             - --cache-cm-name={{ include "static-sbom.configMapCacheName" . }}
