@@ -4,6 +4,13 @@ metadata:
   name: {{ include "k8s-read.fullname" . }}
   labels:
     {{- include "k8s-read.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 spec:
   replicas: 1
   selector:
@@ -13,12 +20,12 @@ spec:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       labels:
         {{- include "k8s-read.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
     spec:
       {{- include "imagePullSecrets" . | nindent 6 }}
@@ -54,6 +61,9 @@ spec:
             - --metric-tls-skip-verify={{ default .Values.output.otlp.tlsSkipVerify $globalMetricTlsSkipVerify }}
             - --metric-interval={{ coalesce .Values.config.metrics.interval $globalMetricInterval }}
             - --interval={{ .Values.config.interval }}
+            {{ if .Values.config.disableCompression }}
+            - --disable-compression
+            {{ end }}
           envFrom:
           {{- if .Values.output.otlp.existingSecret }}
           - secretRef:
