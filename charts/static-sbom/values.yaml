@@ -23,7 +23,7 @@ miggo:
 config:
   queueSize: 10000
   disableCompression: false
-  flushInterval: 168h
+  flushInterval: 7d # put 0 to disable
   metrics:
     interval: 60s
   cache:
