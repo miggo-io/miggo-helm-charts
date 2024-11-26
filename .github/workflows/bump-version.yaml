@@ -49,17 +49,18 @@ jobs:
           }
           
           update_umbrella_charts() {
-            local chart=$1
-            local new_version=$2
-            
             for umbrella_chart in ${UMBRELLA_CHARTS[@]}; do
               local chart_file="charts/$umbrella_chart/Chart.yaml"
               
               CURRENT_VERSION=$(yq eval '.version' "$chart_file")
               NEW_VERSION=$(bump_version "$CURRENT_VERSION")
               
-              yq eval ".version = \"$NEW_VERSION\"" -i "$chart_file"
-              yq e "(.dependencies[] | select(.name == \"$chart\").version) = \"$new_version\"" -i $chart_file
+              if [[ ! $CHANGED_CHARTS =~ $umbrella_chart ]]; then
+                echo "Processing Chart.yaml: $CHART_YAML"
+                CHANGED_CHARTS="$CHANGED_CHARTS $umbrella_chart"
+                
+                yq eval ".version = \"$NEW_VERSION\"" -i "$chart_file"
+              fi
             done
           }
 
@@ -104,7 +105,7 @@ jobs:
                     NEW_VERSION=$(bump_version "$CURRENT_VERSION")
                     echo "Bumping to new version: $NEW_VERSION"
                     yq eval ".version = \"$NEW_VERSION\"" -i "$CHART_YAML"
-                    update_umbrella_charts $CHART_NAME $NEW_VERSION
+                    update_umbrella_charts
                     echo "Bumped $CHART_NAME version from $CURRENT_VERSION to $NEW_VERSION"
                     
                     # Set output for next step
