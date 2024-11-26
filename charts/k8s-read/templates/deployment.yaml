@@ -41,8 +41,8 @@ spec:
           args:
             {{- $global := .Values.global | default dict }}
             {{- $globalClusterName := dig "miggo" "clusterName" "" $global }}
-            {{- $globalTenantId := dig "miggo" "projectId" "" $global }}
-            {{- $globalProjectId := dig "miggo" "tenantId" "" $global }}
+            {{- $globalTenantId := dig "miggo" "tenantId" "" $global }}
+            {{- $globalProjectId := dig "miggo" "projectId" "" $global }}
             {{- $globalOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" $global }}
             {{- $globalTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" $global }}
             {{- $globalStdout := dig "output" "stdout" "" $global }}

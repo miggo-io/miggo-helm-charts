@@ -16,7 +16,7 @@ rules:
   verbs: ["get", "list", "watch"]
 
 - apiGroups: ["gateway.networking.k8s.io"]
-  resources: ["gateways", "httproutes"]
+  resources: ["gateways", "httproutes", "gatewayclasses"]
   verbs: ["get", "list", "watch"]
 
 - apiGroups: ["apps"]
