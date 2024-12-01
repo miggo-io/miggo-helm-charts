@@ -74,7 +74,7 @@ spec:
           {{- if .Values.output.otlp.existingSecret }}
           - secretRef:
               name: {{ .Values.output.otlp.existingSecret }}
-          {{- else }}
+          {{- else if (not (empty (include "common.otlp.authHeader" .))) }}
           - secretRef:
               name: static-sbom-otlp-secret
           {{- end }}

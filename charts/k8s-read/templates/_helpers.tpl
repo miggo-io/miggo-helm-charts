@@ -65,13 +65,15 @@ Create the name of the service account to use
 {{- $emptyImagePullSecrets := list (dict "name" "") }}
 {{- $global := .Values.global | default dict }}
 {{- $globalImagePullSecrets := dig "imagePullSecrets" $emptyImagePullSecrets $global }}
+{{- $globalImageCredentialsUsername := dig "imageCredentials" "username" "" $global }}
+{{- $username := coalesce .Values.imageCredentials.username $globalImageCredentialsUsername }}
 {{- if (not (empty (index .Values.imagePullSecrets 0).name)) }}
 imagePullSecrets:
   {{- toYaml .Values.imagePullSecrets | nindent 2 }}
 {{- else if (not (empty (index $globalImagePullSecrets 0).name)) }}
 imagePullSecrets:
   {{- toYaml .Values.global.imagePullSecrets | nindent 2 }}
-{{- else }}
+{{- else if (not (empty $username)) }}
 imagePullSecrets:
   - name: k8s-read-miggo-regcred
 {{- end }}
@@ -79,4 +81,13 @@ imagePullSecrets:
 
 {{- define "k8s-read.configMapCacheName" -}}
 {{- default (printf "%s-cache" (include "k8s-read.fullname" .)) .Values.config.cache.configMap.name }}
+{{- end }}
+
+{{- define "common.otlp.authHeader" -}}
+{{- $global := .Values.global | default dict }}
+{{- $globalOtlpHttpAuthHeader := dig "output" "otlp" "httpAuthHeader" "" $global }}
+{{- $authHeader := coalesce .Values.output.otlp.httpAuthHeader $globalOtlpHttpAuthHeader "" }}
+{{- if $authHeader }}
+{{- $authHeader -}}
+{{- end }}
 {{- end }}
