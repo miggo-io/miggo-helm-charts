@@ -81,7 +81,7 @@ Create the name of the service account to use
 {{- if $otlpEndpoint }}
 {{- $otlpEndpoint -}}
 {{- else -}}
-http://miggo-collector.miggo-space.svc.cluster.local:4317
+http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4317
 {{- end }}
 {{- end -}}
 

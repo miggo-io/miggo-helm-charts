@@ -13,3 +13,7 @@ dependencies:
     condition: static-sbom.enabled
     repository: file://../static-sbom
     version: "*"
+  - name: collector
+    condition: collector.enabled
+    repository: file://../miggo-collector
+    version: "*"
