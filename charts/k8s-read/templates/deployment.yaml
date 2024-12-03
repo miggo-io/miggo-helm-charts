@@ -36,29 +36,26 @@ spec:
         - name: k8s-read
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             {{- $global := .Values.global | default dict }}
             {{- $globalClusterName := dig "miggo" "clusterName" "" $global }}
             {{- $globalTenantId := dig "miggo" "tenantId" "" $global }}
             {{- $globalProjectId := dig "miggo" "projectId" "" $global }}
-            {{- $globalOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" $global }}
             {{- $globalTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" $global }}
             {{- $globalStdout := dig "output" "stdout" "" $global }}
             {{- $globalHealthPort := dig "healthcheck" "port" "" $global }}
-            {{- $globalMetricOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" $global }}
-            {{- $globalMetricTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" $global }}
             {{- $globalMetricInterval := dig "config" "metrics" "interval" "" $global }}
             - --cluster-name={{ coalesce .Values.miggo.clusterName $globalClusterName }}
             - --tenant-name={{ coalesce .Values.miggo.tenantId $globalTenantId }}  
             - --project-name={{ coalesce .Values.miggo.projectId $globalProjectId }}
-            - --otlp-endpoint={{ coalesce .Values.output.otlp.otlpEndpoint $globalOtlpEndpoint }} 
-            - --tls-skip-verify={{ default .Values.output.otlp.tlsSkipVerify $globalTlsSkipVerify }}
+            - --otlp-endpoint={{ (include "common.otlpEndpoint" .) }} 
+            - --tls-skip-verify={{ (include "common.tlsSkipVerify" .) }} 
             - --stdout={{ default .Values.output.stdout $globalStdout }}
             - --port={{ coalesce .Values.healthcheck.port $globalHealthPort }}
-            - --metric-otlp-endpoint={{ coalesce .Values.output.otlp.otlpEndpoint $globalMetricOtlpEndpoint }}
-            - --metric-tls-skip-verify={{ default .Values.output.otlp.tlsSkipVerify $globalMetricTlsSkipVerify }}
+            - --metric-otlp-endpoint={{ (include "common.otlpEndpoint" .) }} 
+            - --metric-tls-skip-verify={{ (include "common.tlsSkipVerify" .) }} 
             - --metric-interval={{ coalesce .Values.config.metrics.interval $globalMetricInterval }}
             - --interval={{ .Values.config.interval }}
             {{ if .Values.config.disableCompression }}

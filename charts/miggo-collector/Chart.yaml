@@ -1,0 +1,6 @@
+apiVersion: v2
+name: miggo-collector
+description: A Helm chart for miggo-collector
+type: application
+version: 0.0.1
+appVersion: "0.0.1"

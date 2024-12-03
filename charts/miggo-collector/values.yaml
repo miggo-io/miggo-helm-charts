@@ -12,7 +12,7 @@ imageCredentials:
 
 image:
   registry: registry.miggo.io
-  repository: miggoprod/k8s-read
+  repository: miggoprod/miggo-infra-agent
   tag: latest
   pullPolicy: Always
 
@@ -22,11 +22,10 @@ miggo:
   clusterName: "kubernetes-cluster"
 
 config:
-  interval: 6h
-  disableCompression: false
+  logVerbosity: basic # detailed|normal|basic
   metrics:
     interval: 60s
-  
+    
   clientId: P2UOKcx9hh7CfM2i72CflPnVowpH
   
   # Ignored when accessKeySecret specified
@@ -38,27 +37,11 @@ config:
   accessKeySecret: ""
 
 output:
-  stdout: false
   otlp:
-    otlpEndpoint: ""
-    tlsSkipVerify: false
-    
-    # Leave empty if you want to create default secrets based on the httpAuthHeader param.
-    #
-    existingSecret: ""
-    
-    # Ignored when existingSecret specified
-    # 
-    httpAuthHeader: ""
+    otlpEndpoint: "https://api.miggo.io"
 
 nameOverride: ""
 fullnameOverride: ""
-
-serviceAccount:
-  create: true
-  automount: true
-  annotations: {}
-  name: ""
 
 labels: {}
 annotations: {}
@@ -71,14 +54,11 @@ securityContext: {}
 
 resources:
   limits:
-    cpu: 500m
-    memory: 1Gi
+    cpu: 250m
+    memory: 256Mi
   requests:
     cpu: 100m
-    memory: 512Mi
-
-healthcheck:
-  port: 6666
+    memory: 64Mi
 
 volumes: []
 volumeMounts: []
@@ -88,3 +68,24 @@ affinity: {}
 
 extraEnvs: []
 extraEnvsFrom: []
+
+service:
+  type: ClusterIP
+  
+  annotations: {}
+  labels: {}
+
+  ports:
+    - protocol: TCP
+      port: 4318
+      targetPort: 4318
+      name: http
+    - protocol: TCP
+      port: 4317
+      targetPort: 4317
+      name: grpc
+
+  selector: {}
+  externalTrafficPolicy: ""
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
