@@ -40,7 +40,7 @@ config:
 output:
   stdout: false
   otlp:
-    otlpEndpoint: ""
+    otlpEndpoint: 
     tlsSkipVerify: false
     
     # Leave empty if you want to create default secrets based on the httpAuthHeader param.
@@ -76,7 +76,7 @@ resources:
   requests:
     cpu: 100m
     memory: 512Mi
-
+  
 healthcheck:
   port: 6666
 
