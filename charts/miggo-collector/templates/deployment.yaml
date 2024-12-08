@@ -30,7 +30,7 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
     spec:
-      {{- include "imagePullSecrets" . | nindent 6 }}
+      {{- include "common.imagePullSecrets" (list .Values "collector") | nindent 6 }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
