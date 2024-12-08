@@ -3,6 +3,6 @@
 {{- if $otlpEndpoint -}}
 {{- $otlpEndpoint -}}
 {{- else -}}
-http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4317
+http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4318
 {{- end -}}
 {{- end -}}
