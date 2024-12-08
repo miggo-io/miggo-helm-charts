@@ -60,16 +60,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-{{- define "k8s-read.configMapCacheName" -}}
-{{- default (printf "%s-cache" (include "k8s-read.fullname" .)) .Values.config.cache.configMap.name }}
-{{- end }}
-
-{{- define "common.otlp.authHeader" -}}
-{{- $global := .Values.global | default dict }}
-{{- $globalOtlpHttpAuthHeader := dig "output" "otlp" "httpAuthHeader" "" $global }}
-{{- $authHeader := coalesce .Values.output.otlp.httpAuthHeader $globalOtlpHttpAuthHeader "" }}
-{{- if $authHeader }}
-{{- $authHeader -}}
-{{- end }}
-{{- end }}
