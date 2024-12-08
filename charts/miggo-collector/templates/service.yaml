@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: miggo-collector
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.service.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  {{- with .Values.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ . }}
+  {{- end }}
+  {{- with .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  {{- with .Values.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    {{- with .Values.service.selector }}
+    {{- toYaml . | nindent 4 }}
+    {{- else }}
+    app: {{ include "miggo-collector.fullname" . }}
+    {{- end }}
+  ports:
+    {{- with .Values.service.ports }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
