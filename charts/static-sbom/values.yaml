@@ -32,7 +32,7 @@ config:
     configMap:
       enabled: true
       name: ""
-  clientId: P2UOKcx9hh7CfM2i72CflPnVowpH
+  clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
   
   # Ignored when accessKeySecret specified
   # 
