@@ -17,3 +17,6 @@ dependencies:
     condition: collector.enabled
     repository: file://../miggo-collector
     version: "*"
+  - name: common
+    repository: file://../common
+    version: "*"
