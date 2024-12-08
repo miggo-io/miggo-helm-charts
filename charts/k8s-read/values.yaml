@@ -38,10 +38,10 @@ config:
   accessKeySecret: ""
 
 output:
-  stdout: false
+  stdout: "false"
   otlp:
     otlpEndpoint: 
-    tlsSkipVerify: false
+    tlsSkipVerify: "false"
     
     # Leave empty if you want to create default secrets based on the httpAuthHeader param.
     #
