@@ -2,7 +2,7 @@ apiVersion: v2
 name: k8s-integration
 description: A Helm chart for miggo's k8s-integration
 type: application
-version: 0.0.9
+version: 0.0.10
 appVersion: "0.0.1"
 dependencies:
   - name: k8s-read
