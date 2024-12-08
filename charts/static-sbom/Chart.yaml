@@ -2,7 +2,7 @@ apiVersion: v2
 name: static-sbom
 description: A Helm chart for miggo's static-sbom
 type: application
-version: 0.0.13
+version: 0.0.14
 appVersion: "0.0.1"
 dependencies:
   - name: common
