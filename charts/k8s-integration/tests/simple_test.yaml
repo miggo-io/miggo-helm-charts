@@ -1,0 +1,38 @@
+suite: simple test
+
+templates:
+  - charts/collector/templates/deployment.yaml
+  - charts/k8s-read/templates/deployment.yaml
+  - charts/static-sbom/templates/deployment.yaml
+  - charts/collector/templates/collector-config-cm.yaml
+
+values:
+  - simple_values.yaml
+
+tests:
+  - it: collector deployment
+    template: charts/collector/templates/deployment.yaml
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].image
+          value: registry.miggo.io/miggoprod/miggo-infra-agent:latest
+
+  - it: k8s-read deployment
+    template: charts/k8s-read/templates/deployment.yaml
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "k8s-read")].image
+          value: registry.miggo.io/miggoprod/k8s-read:latest
+
+  - it: static-sbom deployment
+    template: charts/static-sbom/templates/deployment.yaml
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "static-sbom")].image
+          value: registry.miggo.io/miggoprod/static-sbom:latest
