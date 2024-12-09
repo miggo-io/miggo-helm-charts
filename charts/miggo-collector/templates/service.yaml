@@ -29,6 +29,10 @@ spec:
     app: {{ include "miggo-collector.fullname" . }}
     {{- end }}
   ports:
+    - protocol: TCP
+      port: {{ .Values.healthcheck.port }}
+      targetPort: {{ .Values.healthcheck.port }}
+      name: healthcheck
     {{- with .Values.service.ports }}
     {{- toYaml . | nindent 4 }}
     {{- end }}

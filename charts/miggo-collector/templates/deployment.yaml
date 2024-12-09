@@ -52,6 +52,16 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
           volumeMounts:
           - name: collector-config
             mountPath: /etc/collector

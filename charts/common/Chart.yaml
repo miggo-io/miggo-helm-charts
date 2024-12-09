@@ -2,4 +2,4 @@ apiVersion: v2
 name: common
 description: A Helm library for miggo's charts
 type: library
-version: 0.0.1
+version: 0.0.2

@@ -5,6 +5,8 @@ metadata:
 data:
   config.yaml: |
     extensions:
+      health_check:
+        endpoint: 0.0.0.0:{{ .Values.healthcheck.port }}
       oauth2client:
         client_id: {{ .Values.config.clientId }}
         client_secret_file: /etc/miggo-access-key
@@ -46,7 +48,7 @@ data:
           authenticator: oauth2client
 
     service:
-      extensions: [oauth2client]
+      extensions: [health_check, oauth2client]
       pipelines:
         metrics:
           receivers: [prometheus, otlp]
