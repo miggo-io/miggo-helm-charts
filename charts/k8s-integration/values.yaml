@@ -54,5 +54,5 @@ static-sbom:
     metrics:
       interval: "" # Set empty to allow global value inheritance or user override
 
-  collector:
-    enabled: false
+collector:
+  enabled: true
