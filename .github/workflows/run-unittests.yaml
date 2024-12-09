@@ -28,10 +28,10 @@ jobs:
         run: |
           # Get list of modified charts
           # Run tests for each modified chart
-          for chart in chart/*; do
-            echo "Testing chart: $chart"
-            cd charts/$chart
-            helm dependency update
-            helm unittest . || exit 1
-            cd ../../
+          for chart in charts/*; do
+              echo "Testing chart: $chart"
+              cd $chart
+              helm dependency update
+              helm unittest . || exit 1
+              cd ../../
           done
