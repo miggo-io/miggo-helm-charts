@@ -3,6 +3,20 @@ entries:
   collector:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2024-12-10T19:12:38.12763449Z"
+    dependencies:
+    - name: common
+      repository: file://../common
+      version: '*'
+    description: A Helm chart for miggo-collector
+    digest: 8f811a8211cb83e44b1e7736367a78757a2e1f62857f9ae6edbfbe1cce3a7215
+    name: collector
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/collector-0.0.6/collector-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2024-12-10T15:02:53.180211606Z"
     dependencies:
     - name: common
@@ -54,6 +68,32 @@ entries:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/common-0.0.1/common-0.0.1.tgz
     version: 0.0.1
   k8s-integration:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-12-10T19:12:38.352395434Z"
+    dependencies:
+    - condition: k8s-read.enabled
+      name: k8s-read
+      repository: file://../k8s-read
+      version: '*'
+    - condition: static-sbom.enabled
+      name: static-sbom
+      repository: file://../static-sbom
+      version: '*'
+    - condition: collector.enabled
+      name: collector
+      repository: file://../miggo-collector
+      version: '*'
+    - name: common
+      repository: file://../common
+      version: '*'
+    description: A Helm chart for miggo's k8s-integration
+    digest: 435a1c6e9ec07242a21ce204d98cf690ea1907ea598a443ee66df7449d3e00eb
+    name: k8s-integration
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/k8s-integration-0.0.16/k8s-integration-0.0.16.tgz
+    version: 0.0.16
   - apiVersion: v2
     appVersion: 0.0.1
     created: "2024-12-10T15:02:53.323632518Z"
@@ -833,4 +873,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.1/static-sbom-0.0.1.tgz
     version: 0.0.1
-generated: "2024-12-10T15:02:53.585671484Z"
+generated: "2024-12-10T19:12:38.352616426Z"
