@@ -20,13 +20,6 @@ data:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
-      prometheus:
-        config:
-          scrape_configs:
-            - job_name: '{{ .Values.miggo.tenantId }}:{{ .Values.miggo.projectId }}:{{ .Values.miggo.clusterName }}'
-              scrape_interval: {{ .Values.config.metrics.interval }}
-              static_configs:
-              - targets: [ 'localhost:8888' ]
     
     processors:
       batch:
@@ -51,7 +44,7 @@ data:
       extensions: [health_check, oauth2client]
       pipelines:
         metrics:
-          receivers: [prometheus, otlp]
+          receivers: [otlp]
           processors: [batch]
           exporters: [debug, prometheus, otlphttp]
         traces:
