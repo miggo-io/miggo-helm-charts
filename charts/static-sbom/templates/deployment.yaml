@@ -28,7 +28,7 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
     spec:
-      {{- include "common.imagePullSecrets" (list .Values "static-sbom") | nindent 6 }}
+      {{- include "common.imagePullSecrets" (list . "static-sbom") | nindent 6 }}
       serviceAccountName: {{ include "static-sbom.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
@@ -36,7 +36,7 @@ spec:
         - name: static-sbom
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ (include "common.imageRegistry" .) }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ (include "common.getVal" (list . "miggo.clusterName")) }}

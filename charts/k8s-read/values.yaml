@@ -11,7 +11,7 @@ imageCredentials:
   password: ""
 
 image:
-  registry: registry.miggo.io
+  registry: "" # default to registry.miggo.io
   repository: miggoprod/k8s-read
   tag: latest
   pullPolicy: Always
@@ -27,7 +27,7 @@ config:
   metrics:
     interval: 60s
   
-  clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
+  clientId: "" # default to miggo production client id
   
   # Ignored when accessKeySecret specified
   # 

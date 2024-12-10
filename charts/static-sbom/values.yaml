@@ -11,7 +11,7 @@ imageCredentials:
   password: ""
 
 image:
-  registry: registry.miggo.io
+  registry: "" # default to registry.miggo.io
   repository: miggoprod/static-sbom
   tag: latest
   pullPolicy: Always
@@ -32,7 +32,7 @@ config:
     configMap:
       enabled: true
       name: ""
-  clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
+  clientId: "" # default to miggo production client id
   
   # Ignored when accessKeySecret specified
   # 

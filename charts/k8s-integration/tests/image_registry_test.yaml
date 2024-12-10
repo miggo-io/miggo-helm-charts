@@ -1,0 +1,89 @@
+suite: image registry test
+
+templates:
+  - charts/collector/templates/deployment.yaml
+  - charts/k8s-read/templates/deployment.yaml
+  - charts/static-sbom/templates/deployment.yaml
+  - charts/collector/templates/collector-config-cm.yaml
+
+values:
+  - all_values.yaml
+
+tests:
+  - it: collector default
+    template: charts/collector/templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].image
+          value: registry.miggo.io/miggoprod/miggo-infra-agent:latest
+
+  - it: collector global
+    template: charts/collector/templates/deployment.yaml
+    set:
+      global.image.registry: global
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].image
+          value: global/miggoprod/miggo-infra-agent:latest
+
+  - it: collector override global
+    template: charts/collector/templates/deployment.yaml
+    set:
+      global.image.registry: global
+      collector.image.registry: collector
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].image
+          value: collector/miggoprod/miggo-infra-agent:latest
+
+  - it: k8s-read default
+    template: charts/k8s-read/templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "k8s-read")].image
+          value: registry.miggo.io/miggoprod/k8s-read:latest
+
+  - it: k8s-read global
+    template: charts/k8s-read/templates/deployment.yaml
+    set:
+      global.image.registry: global
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "k8s-read")].image
+          value: global/miggoprod/k8s-read:latest
+
+  - it: k8s-read override global
+    template: charts/k8s-read/templates/deployment.yaml
+    set:
+      global.image.registry: global
+      k8s-read.image.registry: k8s-read
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "k8s-read")].image
+          value: k8s-read/miggoprod/k8s-read:latest
+
+  - it: static-sbom default
+    template: charts/static-sbom/templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "static-sbom")].image
+          value: registry.miggo.io/miggoprod/static-sbom:latest
+
+  - it: static-sbom global
+    template: charts/static-sbom/templates/deployment.yaml
+    set:
+      global.image.registry: global
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "static-sbom")].image
+          value: global/miggoprod/static-sbom:latest
+
+  - it: static-sbom override global
+    template: charts/static-sbom/templates/deployment.yaml
+    set:
+      global.image.registry: global
+      static-sbom.image.registry: static-sbom
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "static-sbom")].image
+          value: static-sbom/miggoprod/static-sbom:latest
