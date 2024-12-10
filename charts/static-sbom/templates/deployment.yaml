@@ -43,6 +43,7 @@ spec:
             - --tenant-name={{ (include "common.getVal" (list . "miggo.tenantId")) }}
             - --project-name={{ (include "common.getVal" (list . "miggo.projectId")) }}
             - --otlp-endpoint={{ (include "common.otlpEndpoint" .) }} 
+            - --collector-healthcheck-port={{ (include "common.otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "common.getVal" (list . "output.otlp.tlsSkipVerify")) }}
             - --stdout={{ (include "common.getVal" (list . "output.stdout")) }}
             - --port={{ (include "common.getVal" (list . "healthcheck.port")) }}
