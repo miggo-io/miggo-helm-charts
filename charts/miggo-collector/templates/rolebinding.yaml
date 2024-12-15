@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: collector-role-binding
+subjects:
+- kind: ServiceAccount
+  name: {{ include "miggo-collector.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: collector-role
+  apiGroup: rbac.authorization.k8s.io

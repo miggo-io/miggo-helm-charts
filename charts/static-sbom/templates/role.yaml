@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: static-sbom-role
+  name: static-sbom-cluster-role
 rules:
 - apiGroups: [""]
   resources: ["pods", "nodes"]
@@ -20,13 +20,15 @@ rules:
   verbs: ["get", "list", "watch"]
 
 ---
-{{ if .Values.config.cache.configMap.enabled }}
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: static-sbom-configmap-role
+  name: static-sbom-role
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
   verbs: ["create", "get", "delete", "update"]
-{{ end }}
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "update", "delete", "patch"]
