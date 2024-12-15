@@ -18,7 +18,7 @@ $ helm repo update
 
 ## Helm Charts
 
-You can then run `helm search repo miggo-helm-charts` to see the charts.
+You can then run `helm search repo miggo-charts` to see the charts.
 
 ### Miggo Operator
 
