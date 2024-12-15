@@ -1,8 +1,8 @@
 apiVersion: v2
-name: k8s-read
-description: A Helm chart for miggo's k8s-read
+name: collector
+description: A Helm chart for miggo-collector
 type: application
-version: 0.0.13
+version: 0.0.6
 appVersion: "0.0.1"
 dependencies:
   - name: common

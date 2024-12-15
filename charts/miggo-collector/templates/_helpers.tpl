@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "static-sbom.name" -}}
+{{- define "miggo-collector.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "static-sbom.fullname" -}}
+{{- define "miggo-collector.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "static-sbom.chart" -}}
+{{- define "miggo-collector.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "static-sbom.labels" -}}
-helm.sh/chart: {{ include "static-sbom.chart" . }}
-{{ include "static-sbom.selectorLabels" . }}
+{{- define "miggo-collector.labels" -}}
+helm.sh/chart: {{ include "miggo-collector.chart" . }}
+{{ include "miggo-collector.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,22 +45,31 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "static-sbom.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "static-sbom.name" . }}
+{{- define "miggo-collector.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "miggo-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "static-sbom.serviceAccountName" -}}
+{{- define "miggo-collector.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "static-sbom.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "miggo-collector.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
-{{- define "static-sbom.configMapCacheName" -}}
-{{- default (printf "%s-cache" (include "static-sbom.fullname" .)) .Values.config.cache.configMap.name }}
-{{- end }}
+{{- define "accessKeySecret" -}}
+{{- $global := .Values.global | default dict }}
+{{- $globalAccessKey := dig "config" "accessKey" "" $global }}
+{{- $globalAccessKeySecret := dig "config" "accessKeySecret" "" $global }}
+{{- $accessKey := coalesce .Values.config.accessKey $globalAccessKey }}
+{{- $accessKeySecret := coalesce .Values.config.accessKeySecret $globalAccessKeySecret }}
+{{- if and (empty $accessKeySecret) (not (empty $accessKey)) -}}
+collector-access-key-secret
+{{- else if (not (empty ($accessKeySecret))) -}}
+{{ $accessKeySecret }}
+{{- end -}}
+{{- end -}}

@@ -28,7 +28,7 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
     spec:
-      {{- include "imagePullSecrets" . | nindent 6 }}
+      {{- include "common.imagePullSecrets" (list .Values "static-sbom") | nindent 6 }}
       serviceAccountName: {{ include "static-sbom.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
@@ -36,30 +36,20 @@ spec:
         - name: static-sbom
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            {{- $global := .Values.global | default dict }}
-            {{- $globalClusterName := dig "miggo" "clusterName" "" $global }}
-            {{- $globalTenantId := dig "miggo" "tenantId" "" $global }}
-            {{- $globalProjectId := dig "miggo" "projectId" "" $global }}
-            {{- $globalOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" $global }}
-            {{- $globalTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" $global }}
-            {{- $globalStdout := dig "output" "stdout" "" $global }}
-            {{- $globalHealthPort := dig "healthcheck" "port" "" $global }}
-            {{- $globalMetricOtlpEndpoint := dig "output" "otlp" "otlpEndpoint" "" $global }}
-            {{- $globalMetricTlsSkipVerify := dig "output" "otlp" "tlsSkipVerify" "" $global }}
-            {{- $globalMetricInterval := dig "config" "metrics" "interval" "" $global }}
-            - --cluster-name={{ coalesce .Values.miggo.clusterName $globalClusterName }}
-            - --tenant-name={{ coalesce .Values.miggo.tenantId $globalTenantId }}  
-            - --project-name={{ coalesce .Values.miggo.projectId $globalProjectId }}
-            - --otlp-endpoint={{ coalesce .Values.output.otlp.otlpEndpoint $globalOtlpEndpoint }} 
-            - --tls-skip-verify={{ default .Values.output.otlp.tlsSkipVerify $globalTlsSkipVerify }}
-            - --stdout={{ default .Values.output.stdout $globalStdout }}
-            - --port={{ coalesce .Values.healthcheck.port $globalHealthPort }}
-            - --metric-otlp-endpoint={{ coalesce .Values.output.otlp.otlpEndpoint $globalMetricOtlpEndpoint }}
-            - --metric-tls-skip-verify={{ default .Values.output.otlp.tlsSkipVerify $globalMetricTlsSkipVerify }}
-            - --metric-interval={{ coalesce .Values.config.metrics.interval $globalMetricInterval }}
+            - --cluster-name={{ (include "common.getVal" (list . "miggo.clusterName")) }}
+            - --tenant-name={{ (include "common.getVal" (list . "miggo.tenantId")) }}
+            - --project-name={{ (include "common.getVal" (list . "miggo.projectId")) }}
+            - --otlp-endpoint={{ (include "common.otlpEndpoint" .) }} 
+            - --collector-healthcheck-port={{ (include "common.otlpEndpointHealthCheckPort" .) }}
+            - --tls-skip-verify={{ (include "common.getVal" (list . "output.otlp.tlsSkipVerify")) }}
+            - --stdout={{ (include "common.getVal" (list . "output.stdout")) }}
+            - --port={{ (include "common.getVal" (list . "healthcheck.port")) }}
+            - --metric-otlp-endpoint={{ include "common.otlpEndpoint" . }}
+            - --metric-tls-skip-verify={{ (include "common.getVal" (list . "output.otlp.tlsSkipVerify")) }}
+            - --metric-interval={{ (include "common.getVal" (list . "config.metrics.interval")) }}
             - --queue-size={{ .Values.config.queueSize }}
             {{ if .Values.config.disableCompression }}
             - --disable-compression

@@ -2,7 +2,7 @@ apiVersion: v2
 name: k8s-integration
 description: A Helm chart for miggo's k8s-integration
 type: application
-version: 0.0.9
+version: 0.0.16
 appVersion: "0.0.1"
 dependencies:
   - name: k8s-read
@@ -12,4 +12,11 @@ dependencies:
   - name: static-sbom
     condition: static-sbom.enabled
     repository: file://../static-sbom
+    version: "*"
+  - name: collector
+    condition: collector.enabled
+    repository: file://../miggo-collector
+    version: "*"
+  - name: common
+    repository: file://../common
     version: "*"

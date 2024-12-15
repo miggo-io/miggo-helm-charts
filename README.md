@@ -18,13 +18,14 @@ $ helm repo update
 
 ## Helm Charts
 
+
 Helm charts of Miggo products: 
 - [Datadog Agents](charts/datadog/README.md) Datadog Agents (datadog/datadog)
 Datadog Operator (datadog/datadog-operator)
 Extended DaemonSet (datadog/extendeddaemonset)
 Observability Pipelines Worker (datadog/observability-pipelines-worker)
 Synthetics Private Location (datadog/synthetics-private-location)
-You can then run `helm search repo miggo-helm-charts` to see the charts.
+You can then run `helm search repo miggo-charts` to see the charts.
 
 
 
