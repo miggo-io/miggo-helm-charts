@@ -33,6 +33,7 @@ spec:
       {{- include "common.imagePullSecrets" (list .Values "collector") | nindent 6 }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ include "miggo-collector.serviceAccountName" . }}
       containers:
         - name: miggo-collector
           securityContext:

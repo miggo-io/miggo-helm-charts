@@ -22,6 +22,8 @@ miggo:
   clusterName: "kubernetes-cluster"
 
 config:
+  updaterCron: "0 0 */6 * *"
+  updaterEnabled: true
   logVerbosity: basic # detailed|normal|basic
   metrics:
     interval: 60s
@@ -42,6 +44,12 @@ output:
 
 nameOverride: ""
 fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
 
 labels: {}
 annotations: {}

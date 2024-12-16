@@ -22,6 +22,8 @@ miggo:
   clusterName: "kubernetes-cluster"
 
 config:
+  updaterCron: "0 0 */6 * *"
+  updaterEnabled: true
   queueSize: 10000
   disableCompression: false
   metrics:
