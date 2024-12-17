@@ -22,7 +22,7 @@ miggo:
   clusterName: "kubernetes-cluster"
 
 config:
-  updaterCron: "0 0 */6 * *"
+  updaterCron: "0 */6 * * *"
   updaterEnabled: true
   logVerbosity: basic # detailed|normal|basic
   metrics:

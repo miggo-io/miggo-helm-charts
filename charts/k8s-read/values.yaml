@@ -23,7 +23,7 @@ miggo:
 
 config:
   updaterEnabled: true
-  updaterCron: "0 0 */6 * *"
+  updaterCron: "0 */6 * * *"
   interval: 6h
   disableCompression: false
   metrics:
