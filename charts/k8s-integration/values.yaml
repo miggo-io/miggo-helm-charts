@@ -54,5 +54,15 @@ static-sbom:
     metrics:
       interval: "" # Set empty to allow global value inheritance or user override
 
+dynamic-ebpf:
+  enabled: false
+  
+  miggo:
+    clusterName: "" # Set empty to allow global value inheritance or user override
+  
+  config:
+    metrics:
+      interval: "" # Set empty to allow global value inheritance or user override
+
 collector:
   enabled: true

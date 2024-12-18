@@ -12,6 +12,9 @@ k8s-read:
   
 static-sbom:
   enabled: true
-    
+
+dynamic-ebpf:
+  enabled: true
+
 collector:
   enabled: true

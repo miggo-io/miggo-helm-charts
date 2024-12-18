@@ -1,54 +1,93 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ include "dynamic-ebpf.fullname" . }}-dynamic-ebpf
+  name: {{ include "dynamic-ebpf.fullname" . }}
   labels:
-  {{- include "dynamic-ebpf.labels" . | nindent 4 }}
+    {{- include "dynamic-ebpf.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 spec:
   selector:
     matchLabels:
-      name: dynamic-ebpf
     {{- include "dynamic-ebpf.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
       labels:
-        name: dynamic-ebpf
-      {{- include "dynamic-ebpf.selectorLabels" . | nindent 8 }}
+        {{- include "dynamic-ebpf.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
     spec:
+      {{- include "common.imagePullSecrets" (list .Values "dynamic-ebpf") | nindent 6 }}
+      serviceAccountName: {{ include "dynamic-ebpf.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-      - args: {{- toYaml .Values.dynamicEbpf.agent.args | nindent 8 }}
-        env:
-        - name: DYNAMIC_EBPF_AGENT_NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: KUBERNETES_CLUSTER_DOMAIN
-          value: {{ quote .Values.kubernetesClusterDomain }}
-        image: {{ .Values.dynamicEbpf.agent.image.repository }}:{{ .Values.dynamicEbpf.agent.image.tag
-          | default .Chart.AppVersion }}
-        imagePullPolicy: {{ .Values.dynamicEbpf.agent.imagePullPolicy }}
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 6666
-          periodSeconds: 10
-        name: agent
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 6666
-          periodSeconds: 10
-        resources: {}
-        securityContext: {{- toYaml .Values.dynamicEbpf.agent.containerSecurityContext
-          | nindent 10 }}
-        volumeMounts:
-        - mountPath: /sys/kernel/debug
-          name: debugfs
+        - name: dynamic-ebpf
+          securityContext:
+            privileged: true
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --cluster-name={{ (include "common.getVal" (list . "miggo.clusterName")) }}
+            - --tenant-name={{ (include "common.getVal" (list . "miggo.tenantId")) }}
+            - --project-name={{ (include "common.getVal" (list . "miggo.projectId")) }}
+            - --otlp-endpoint={{ (include "common.otlpEndpoint" .) }} 
+            - --collector-healthcheck-port={{ (include "common.otlpEndpointHealthCheckPort" .) }}
+            - --tls-skip-verify={{ (include "common.getVal" (list . "output.otlp.tlsSkipVerify")) }}
+            - --stdout={{ (include "common.getVal" (list . "output.stdout")) }}
+            - --port={{ (include "common.getVal" (list . "healthcheck.port")) }}
+            - --metric-otlp-endpoint={{ include "common.otlpEndpoint" . }}
+            - --metric-tls-skip-verify={{ (include "common.getVal" (list . "output.otlp.tlsSkipVerify")) }}
+            - --metric-interval={{ (include "common.getVal" (list . "config.metrics.interval")) }}
+          env:
+            - name: DYNAMIC_EBPF_AGENT_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: KUBERNETES_CLUSTER_DOMAIN
+              value: {{ quote .Values.kubernetesClusterDomain }}
+          ports:
+          - containerPort: {{ .Values.healthcheck.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - mountPath: /sys/kernel/debug
+            name: debugfs
       hostPID: true
-      nodeSelector: {{- toYaml .Values.dynamicEbpf.nodeSelector | nindent 8 }}
-      priorityClassName: system-node-critical
-      serviceAccountName: {{ include "dynamic-ebpf.fullname" . }}-dynamic-ebpf
       volumes:
       - hostPath:
           path: /sys/kernel/debug
         name: debugfs
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      priorityClassName: system-node-critical      

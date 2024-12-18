@@ -10,5 +10,5 @@ roleRef:
   name: '{{ include "dynamic-ebpf.fullname" . }}-watch-pods'
 subjects:
 - kind: ServiceAccount
-  name: '{{ include "dynamic-ebpf.fullname" . }}-dynamic-ebpf'
+  name: '{{ include "dynamic-ebpf.fullname" . }}'
   namespace: '{{ .Release.Namespace }}'
