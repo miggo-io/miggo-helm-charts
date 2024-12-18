@@ -1,0 +1,10 @@
+apiVersion: v2
+name: miggo-sensor
+description: A Helm chart for miggo's miggo-sensor
+type: application
+version: 0.1.19
+appVersion: "0.0.1"
+dependencies:
+  - name: common
+    repository: file://../common
+    version: "*"

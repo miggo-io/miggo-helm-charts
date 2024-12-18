@@ -1,0 +1,99 @@
+## List of secrets to use for pulling images from authenticated repositories.
+## Only one of imagePullSecrets or imageCredentials should be specified.
+imagePullSecrets:
+  - name: ""
+
+## Credentials to create a secret for image pulling.
+## Only one of imagePullSecrets or imageCredentials should be specified.
+imageCredentials:
+  registry: ""
+  username: ""
+  password: ""
+
+image:
+  registry: registry.miggo.io
+  repository: miggoprod/dynamic-ebpf # will be changed later as well
+  tag: latest
+  pullPolicy: Always
+
+miggo:
+  tenantId: ""
+  projectId: ""
+  clusterName: "kubernetes-cluster"
+
+config:
+  updaterCron: "0 */6 * * *"
+  updaterEnabled: true
+  queueSize: 10000
+  disableCompression: false
+  metrics:
+    interval: 60s
+  cache:
+    flushInterval: "168h" # a week, put 0 to disable cache flushing
+    maxEntries: 10000
+    configMap:
+      enabled: true
+      name: ""
+  clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
+
+  # Ignored when accessKeySecret specified
+  #
+  accessKey: ""
+
+  # Leave empty if you want to create default secrets based on the accessKey param.
+  #
+  accessKeySecret: ""
+
+
+output:
+  stdout: "false"
+  otlp:
+    otlpEndpoint:
+    tlsSkipVerify: "false"
+
+    # Leave empty if you want to create default secrets based on the httpAuthHeader param.
+    #
+    existingSecret: ""
+
+    # Ignored when existingSecret specified
+    #
+    httpAuthHeader: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+labels: {}
+annotations: {}
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+resources:
+  limits:
+    cpu: 3000m
+    memory: 4Gi
+  requests:
+    cpu: 1000m
+    memory: 2Gi
+
+healthcheck:
+  port: 6666
+
+volumes: []
+volumeMounts: []
+nodeSelector:
+    kubernetes.io/os: linux
+tolerations: []
+affinity: {}
+
+extraEnvs: []
+extraEnvsFrom: []

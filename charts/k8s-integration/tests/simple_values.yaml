@@ -9,9 +9,12 @@ global:
 
 k8s-read:
   enabled: true
-  
+
 static-sbom:
   enabled: true
-    
+
+miggo-sensor:
+  enabled: true
+
 collector:
   enabled: true
