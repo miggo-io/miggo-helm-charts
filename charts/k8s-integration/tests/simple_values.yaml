@@ -9,11 +9,11 @@ global:
 
 k8s-read:
   enabled: true
-  
+
 static-sbom:
   enabled: true
 
-dynamic-ebpf:
+miggo-sensor:
   enabled: true
 
 collector:

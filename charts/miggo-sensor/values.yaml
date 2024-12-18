@@ -12,7 +12,7 @@ imageCredentials:
 
 image:
   registry: registry.miggo.io
-  repository: miggoprod/dynamic-ebpf
+  repository: miggoprod/dynamic-ebpf # will be changed later as well
   tag: latest
   pullPolicy: Always
 
@@ -35,28 +35,28 @@ config:
       enabled: true
       name: ""
   clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
-  
+
   # Ignored when accessKeySecret specified
-  # 
+  #
   accessKey: ""
 
   # Leave empty if you want to create default secrets based on the accessKey param.
   #
   accessKeySecret: ""
-  
+
 
 output:
   stdout: "false"
   otlp:
     otlpEndpoint:
     tlsSkipVerify: "false"
-    
+
     # Leave empty if you want to create default secrets based on the httpAuthHeader param.
     #
     existingSecret: ""
-    
+
     # Ignored when existingSecret specified
-    # 
+    #
     httpAuthHeader: ""
 
 nameOverride: ""

@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ include "dynamic-ebpf.fullname" . }}
+  name: {{ include "miggo-sensor.fullname" . }}
   labels:
-    {{- include "dynamic-ebpf.labels" . | nindent 4 }}
+    {{- include "miggo-sensor.labels" . | nindent 4 }}
     {{- with .Values.labels }}
     {{- tpl (toYaml .) $ | nindent 4 }}
     {{- end }}
@@ -14,7 +14,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-    {{- include "dynamic-ebpf.selectorLabels" . | nindent 6 }}
+    {{- include "miggo-sensor.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -22,17 +22,17 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "dynamic-ebpf.labels" . | nindent 8 }}
+        {{- include "miggo-sensor.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
     spec:
-      {{- include "common.imagePullSecrets" (list .Values "dynamic-ebpf") | nindent 6 }}
-      serviceAccountName: {{ include "dynamic-ebpf.serviceAccountName" . }}
+      {{- include "common.imagePullSecrets" (list .Values "miggo-sensor") | nindent 6 }}
+      serviceAccountName: {{ include "miggo-sensor.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: dynamic-ebpf
+        - name: miggo-sensor
           securityContext:
             privileged: true
           image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -41,7 +41,7 @@ spec:
             - --cluster-name={{ (include "common.getVal" (list . "miggo.clusterName")) }}
             - --tenant-name={{ (include "common.getVal" (list . "miggo.tenantId")) }}
             - --project-name={{ (include "common.getVal" (list . "miggo.projectId")) }}
-            - --otlp-endpoint={{ (include "common.otlpEndpoint" .) }} 
+            - --otlp-endpoint={{ (include "common.otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "common.otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "common.getVal" (list . "output.otlp.tlsSkipVerify")) }}
             - --stdout={{ (include "common.getVal" (list . "output.stdout")) }}
@@ -90,4 +90,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      priorityClassName: system-node-critical      
+      priorityClassName: system-node-critical

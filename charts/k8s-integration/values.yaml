@@ -10,7 +10,7 @@ global:
     registry: ""
     username: ""
     password: ""
-  
+
   miggo:
     tenantId: ""
     projectId: ""
@@ -25,41 +25,41 @@ global:
     otlp:
       otlpEndpoint: ""
       tlsSkipVerify: false
-      
+
       # Leave empty if you want to create default secrets based on the httpAuthHeader param.
       #
       existingSecret: ""
-      
+
       # Ignored when existingSecret specified
-      # 
+      #
       httpAuthHeader: ""
 
 k8s-read:
   enabled: false
-  
+
   miggo:
     clusterName: "" # Set empty to allow global value inheritance or user override
-  
+
   config:
     metrics:
       interval: "" # Set empty to allow global value inheritance or user override
 
 static-sbom:
   enabled: false
-  
+
   miggo:
     clusterName: "" # Set empty to allow global value inheritance or user override
-  
+
   config:
     metrics:
       interval: "" # Set empty to allow global value inheritance or user override
 
-dynamic-ebpf:
+miggo-sensor:
   enabled: false
-  
+
   miggo:
     clusterName: "" # Set empty to allow global value inheritance or user override
-  
+
   config:
     metrics:
       interval: "" # Set empty to allow global value inheritance or user override

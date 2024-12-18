@@ -13,9 +13,9 @@ dependencies:
     condition: static-sbom.enabled
     repository: file://../static-sbom
     version: "*"
-  - name: dynamic-ebpf
-    condition: dynamic-ebpf.enabled
-    repository: file://../dynamic-ebpf
+  - name: miggo-sensor
+    condition: miggo-sensor.enabled
+    repository: file://../miggo-sensor
     version: "*"
   - name: collector
     condition: collector.enabled

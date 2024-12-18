@@ -1,9 +1,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "dynamic-ebpf.fullname" . }}-watch-pods
+  name: {{ include "miggo-sensor.fullname" . }}-pod-watcher-cr
   labels:
-  {{- include "dynamic-ebpf.labels" . | nindent 4 }}
+  {{- include "miggo-sensor.labels" . | nindent 4 }}
 rules:
 - apiGroups:
   - ""
