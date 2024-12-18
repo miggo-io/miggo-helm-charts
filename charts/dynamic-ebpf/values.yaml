@@ -1,0 +1,24 @@
+dynamicEbpf:
+  agent:
+    args:
+    - --cluster-name=test-loki-aaaa
+    - --tenant-name=0654a211-37ca-7a9f-8000-f111e59b1c7f
+    - --project-name=0654a21d-1dd6-7584-8000-973d08525743
+    - --port=6666
+    - --otlp-endpoint=http://miggo-collector.miggo-system.svc.cluster.local:4318
+    - --tls-skip-verify=false
+    - --debug-slog-level=DEBUG
+    - --debug-monitored-comm=
+    - --debug-pages=10
+    - --stdout
+    containerSecurityContext:
+      privileged: true
+    image:
+      repository: dynamic-ebpf
+      tag: latest
+    imagePullPolicy: IfNotPresent
+  nodeSelector:
+    kubernetes.io/os: linux
+  serviceAccount:
+    annotations: {}
+kubernetesClusterDomain: cluster.local

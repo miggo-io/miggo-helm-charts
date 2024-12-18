@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "dynamic-ebpf.fullname" . }}-dynamic-ebpf
+  labels:
+  {{- include "dynamic-ebpf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      name: dynamic-ebpf
+    {{- include "dynamic-ebpf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        name: dynamic-ebpf
+      {{- include "dynamic-ebpf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.dynamicEbpf.agent.args | nindent 8 }}
+        env:
+        - name: DYNAMIC_EBPF_AGENT_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.dynamicEbpf.agent.image.repository }}:{{ .Values.dynamicEbpf.agent.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.dynamicEbpf.agent.imagePullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 6666
+          periodSeconds: 10
+        name: agent
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 6666
+          periodSeconds: 10
+        resources: {}
+        securityContext: {{- toYaml .Values.dynamicEbpf.agent.containerSecurityContext
+          | nindent 10 }}
+        volumeMounts:
+        - mountPath: /sys/kernel/debug
+          name: debugfs
+      hostPID: true
+      nodeSelector: {{- toYaml .Values.dynamicEbpf.nodeSelector | nindent 8 }}
+      priorityClassName: system-node-critical
+      serviceAccountName: {{ include "dynamic-ebpf.fullname" . }}-dynamic-ebpf
+      volumes:
+      - hostPath:
+          path: /sys/kernel/debug
+        name: debugfs
