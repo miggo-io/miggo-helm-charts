@@ -98,6 +98,36 @@ entries:
   k8s-integration:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2024-12-20T13:56:50.755609478Z"
+    dependencies:
+    - condition: k8s-read.enabled
+      name: k8s-read
+      repository: file://../k8s-read
+      version: '*'
+    - condition: static-sbom.enabled
+      name: static-sbom
+      repository: file://../static-sbom
+      version: '*'
+    - condition: miggo-sensor.enabled
+      name: miggo-sensor
+      repository: file://../miggo-sensor
+      version: '*'
+    - condition: collector.enabled
+      name: collector
+      repository: file://../miggo-collector
+      version: '*'
+    - name: common
+      repository: file://../common
+      version: '*'
+    description: A Helm chart for miggo's k8s-integration
+    digest: 0b83ff2b656e3a5476270b72d5c1b44f961dd7f88f3505b235dfb0e44947bd45
+    name: k8s-integration
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/k8s-integration-0.0.21/k8s-integration-0.0.21.tgz
+    version: 0.0.21
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2024-12-18T17:58:17.44907413Z"
     dependencies:
     - condition: k8s-read.enabled
@@ -491,6 +521,20 @@ entries:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/k8s-integration-0.0.1/k8s-integration-0.0.1.tgz
     version: 0.0.1
   k8s-read:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-12-20T13:56:50.916294293Z"
+    dependencies:
+    - name: common
+      repository: file://../common
+      version: '*'
+    description: A Helm chart for miggo's k8s-read
+    digest: 53b17016b6afd49309cd4115f90767bf5daf6971ff196862f24a5d05c509bb55
+    name: k8s-read
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/k8s-read-0.0.16/k8s-read-0.0.16.tgz
+    version: 0.0.16
   - apiVersion: v2
     appVersion: 0.0.1
     created: "2024-12-17T15:04:52.551206662Z"
@@ -1094,4 +1138,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.1/static-sbom-0.0.1.tgz
     version: 0.0.1
-generated: "2024-12-18T17:58:17.616053793Z"
+generated: "2024-12-20T13:56:50.916848473Z"
