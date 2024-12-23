@@ -1,68 +1,180 @@
-global:
-  ## List of secrets to use for pulling images from authenticated repositories.
-  ## Only one of imagePullSecrets or imageCredentials should be specified.
-  imagePullSecrets:
-    - name: ""
+image:
+  registry: registry.miggo.io
+  pullPolicy: Always
 
-  ## Credentials to create a secret for image pulling.
-  ## Only one of imagePullSecrets or imageCredentials should be specified.
-  imageCredentials:
-    registry: ""
-    username: ""
-    password: ""
+## List of secrets to use for pulling images from authenticated repositories.
+## Only one of imagePullSecrets or imageCredentials should be specified.
+imagePullSecrets:
+  # - name: ""
 
-  miggo:
-    tenantId: ""
-    projectId: ""
-    clusterName: "kubernetes-cluster"
+## Credentials to create a secret for image pulling.
+## Only one of imagePullSecrets or imageCredentials should be specified.
+imageCredentials:
+  registry: ""
+  username: ""
+  password: ""
 
+miggo:
+  tenantId: ""
+  projectId: ""
+  clusterName: "kubernetes-cluster"
+
+healthcheck:
+  port: 6666
+
+config:
+  updaterEnabled: true
+  updaterCron: "0 */6 * * *"
+  metrics:
+    interval: 60s
+  
+  clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
+  
+  # Ignored when accessKeySecret specified
+  # 
+  accessKey: ""
+  
+  # Leave empty if you want to create default secrets based on the accessKey param.
+  #
+  accessKeySecret: ""
+
+output:
+  stdout: false
+  otlp:
+    otlpEndpoint: "https://api.miggo.io"
+    tlsSkipVerify: false
+
+    # Leave empty if you want to create default secrets based on the httpAuthHeader param.
+    #
+    existingSecret: ""
+
+    # Ignored when existingSecret specified
+    #
+    httpAuthHeader: ""
+
+serviceAccount:
+  automount: true
+  annotations: {}
+  name: ""
+
+labels: {}
+annotations: {}
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+extraEnvs: []
+extraEnvsFrom: []
+volumes: []
+volumeMounts: []
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+k8sRead:
+  enabled: true
+  labels: {}
+  annotations: {}
+  podAnnotations: {}
+  podLabels: {}
+  extraEnvs: []
+  extraEnvsFrom: []
+  volumes: []
+  volumeMounts: []
+  image:
+    repository: miggoprod/k8s-read
+    tag: latest
   config:
+    interval: 6h
+    disableCompression: false
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+
+staticSbom:
+  enabled: true
+  labels: {}
+  annotations: {}
+  podAnnotations: {}
+  podLabels: {}
+  extraEnvs: []
+  extraEnvsFrom: []
+  volumes: []
+  volumeMounts: []
+  image:
+    repository: miggoprod/static-sbom
+    tag: latest
+  config:
+    queueSize: 10000
+    disableCompression: false
     metrics:
       interval: 60s
+    cache:
+      flushInterval: "168h" # a week, put 0 to disable cache flushing
+      maxEntries: 10000
+      configMap:
+        enabled: true
+        name: ""
+  resources:
+    limits:
+      cpu: 3000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
 
-  output:
-    stdout: false
-    otlp:
-      otlpEndpoint: ""
-      tlsSkipVerify: false
-
-      # Leave empty if you want to create default secrets based on the httpAuthHeader param.
-      #
-      existingSecret: ""
-
-      # Ignored when existingSecret specified
-      #
-      httpAuthHeader: ""
-
-k8s-read:
-  enabled: false
-
-  miggo:
-    clusterName: "" # Set empty to allow global value inheritance or user override
-
-  config:
-    metrics:
-      interval: "" # Set empty to allow global value inheritance or user override
-
-static-sbom:
-  enabled: false
-
-  miggo:
-    clusterName: "" # Set empty to allow global value inheritance or user override
-
-  config:
-    metrics:
-      interval: "" # Set empty to allow global value inheritance or user override
-
-miggo-sensor:
-  enabled: false
-
-  miggo:
-    clusterName: "" # Set empty to allow global value inheritance or user override
-
-  config:
-    metrics:
-      interval: "" # Set empty to allow global value inheritance or user override
+sensor:
+  enabled: true
+  kubernetesClusterDomain: ""
+  image:
+    repository: miggoprod/dynamic-ebpf
+    tag: latest
+  resources:
+    limits:
+      cpu: 3000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  nodeSelector:
+    kubernetes.io/os: linux
 
 collector:
   enabled: true
+  labels: {}
+  annotations: {}
+  podAnnotations: {}
+  podLabels: {}
+  extraEnvs: []
+  extraEnvsFrom: []
+  volumes: []
+  volumeMounts: []
+  image:
+    repository: miggoprod/miggo-infra-agent
+    tag: latest
+  config:
+    logVerbosity: basic # detailed|normal|basic
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 1Gi
+  service:
+    type: ClusterIP
+    annotations: {}
+    labels: {}
+    ports:
+      - protocol: TCP
+        port: 4318
+        targetPort: 4318
+        name: http
+      - protocol: TCP
+        port: 4317
+        targetPort: 4317
+        name: grpc

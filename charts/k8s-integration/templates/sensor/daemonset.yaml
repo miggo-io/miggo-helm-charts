@@ -1,0 +1,114 @@
+{{ if .Values.sensor.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "k8s-integrations.fullname" . }}-sensor
+  labels:
+    {{- include "k8s-integrations.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+    {{- with .Values.sensor.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+  annotations:
+  {{- with .Values.annotations }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with .Values.sensor.annotations }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+    {{- include "sensor.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- with .Values.podAnnotations }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sensor.podAnnotations }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "sensor.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with .Values.sensor.podLabels }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+    spec:
+      imagePullSecrets:
+        {{- with .Values.imagePullSecrets }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- include "miggoImagePullSecrets" . | nindent 8 }}
+      serviceAccountName: {{ include "k8s-integrations.serviceAccountName" . }}-sensor
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: miggo-sensor
+          securityContext:
+            privileged: true
+          image: "{{ .Values.image.registry }}/{{ .Values.sensor.image.repository }}:{{ .Values.sensor.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --cluster-name={{ .Values.miggo.clusterName }}
+            - --tenant-name={{ .Values.miggo.tenantId }}
+            - --project-name={{ .Values.miggo.projectId }}
+            - --otlp-endpoint={{ (include "otlpEndpoint" .) }} 
+            - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
+            - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --stdout={{ .Values.output.stdout }}
+            - --port={{ .Values.healthcheck.port }}
+            - --metric-otlp-endpoint={{ (include "otlpEndpointHealthCheckPort" .) }}
+            - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --metric-interval={{ .Values.config.metrics.interval }}
+          env:
+            - name: DYNAMIC_EBPF_AGENT_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: KUBERNETES_CLUSTER_DOMAIN
+              value: {{ quote .Values.kubernetesClusterDomain }}
+          ports:
+          - containerPort: {{ .Values.healthcheck.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.sensor.resources | nindent 12 }}
+          volumeMounts:
+          - mountPath: /sys/kernel/debug
+            name: debugfs
+      hostPID: true
+      volumes:
+      - hostPath:
+          path: /sys/kernel/debug
+        name: debugfs
+      nodeSelector:
+      {{- with .Values.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.staticSbom.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      priorityClassName: system-node-critical
+{{ end }}

@@ -2,25 +2,5 @@ apiVersion: v2
 name: k8s-integration
 description: A Helm chart for miggo's k8s-integration
 type: application
-version: 0.0.21
+version: 0.0.22
 appVersion: "0.0.1"
-dependencies:
-  - name: k8s-read
-    condition: k8s-read.enabled
-    repository: file://../k8s-read
-    version: "*"
-  - name: static-sbom
-    condition: static-sbom.enabled
-    repository: file://../static-sbom
-    version: "*"
-  - name: miggo-sensor
-    condition: miggo-sensor.enabled
-    repository: file://../miggo-sensor
-    version: "*"
-  - name: collector
-    condition: collector.enabled
-    repository: file://../miggo-collector
-    version: "*"
-  - name: common
-    repository: file://../common
-    version: "*"

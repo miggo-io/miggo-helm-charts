@@ -1,0 +1,59 @@
+{{ if .Values.collector.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collector-config-cm
+data:
+  config.yaml: |
+    extensions:
+      health_check:
+        endpoint: 0.0.0.0:{{ .Values.healthcheck.port }}
+      oauth2client:
+        client_id: {{ .Values.config.clientId }}
+        client_secret_file: /etc/miggo-access-key
+        token_url: https://api.descope.com/oauth2/v1/token
+        timeout: 1m
+
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:4318"
+    
+    processors:
+      batch:
+        timeout: 10s
+
+    exporters:
+      
+      debug:
+        verbosity: {{ .Values.config.logVerbosity }}
+      
+      prometheus:
+        endpoint: 0.0.0.0:8889
+      
+      otlphttp:
+        traces_endpoint: {{ .Values.output.otlp.otlpEndpoint }}/v1/traces
+        metrics_endpoint: {{ .Values.output.otlp.otlpEndpoint }}/v1/metrics
+        logs_endpoint: {{ .Values.output.otlp.otlpEndpoint }}/v1/logs
+        auth:
+          authenticator: oauth2client
+
+    service:
+      extensions: [health_check, oauth2client]
+      pipelines:
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug, prometheus, otlphttp]
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug, otlphttp]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug, otlphttp]
+{{ end }}

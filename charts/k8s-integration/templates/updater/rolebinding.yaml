@@ -1,0 +1,14 @@
+{{ if .Values.config.updaterEnabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: updater-binding
+subjects:
+- kind: ServiceAccount
+  name: {{ include "k8s-integrations.serviceAccountName" . }}-updater
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: updater-role
+  apiGroup: rbac.authorization.k8s.io
+{{ end }}

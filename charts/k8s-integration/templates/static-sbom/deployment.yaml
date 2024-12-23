@@ -1,0 +1,141 @@
+{{ if .Values.staticSbom.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "k8s-integrations.fullname" . }}-static-sbom
+  labels:
+    {{- include "k8s-integrations.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+    {{- with .Values.staticSbom.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+  annotations:
+  {{- with .Values.annotations }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with .Values.staticSbom.annotations }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "static-sbom.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with .Values.staticSbom.podAnnotations }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "k8s-read.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with .Values.staticSbom.podLabels }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+    spec:
+      imagePullSecrets:
+        {{- with .Values.imagePullSecrets }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- include "miggoImagePullSecrets" . | nindent 8 }}
+      serviceAccountName: {{ include "k8s-integrations.serviceAccountName" . }}-static-sbom
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: static-sbom
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.registry }}/{{ .Values.staticSbom.image.repository }}:{{ .Values.staticSbom.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --cluster-name={{ .Values.miggo.clusterName }}
+            - --tenant-name={{ .Values.miggo.tenantId }}
+            - --project-name={{ .Values.miggo.projectId }}
+            - --otlp-endpoint={{ (include "otlpEndpoint" .) }} 
+            - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
+            - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --stdout={{ .Values.output.stdout }}
+            - --port={{ .Values.healthcheck.port }}
+            - --metric-otlp-endpoint={{ (include "otlpEndpointHealthCheckPort" .) }}
+            - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --metric-interval={{ .Values.config.metrics.interval }}
+            - --queue-size={{ .Values.staticSbom.config.queueSize }}
+            {{ if .Values.staticSbom.config.disableCompression }}
+            - --disable-compression
+            {{ end }}
+            - --cache-flush-interval={{ .Values.staticSbom.config.cache.flushInterval }}
+            - --cache-size={{ .Values.staticSbom.config.cache.maxEntries }}
+            {{ if .Values.staticSbom.config.cache.configMap.enabled }}
+            - --cache-cm-name={{ include "static-sbom.configMapCacheName" . }}
+            - --cache-cm-namespace={{ .Release.Namespace }}
+            {{ end }}
+          envFrom:
+          {{- if .Values.output.otlp.existingSecret }}
+          - secretRef:
+              name: {{ .Values.output.otlp.existingSecret }}
+          {{- else if (not (empty ( .Values.output.otlp.authHeader ))) }}
+          - secretRef:
+              name: otlp-secret
+          {{- end }}
+          {{- with .Values.extraEnvsFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.staticSbom.extraEnvsFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          env:
+          {{- with .Values.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.staticSbom.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+          - containerPort: {{ .Values.healthcheck.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.staticSbom.resources | nindent 12 }}
+          volumeMounts:
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.staticSbom.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.staticSbom.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}
