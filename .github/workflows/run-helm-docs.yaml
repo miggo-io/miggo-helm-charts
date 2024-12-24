@@ -40,11 +40,17 @@ jobs:
           helm-docs --version
 
       - name: Generate Helm Docs
+        id: generate_docs
         run: |
           helm-docs
+          if git status | grep README.md; then
+            echo "changes_detected=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changes_detected=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Commit and push changes
-        if: steps.version_check.outputs.versions_bumped == 'true'
+        if: steps.generate_docs.outputs.changes_detected == 'true'
         run: |
           # Make sure we're on the PR branch
           git checkout ${{ github.head_ref }}
