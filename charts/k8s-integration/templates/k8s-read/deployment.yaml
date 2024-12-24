@@ -33,6 +33,7 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
       labels:
+        component: k8s-read
         {{- include "k8s-read.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
