@@ -137,6 +137,8 @@ The following table lists the configurable parameters of the k8s-integration cha
 | podSecurityContext | object | `{}` | Pod security context for all pods |
 | securityContext | object | `{}` | Container security context for all containers |
 | sensor.enabled | bool | `true` | Enable Sensor component |
+| sensor.extraEnvs | list | `[]` | Additional environment variables |
+| sensor.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
 | sensor.image.repository | string | `"miggoprod/dynamic-ebpf"` | Image repository |
 | sensor.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | sensor.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
@@ -145,6 +147,8 @@ The following table lists the configurable parameters of the k8s-integration cha
 | sensor.resources.limits.memory | string | `"4Gi"` |  |
 | sensor.resources.requests.cpu | string | `"1000m"` |  |
 | sensor.resources.requests.memory | string | `"2Gi"` |  |
+| sensor.volumeMounts | list | `[]` | Additional volume mounts for all containers |
+| sensor.volumes | list | `[]` |  |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.automount | bool | `true` | Automatically mount API credentials for the service account |
 | serviceAccount.name | string | `""` | Name of the service account. If not set, a name is generated |
