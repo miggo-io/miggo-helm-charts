@@ -72,13 +72,6 @@ spec:
             - --disable-compression
             {{ end }}
           envFrom:
-          {{- if .Values.output.otlp.existingSecret }}
-          - secretRef:
-              name: {{ .Values.output.otlp.existingSecret }}
-          {{- else if .Values.output.otlp.authHeader }}
-          - secretRef:
-              name: otlp-secret
-          {{- end }}
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
