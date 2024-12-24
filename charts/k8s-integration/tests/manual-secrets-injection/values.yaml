@@ -3,13 +3,13 @@ miggo:
   projectId: "8f74294c-c769-4746-b1f3-cc20eecf0149"
   clusterName: "simple-test"
 
-k8s-read:
+k8sRead:
   enabled: true
 
-static-sbom:
+staticSbom:
   enabled: true
 
-miggo-sensor:
+sensor:
   enabled: true
 
 collector:

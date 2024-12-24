@@ -1,4 +1,4 @@
-suite: simple installation
+suite: customer secrets
 
 release:
   name: miggo
