@@ -67,13 +67,26 @@ spec:
             - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }} 
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
+          envFrom:
+          {{- with .Values.extraEnvsFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.sensor.extraEnvsFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           env:
-            - name: DYNAMIC_EBPF_AGENT_NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            - name: KUBERNETES_CLUSTER_DOMAIN
-              value: {{ quote .Values.kubernetesClusterDomain }}
+          - name: DYNAMIC_EBPF_AGENT_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: KUBERNETES_CLUSTER_DOMAIN
+            value: {{ quote .Values.kubernetesClusterDomain }}
+          {{- with .Values.extraEnvs }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.sensor.extraEnvs }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           ports:
           - containerPort: {{ .Values.healthcheck.port }}
           livenessProbe:
@@ -91,11 +104,23 @@ spec:
           volumeMounts:
           - mountPath: /sys/kernel/debug
             name: debugfs
+          {{- with .Values.volumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.sensor.volumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
       hostPID: true
       volumes:
       - hostPath:
           path: /sys/kernel/debug
         name: debugfs
+      {{- with .Values.volumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.sensor.volumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       nodeSelector:
       {{- with .Values.nodeSelector }}
         {{- toYaml . | nindent 8 }}

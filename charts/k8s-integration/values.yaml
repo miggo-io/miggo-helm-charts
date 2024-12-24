@@ -183,6 +183,13 @@ sensor:
   enabled: true
   # -- Kubernetes cluster domain
   kubernetesClusterDomain: ""
+  # -- Additional environment variables
+  extraEnvs: []
+  # -- Additional environment variables from sources
+  extraEnvsFrom: []
+  volumes: []
+  # -- Additional volume mounts for all containers
+  volumeMounts: []
 
   image:
     # -- Image repository

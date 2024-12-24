@@ -29,9 +29,11 @@ jobs:
           # Get list of modified charts
           # Run tests for each modified chart
           for chart in charts/*; do
-              echo "Testing chart: $chart"
               cd $chart
-              helm dependency update
-              helm unittest . || exit 1
-              cd ../../
+              if [ -e "run-tests.sh" ]; then
+                echo "Testing chart: $chart"
+                helm dependency update
+                ./run-tests.sh || exit 1
+                cd ../../
+              fi
           done

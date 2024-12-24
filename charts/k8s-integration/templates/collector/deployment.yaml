@@ -96,10 +96,10 @@ spec:
             subPath: ACCESS_KEY
           {{- end }}
           {{- with .Values.volumeMounts }}
-            {{- toYaml . | nindent 12 }}
+          {{- toYaml . | nindent 10 }}
           {{- end }}
           {{- with .Values.collector.volumeMounts }}
-            {{- toYaml . | nindent 12 }}
+          {{- toYaml . | nindent 10 }}
           {{- end }}
       volumes:
       - name: collector-config
@@ -114,10 +114,10 @@ spec:
             path: ACCESS_KEY
       {{- end }}
       {{- with .Values.volumes }}
-        {{- toYaml . | nindent 8 }}
+      {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- with .Values.collector.volumes }}
-        {{- toYaml . | nindent 8 }}
+      {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
