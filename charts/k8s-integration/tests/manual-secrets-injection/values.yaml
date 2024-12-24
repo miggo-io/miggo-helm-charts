@@ -1,0 +1,16 @@
+miggo:
+  tenantId: "1b4a61e8-cdc8-4174-87bf-8201406ee65e"
+  projectId: "8f74294c-c769-4746-b1f3-cc20eecf0149"
+  clusterName: "simple-test"
+
+k8s-read:
+  enabled: true
+
+static-sbom:
+  enabled: true
+
+miggo-sensor:
+  enabled: true
+
+collector:
+  enabled: true

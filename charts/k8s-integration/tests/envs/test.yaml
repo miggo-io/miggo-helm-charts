@@ -1,0 +1,157 @@
+suite: custom envrionment variables
+
+release:
+  name: envtest
+  namespace: miggo-space
+
+templates:
+  - templates/k8s-read/deployment.yaml
+  - templates/static-sbom/deployment.yaml
+  - templates/sensor/daemonset.yaml
+  - templates/collector/deployment.yaml
+  - templates/collector/collector-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: collector deployment
+    template: templates/collector/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: environment
+            value: staging
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: component
+            value: collector
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: common-cm
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: common-secret
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: collector-cm
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: collector-secret
+
+  - it: k8s-read deployment
+    template: templates/k8s-read/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: environment
+            value: staging
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: component
+            value: k8s-read
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: type
+            value: testing
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: common-cm
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: common-secret
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: k8s-read-cm
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: k8s-read-secret
+
+  - it: static-sbom deployment
+    template: templates/static-sbom/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: environment
+            value: staging
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: component
+            value: static-sbom
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: common-cm
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: common-secret
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: sbom-cm
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: sbom-secret
+
+  - it: sensor daemonset
+    template: templates/sensor/daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: environment
+            value: staging
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: component
+            value: sensor
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: common-cm
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: common-secret
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: sensor-cm
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: sensor-secret
