@@ -110,7 +110,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | k8sRead.annotations | object | `{}` | Component-specific annotations |
 | k8sRead.config.disableCompression | bool | `false` | Disable compression for data transfer |
 | k8sRead.config.interval | string | `"6h"` | Interval for scanning Kubernetes resources |
-| k8sRead.enabled | bool | `true` | Enable K8s Read component |
+| k8sRead.enabled | bool | `false` | Enable K8s Read component |
 | k8sRead.extraEnvs | list | `[]` | Additional environment variables |
 | k8sRead.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
 | k8sRead.image.repository | string | `"miggoprod/k8s-read"` | Image repository |
@@ -136,7 +136,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | podLabels | object | `{}` | Pod labels to add to all pods |
 | podSecurityContext | object | `{}` | Pod security context for all pods |
 | securityContext | object | `{}` | Container security context for all containers |
-| sensor.enabled | bool | `true` | Enable Sensor component |
+| sensor.enabled | bool | `false` | Enable Sensor component |
 | sensor.extraEnvs | list | `[]` | Additional environment variables |
 | sensor.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
 | sensor.image.repository | string | `"miggoprod/dynamic-ebpf"` | Image repository |
@@ -159,7 +159,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | staticSbom.config.cache.maxEntries | int | `10000` | Maximum number of entries in cache |
 | staticSbom.config.disableCompression | bool | `false` | Disable compression for data transfer |
 | staticSbom.config.queueSize | int | `10000` | Max limit of the processing queue |
-| staticSbom.enabled | bool | `true` | Enable Static SBOM component |
+| staticSbom.enabled | bool | `false` | Enable Static SBOM component |
 | staticSbom.extraEnvs | list | `[]` | Additional environment variables |
 | staticSbom.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
 | staticSbom.image.repository | string | `"miggoprod/static-sbom"` | Image repository |
