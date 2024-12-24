@@ -89,7 +89,7 @@ spec:
           volumeMounts:
           - name: collector-config
             mountPath: /etc/collector
-          {{ if (not (empty (include "accessKeySecret" .))) }}
+          {{ if (include "accessKeySecret" .) }}
           - name: access-key
             mountPath: /etc/miggo-access-key
             subPath: ACCESS_KEY
@@ -104,7 +104,7 @@ spec:
       - name: collector-config
         configMap:
           name: collector-config-cm
-      {{ if (not (empty (include "accessKeySecret" .))) }}
+      {{ if (include "accessKeySecret" .) }}
       - name: access-key
         secret:
           secretName: {{ include "accessKeySecret" . }}

@@ -19,9 +19,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{- define "accessKeySecret" -}}
-{{- if (not (empty (.Values.config.accessKeySecret))) -}}
+{{- if .Values.config.accessKeySecret -}}
 {{- .Values.config.accessKeySecret -}}
-{{- else if (not (empty (.Values.config.accessKey))) -}}
+{{- else if .Values.config.accessKey -}}
 access-key-secret
 {{- end -}}
 {{- end -}}

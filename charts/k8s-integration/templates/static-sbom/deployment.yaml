@@ -33,7 +33,7 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
       labels:
-        {{- include "k8s-read.labels" . | nindent 8 }}
+        {{- include "static-sbom.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
@@ -64,7 +64,7 @@ spec:
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --stdout={{ .Values.output.stdout }}
             - --port={{ .Values.healthcheck.port }}
-            - --metric-otlp-endpoint={{ (include "otlpEndpointHealthCheckPort" .) }}
+            - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }} 
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
             - --queue-size={{ .Values.staticSbom.config.queueSize }}
@@ -81,7 +81,7 @@ spec:
           {{- if .Values.output.otlp.existingSecret }}
           - secretRef:
               name: {{ .Values.output.otlp.existingSecret }}
-          {{- else if (not (empty ( .Values.output.otlp.authHeader ))) }}
+          {{- else if .Values.output.otlp.authHeader }}
           - secretRef:
               name: otlp-secret
           {{- end }}

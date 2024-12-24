@@ -82,7 +82,7 @@ http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4318
 {{- end -}}
 
 {{- define "miggoImagePullSecrets" -}}
-{{- if (not (empty .Values.config.accessKey)) }}
+{{- if .Values.config.accessKey }}
 - name: miggo-regcred
 {{- end }}
 {{- end -}}

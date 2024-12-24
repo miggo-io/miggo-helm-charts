@@ -63,7 +63,7 @@ spec:
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --stdout={{ .Values.output.stdout }}
             - --port={{ .Values.healthcheck.port }}
-            - --metric-otlp-endpoint={{ (include "otlpEndpointHealthCheckPort" .) }}
+            - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }} 
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
           env:
