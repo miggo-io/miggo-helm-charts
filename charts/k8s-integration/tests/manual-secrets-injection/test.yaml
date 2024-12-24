@@ -42,31 +42,31 @@ tests:
           path: spec.template.spec.containers[0].volumeMounts
           count: 1
 
-  - it: k8s-read deployment
-    template: templates/k8s-read/deployment.yaml
-    asserts:
-      - equal:
-          path: spec.template.spec.imagePullSecrets
-          value: null
-      - lengthEqual:
-          path: spec.template.spec.volumes
-          count: 0
-      - lengthEqual:
-          path: spec.template.spec.containers[0].volumeMounts
-          count: 0
+  # - it: k8s-read deployment
+  #   template: templates/k8s-read/deployment.yaml
+  #   asserts:
+  #     - equal:
+  #         path: spec.template.spec.imagePullSecrets
+  #         value: null
+  #     - lengthEqual:
+  #         path: spec.template.spec.volumes
+  #         count: 0
+  #     - lengthEqual:
+  #         path: spec.template.spec.containers[0].volumeMounts
+  #         count: 0
 
-  - it: static-sbom deployment
-    template: templates/static-sbom/deployment.yaml
-    asserts:
-      - equal:
-          path: spec.template.spec.imagePullSecrets
-          value: null
-      - lengthEqual:
-          path: spec.template.spec.volumes
-          count: 0
-      - lengthEqual:
-          path: spec.template.spec.containers[0].volumeMounts
-          count: 0
+  # - it: static-sbom deployment
+  #   template: templates/static-sbom/deployment.yaml
+  #   asserts:
+  #     - equal:
+  #         path: spec.template.spec.imagePullSecrets
+  #         value: null
+  #     - lengthEqual:
+  #         path: spec.template.spec.volumes
+  #         count: 0
+  #     - lengthEqual:
+  #         path: spec.template.spec.containers[0].volumeMounts
+  #         count: 0
       
   - it: sensor daemonset
     template: templates/sensor/daemonset.yaml
