@@ -1,68 +1,267 @@
-global:
-  ## List of secrets to use for pulling images from authenticated repositories.
-  ## Only one of imagePullSecrets or imageCredentials should be specified.
-  imagePullSecrets:
-    - name: ""
+# -- Docker registry settings
+image:
+  # -- Registry host for all images
+  registry: registry.miggo.io
+  # -- Image pull policy for all images
+  pullPolicy: Always
 
-  ## Credentials to create a secret for image pulling.
-  ## Only one of imagePullSecrets or imageCredentials should be specified.
-  imageCredentials:
-    registry: ""
-    username: ""
-    password: ""
+## -- List of secrets to use for pulling images from authenticated repositories
+imagePullSecrets: []
+  # -- Name of the image pull secret
+  # - name: ""
 
-  miggo:
-    tenantId: ""
-    projectId: ""
-    clusterName: "kubernetes-cluster"
+miggo:
+  # -- Tenant ID for the Miggo platform
+  tenantId: ""
+  # -- Project ID for the Miggo platform
+  projectId: ""
+  # -- Name of the Kubernetes cluster
+  clusterName: "kubernetes-cluster"
+
+healthcheck:
+  # -- Port number for health check endpoints
+  port: 6666
+
+config:
+  # -- Enable automatic updates for deployments
+  updaterEnabled: true
+  # -- Cron schedule for the updater (default: every 6 hours)
+  updaterCron: "0 */6 * * *"
+  # -- Metrics configuration
+  metrics:
+    # -- Interval for metrics collection
+    interval: 60s
+  
+  # -- Client ID for authentication
+  clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
+  
+  # -- Access key for authentication (ignored when accessKeySecret is specified)
+  accessKey: ""
+  
+  # -- Name of the secret containing the access key. Leave empty to create default secrets based on config.accessKey
+  accessKeySecret: ""
+
+output:
+  # -- Enable stdout logging (for debugging)
+  stdout: false
+
+  otlp:
+    # -- OTLP endpoint URL
+    otlpEndpoint: "https://api.miggo.io"
+    # -- Skip TLS verification
+    tlsSkipVerify: false
+
+serviceAccount:
+  # -- Automatically mount API credentials for the service account
+  automount: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- Name of the service account. If not set, a name is generated
+  name: ""
+
+# -- Global labels to add to all resources
+labels: {}
+# -- Global annotations to add to all resources
+annotations: {}
+# -- Pod annotations to add to all pods
+podAnnotations: {}
+# -- Pod labels to add to all pods
+podLabels: {}
+# -- Pod security context for all pods
+podSecurityContext: {}
+# -- Container security context for all containers
+securityContext: {}
+# -- Additional environment variables for all containers
+extraEnvs: []
+# -- Additional environment variables from sources for all containers
+extraEnvsFrom: []
+# -- Additional volumes for all pods
+volumes: []
+# -- Additional volume mounts for all containers
+volumeMounts: []
+# -- Node selector for all pods
+nodeSelector: {}
+# -- Tolerations for all pods
+tolerations: []
+# -- Pod affinity settings for all pods
+affinity: {}
+
+k8sRead:
+  # -- Enable K8s Read component
+  enabled: true
+  # -- Component-specific labels
+  labels: {}
+  # -- Component-specific annotations
+  annotations: {}
+  # -- Component-specific pod annotations
+  podAnnotations: {}
+  # -- Component-specific pod labels
+  podLabels: {}
+  # -- Additional environment variables
+  extraEnvs: []
+  # -- Additional environment variables from sources
+  extraEnvsFrom: []
+  # -- Additional volumes
+  volumes: []
+  # -- Additional volume mounts
+  volumeMounts: []
+
+  image:
+    # -- Image repository
+    repository: miggoprod/k8s-read
+    # -- Image tag (defaults to Chart appVersion if not set)
+    tag: latest
 
   config:
-    metrics:
-      interval: 60s
+    # -- Interval for scanning Kubernetes resources
+    interval: 6h
+    # -- Disable compression for data transfer
+    disableCompression: false
 
-  output:
-    stdout: false
-    otlp:
-      otlpEndpoint: ""
-      tlsSkipVerify: false
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
 
-      # Leave empty if you want to create default secrets based on the httpAuthHeader param.
-      #
-      existingSecret: ""
+staticSbom:
+  # -- Enable Static SBOM component
+  enabled: true
+  # -- Component-specific labels
+  labels: {}
+  # -- Component-specific annotations
+  annotations: {}
+  # -- Component-specific pod annotations
+  podAnnotations: {}
+  # -- Component-specific pod labels
+  podLabels: {}
+  # -- Additional environment variables
+  extraEnvs: []
+  # -- Additional environment variables from sources
+  extraEnvsFrom: []
+  # -- Additional volumes
+  volumes: []
+  # -- Additional volume mounts
+  volumeMounts: []
 
-      # Ignored when existingSecret specified
-      #
-      httpAuthHeader: ""
+  image:
+    # -- Image repository
+    repository: miggoprod/static-sbom
+    # -- Image tag (defaults to Chart appVersion if not set)
+    tag: latest
 
-k8s-read:
+  config:
+    # -- Max limit of the processing queue
+    queueSize: 10000
+    # -- Disable compression for data transfer
+    disableCompression: false
+
+    cache:
+      # -- Interval for cache flushing (0 to disable)
+      flushInterval: "168h"
+      # -- Maximum number of entries in cache
+      maxEntries: 10000
+
+      configMap:
+        # -- Enable persisted ConfigMap based cache
+        enabled: true
+        # -- Name of the ConfigMap (generated if not set)
+        name: ""
+
+  resources:
+    limits:
+      cpu: 3000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+sensor:
+  # -- Enable Sensor component
   enabled: false
+  # -- Kubernetes cluster domain
+  kubernetesClusterDomain: ""
+  # -- Additional environment variables
+  extraEnvs: []
+  # -- Additional environment variables from sources
+  extraEnvsFrom: []
+  volumes: []
+  # -- Additional volume mounts for all containers
+  volumeMounts: []
 
-  miggo:
-    clusterName: "" # Set empty to allow global value inheritance or user override
+  image:
+    # -- Image repository
+    repository: miggoprod/dynamic-ebpf
+    # -- Image tag (defaults to Chart appVersion if not set)
+    tag: latest
 
-  config:
-    metrics:
-      interval: "" # Set empty to allow global value inheritance or user override
-
-static-sbom:
-  enabled: false
-
-  miggo:
-    clusterName: "" # Set empty to allow global value inheritance or user override
-
-  config:
-    metrics:
-      interval: "" # Set empty to allow global value inheritance or user override
-
-miggo-sensor:
-  enabled: false
-
-  miggo:
-    clusterName: "" # Set empty to allow global value inheritance or user override
-
-  config:
-    metrics:
-      interval: "" # Set empty to allow global value inheritance or user override
+  # -- Node selector settings
+  nodeSelector:
+    kubernetes.io/os: linux
+    
+  resources:
+    limits:
+      cpu: 3000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
 
 collector:
+  # -- Enable Collector component
   enabled: true
+  # -- Component-specific labels
+  labels: {}
+  # -- Component-specific annotations
+  annotations: {}
+  # -- Component-specific pod annotations
+  podAnnotations: {}
+  # -- Component-specific pod labels
+  podLabels: {}
+  # -- Additional environment variables
+  extraEnvs: []
+  # -- Additional environment variables from sources
+  extraEnvsFrom: []
+  # -- Additional volumes
+  volumes: []
+  # -- Additional volume mounts
+  volumeMounts: []
+
+  image:
+    # -- Image repository
+    repository: miggoprod/miggo-infra-agent
+    # -- Image tag (defaults to Chart appVersion if not set)
+    tag: latest
+
+  config:
+    # -- Log verbosity level (detailed|normal|basic)
+    logVerbosity: basic
+
+  # -- Resource requirements
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 1Gi
+      
+  service:
+    # -- Service type
+    type: ClusterIP
+    # -- Service annotations
+    annotations: {}
+    # -- Service labels
+    labels: {}
+    # -- Service ports
+    ports:
+      - protocol: TCP
+        port: 4318
+        targetPort: 4318
+        name: http
+      - protocol: TCP
+        port: 4317
+        targetPort: 4317
+        name: grpc

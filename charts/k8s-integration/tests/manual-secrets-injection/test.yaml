@@ -1,0 +1,56 @@
+suite: manual secrets injection
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/k8s-read/deployment.yaml
+  - templates/static-sbom/deployment.yaml
+  - templates/sensor/daemonset.yaml
+  - templates/collector/deployment.yaml
+  - templates/collector/collector-config-cm.yaml
+  - templates/image-pull-secret.yaml
+  - templates/access-key-secret.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: no access key secret
+    template: templates/access-key-secret.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: no image pull secrets
+    template: templates/image-pull-secret.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: collector deployment
+    template: templates/collector/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: null
+      - lengthEqual:
+          path: spec.template.spec.volumes
+          count: 1
+      - lengthEqual:
+          path: spec.template.spec.containers[0].volumeMounts
+          count: 1
+
+  - it: sensor daemonset
+    template: templates/sensor/daemonset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: null
+      - lengthEqual:
+          path: spec.template.spec.volumes
+          count: 1
+      - lengthEqual:
+          path: spec.template.spec.containers[0].volumeMounts
+          count: 1

@@ -1,0 +1,63 @@
+name: Generate Helm Docs
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'charts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate-helm-docs:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+    
+      - name: Install Helm Docs
+        run: |
+          cd /tmp
+          HELM_DOCS_VERSION=$(curl -s https://api.github.com/repos/norwoodj/helm-docs/releases/latest | jq -r '.tag_name')
+          curl -L -o helm-docs.tar.gz "https://github.com/norwoodj/helm-docs/releases/download/${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION#v}_Linux_x86_64.tar.gz"
+          tar xzvf helm-docs.tar.gz
+          sudo mv helm-docs /usr/local/bin/helm-docs
+          helm-docs --version
+
+      - name: Generate Helm Docs
+        id: generate_docs
+        run: |
+          helm-docs
+          if git status | grep README.md; then
+            echo "changes_detected=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changes_detected=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push changes
+        if: steps.generate_docs.outputs.changes_detected == 'true'
+        run: |
+          # Make sure we're on the PR branch
+          git checkout ${{ github.head_ref }}
+          
+          # Add and commit changes
+          git add charts/*/README.md
+          git commit -m "[AUTO GITHUB] Chart README.md"
+          
+          # Push to the PR branch
+          git push origin ${{ github.head_ref }}

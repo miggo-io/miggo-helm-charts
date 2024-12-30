@@ -1,0 +1,11 @@
+k8s-read:
+  enabled: false
+
+static-sbom:
+  enabled: false
+
+miggo-sensor:
+  enabled: false
+
+collector:
+  enabled: false

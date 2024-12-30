@@ -1,0 +1,70 @@
+miggo:
+  tenantId: "1b4a61e8-cdc8-4174-87bf-8201406ee65e"
+  projectId: "8f74294c-c769-4746-b1f3-cc20eecf0149"
+  clusterName: "simple-test"
+
+config:
+  accessKey: "d6918ba5-b727-4d51-bae5-31c2a8ba59cb98944bab-d97a-4e3a-9b22-dae633070ba9"
+
+extraEnvs:
+  - name: environment
+    value: staging
+
+extraEnvsFrom:
+  - configMapRef:
+      name: common-cm
+  - secretRef:
+      name: common-secret
+
+k8sRead:
+  enabled: true
+  extraEnvs:
+    - name: component
+      value: k8s-read
+    - name: type
+      value: testing
+  
+  extraEnvsFrom:
+    - configMapRef:
+        name: k8s-read-cm
+    - secretRef:
+        name: k8s-read-secret
+  
+staticSbom:
+  enabled: true
+  extraEnvs:
+    - name: component
+      value: static-sbom
+  
+  extraEnvsFrom:
+    - configMapRef:
+        name: sbom-cm
+    - secretRef:
+        name: sbom-secret
+      
+sensor:
+  enabled: true
+  extraEnvs:
+    - name: component
+      value: sensor
+  
+    
+  extraEnvsFrom:
+    - configMapRef:
+        name: sensor-cm
+    - secretRef:
+        name: sensor-secret
+
+
+collector:
+  enabled: true
+  extraEnvs:
+    - name: component
+      value: collector
+        
+  extraEnvsFrom:
+    - configMapRef:
+        name: collector-cm
+    - secretRef:
+        name: collector-secret
+

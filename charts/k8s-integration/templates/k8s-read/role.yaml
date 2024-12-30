@@ -1,0 +1,30 @@
+{{ if .Values.k8sRead.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: k8s-read-cluster-role
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments", "statefulsets"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: [""]
+  resources: ["services", "pods", "serviceaccounts"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses", "ingressclasses"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: ["gateway.networking.k8s.io"]
+  resources: ["gateways", "httproutes", "gatewayclasses"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: ["apps"]
+  resources: ["daemonsets"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: ["batch"]
+  resources: ["cronjobs"]
+  verbs: ["get", "list", "watch"]
+{{ end }}

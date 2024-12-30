@@ -1,1 +1,0 @@
-Miggo's k8s-read installed successfully

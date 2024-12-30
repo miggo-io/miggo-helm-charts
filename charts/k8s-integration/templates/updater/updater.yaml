@@ -1,0 +1,35 @@
+{{ if .Values.config.updaterEnabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "k8s-integrations.fullname" . }}-image-updater
+spec:
+  schedule: "{{ .Values.config.updaterCron }}"
+  successfulJobsHistoryLimit: 0
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ include "k8s-integrations.serviceAccountName" . }}-updater
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl
+            command: ["/bin/bash", "-c"]
+            args: 
+              - |
+                #/bin/bash
+                
+                {{ if .Values.k8sRead.enabled }}
+                kubectl rollout restart deployment/{{ include "k8s-integrations.fullname" . }}-k8s-read
+                {{ end }}
+                {{ if .Values.staticSbom.enabled }}
+                kubectl rollout restart deployment/{{ include "k8s-integrations.fullname" . }}-static-sbom
+                {{ end }}
+                {{ if .Values.sensor.enabled }}
+                kubectl rollout restart deployment/{{ include "k8s-integrations.fullname" . }}-sensor
+                {{ end }}
+                {{ if .Values.collector.enabled }}
+                kubectl rollout restart deployment/{{ include "k8s-integrations.fullname" . }}-collector
+                {{ end }}
+          restartPolicy: Never
+{{ end }}
