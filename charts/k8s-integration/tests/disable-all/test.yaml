@@ -1,4 +1,4 @@
-suite: simple installation
+suite: disable all
 
 release:
   name: miggo

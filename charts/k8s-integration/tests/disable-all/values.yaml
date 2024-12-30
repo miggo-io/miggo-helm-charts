@@ -1,10 +1,10 @@
-k8s-read:
+k8sRead:
   enabled: false
 
-static-sbom:
+staticSbom:
   enabled: false
 
-miggo-sensor:
+sensor:
   enabled: false
 
 collector:
