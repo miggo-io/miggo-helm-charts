@@ -31,7 +31,7 @@ Monitors Kubernetes resources and tracks changes in your cluster's configuration
 
 Analyzes container images to generate Software Bill of Materials (SBOM), identifying dependencies and potential security vulnerabilities.
 
-### Sensor
+### Container Monitor
 
 Uses eBPF technology to monitor runtime behavior of containers and system calls, providing deep visibility into container activities.
 
