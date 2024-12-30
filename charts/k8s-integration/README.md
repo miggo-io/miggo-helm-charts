@@ -31,7 +31,7 @@ Monitors Kubernetes resources and tracks changes in your cluster's configuration
 
 Analyzes container images to generate Software Bill of Materials (SBOM), identifying dependencies and potential security vulnerabilities.
 
-### Container Monitor
+### Sensor
 
 Uses eBPF technology to monitor runtime behavior of containers and system calls, providing deep visibility into container activities.
 
@@ -110,7 +110,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | k8sRead.annotations | object | `{}` | Component-specific annotations |
 | k8sRead.config.disableCompression | bool | `false` | Disable compression for data transfer |
 | k8sRead.config.interval | string | `"6h"` | Interval for scanning Kubernetes resources |
-| k8sRead.enabled | bool | `false` | Enable K8s Read component |
+| k8sRead.enabled | bool | `true` | Enable K8s Read component |
 | k8sRead.extraEnvs | list | `[]` | Additional environment variables |
 | k8sRead.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
 | k8sRead.image.repository | string | `"miggoprod/k8s-read"` | Image repository |
@@ -159,7 +159,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | staticSbom.config.cache.maxEntries | int | `10000` | Maximum number of entries in cache |
 | staticSbom.config.disableCompression | bool | `false` | Disable compression for data transfer |
 | staticSbom.config.queueSize | int | `10000` | Max limit of the processing queue |
-| staticSbom.enabled | bool | `false` | Enable Static SBOM component |
+| staticSbom.enabled | bool | `true` | Enable Static SBOM component |
 | staticSbom.extraEnvs | list | `[]` | Additional environment variables |
 | staticSbom.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
 | staticSbom.image.repository | string | `"miggoprod/static-sbom"` | Image repository |
