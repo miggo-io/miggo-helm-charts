@@ -88,7 +88,7 @@ affinity: {}
 
 k8sRead:
   # -- Enable K8s Read component
-  enabled: false
+  enabled: true
   # -- Component-specific labels
   labels: {}
   # -- Component-specific annotations
@@ -128,7 +128,7 @@ k8sRead:
 
 staticSbom:
   # -- Enable Static SBOM component
-  enabled: false
+  enabled: true
   # -- Component-specific labels
   labels: {}
   # -- Component-specific annotations
