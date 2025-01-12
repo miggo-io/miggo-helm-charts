@@ -111,6 +111,11 @@ k8sRead:
     repository: miggoprod/k8s-read
     # -- Image tag (defaults to Chart appVersion if not set)
     tag: latest
+    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings. 
+    # Useful for local development with Minikube or when needing to specify a complete custom image path
+    fullPath: 
+    # -- Image pull policy. Specifies when Kubernetes should pull the container image 
+    pullPolicy:
 
   config:
     # -- Interval for scanning Kubernetes resources
@@ -151,6 +156,11 @@ staticSbom:
     repository: miggoprod/static-sbom
     # -- Image tag (defaults to Chart appVersion if not set)
     tag: latest
+    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings. 
+    # Useful for local development with Minikube or when needing to specify a complete custom image path
+    fullPath: 
+    # -- Image pull policy. Specifies when Kubernetes should pull the container image 
+    pullPolicy:
 
   config:
     # -- Max limit of the processing queue
@@ -196,6 +206,11 @@ sensor:
     repository: miggoprod/dynamic-ebpf
     # -- Image tag (defaults to Chart appVersion if not set)
     tag: latest
+    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings. 
+    # Useful for local development with Minikube or when needing to specify a complete custom image path
+    fullPath: 
+    # -- Image pull policy. Specifies when Kubernetes should pull the container image 
+    pullPolicy:
 
   # -- Node selector settings
   nodeSelector:
@@ -234,6 +249,11 @@ collector:
     repository: miggoprod/miggo-infra-agent
     # -- Image tag (defaults to Chart appVersion if not set)
     tag: latest
+    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings. 
+    # Useful for local development with Minikube or when needing to specify a complete custom image path
+    fullPath: 
+    # -- Image pull policy. Specifies when Kubernetes should pull the container image 
+    pullPolicy:
 
   config:
     # -- Log verbosity level (detailed|normal|basic)

@@ -53,8 +53,12 @@ spec:
         - name: miggo-sensor
           securityContext:
             privileged: true
+          {{- if .Values.sensor.image.fullPath }}
+          image: "{{ .Values.sensor.image.fullPath }}"
+          {{- else }}
           image: "{{ .Values.image.registry }}/{{ .Values.sensor.image.repository }}:{{ .Values.sensor.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.sensor.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
             - --tenant-name={{ .Values.miggo.tenantId }}

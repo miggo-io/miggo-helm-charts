@@ -40,6 +40,9 @@ tests:
           path: spec.template.spec.imagePullSecrets
           content:
             name: miggo-regcred
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].imagePullPolicy
+          value: Always
 
   - it: k8s-read deployment
     template: templates/k8s-read/deployment.yaml
@@ -59,6 +62,9 @@ tests:
           path: spec.template.spec.imagePullSecrets
           content:
             name: miggo-regcred
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "k8s-read")].imagePullPolicy
+          value: Always
 
   - it: static-sbom deployment
     template: templates/static-sbom/deployment.yaml
@@ -78,6 +84,9 @@ tests:
           path: spec.template.spec.imagePullSecrets
           content:
             name: miggo-regcred
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "static-sbom")].imagePullPolicy
+          value: Always
 
   - it: sensor daemonset
     template: templates/sensor/daemonset.yaml
@@ -97,3 +106,6 @@ tests:
           path: spec.template.spec.imagePullSecrets
           content:
             name: miggo-regcred
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-sensor")].imagePullPolicy
+          value: Always
