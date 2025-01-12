@@ -81,6 +81,8 @@ The following table lists the configurable parameters of the k8s-integration cha
 | collector.enabled | bool | `true` | Enable Collector component |
 | collector.extraEnvs | list | `[]` | Additional environment variables |
 | collector.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
+| collector.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings.  Useful for local development with Minikube or when needing to specify a complete custom image path |
+| collector.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image  |
 | collector.image.repository | string | `"miggoprod/miggo-infra-agent"` | Image repository |
 | collector.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | collector.labels | object | `{}` | Component-specific labels |
@@ -113,6 +115,8 @@ The following table lists the configurable parameters of the k8s-integration cha
 | k8sRead.enabled | bool | `true` | Enable K8s Read component |
 | k8sRead.extraEnvs | list | `[]` | Additional environment variables |
 | k8sRead.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
+| k8sRead.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings.  Useful for local development with Minikube or when needing to specify a complete custom image path |
+| k8sRead.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image  |
 | k8sRead.image.repository | string | `"miggoprod/k8s-read"` | Image repository |
 | k8sRead.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | k8sRead.labels | object | `{}` | Component-specific labels |
@@ -139,6 +143,8 @@ The following table lists the configurable parameters of the k8s-integration cha
 | sensor.enabled | bool | `false` | Enable Sensor component |
 | sensor.extraEnvs | list | `[]` | Additional environment variables |
 | sensor.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
+| sensor.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings.  Useful for local development with Minikube or when needing to specify a complete custom image path |
+| sensor.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image  |
 | sensor.image.repository | string | `"miggoprod/dynamic-ebpf"` | Image repository |
 | sensor.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | sensor.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
@@ -162,6 +168,8 @@ The following table lists the configurable parameters of the k8s-integration cha
 | staticSbom.enabled | bool | `true` | Enable Static SBOM component |
 | staticSbom.extraEnvs | list | `[]` | Additional environment variables |
 | staticSbom.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
+| staticSbom.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings.  Useful for local development with Minikube or when needing to specify a complete custom image path |
+| staticSbom.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image  |
 | staticSbom.image.repository | string | `"miggoprod/static-sbom"` | Image repository |
 | staticSbom.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | staticSbom.labels | object | `{}` | Component-specific labels |
