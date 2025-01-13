@@ -51,13 +51,10 @@ jobs:
 
       - name: Commit and push changes
         if: steps.generate_docs.outputs.changes_detected == 'true'
-        run: |
-          # Make sure we're on the PR branch
-          git checkout ${{ github.head_ref }}
-          
-          # Add and commit changes
-          git add charts/*/README.md
-          git commit -m "[AUTO GITHUB] Chart README.md"
-          
-          # Push to the PR branch
-          git push origin ${{ github.head_ref }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[AUTO GITHUB] Chart README.md"
+          branch: ${{ github.head_ref }}
+          file_pattern: 'charts/*/README.md'
+          push_options: '--retry 5'
+          create_branch: false
