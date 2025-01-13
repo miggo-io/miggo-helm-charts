@@ -27,7 +27,7 @@ spec:
     {{- with .Values.collector.service.selector }}
     {{- toYaml . | nindent 4 }}
     {{- else }}
-    app: {{ include "k8s-integrations.fullname" . }}-collector
+    miggo.io/app: {{ include "k8s-integrations.fullname" . }}-collector
     {{- end }}
   ports:
     - protocol: TCP
