@@ -56,8 +56,12 @@ spec:
         - name: miggo-collector
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.collector.image.fullPath }}
+          image: "{{ .Values.collector.image.fullPath }}"
+          {{- else }}
           image: "{{ .Values.image.registry }}/{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.collector.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --config
             - /etc/collector/config.yaml

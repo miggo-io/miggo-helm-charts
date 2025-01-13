@@ -54,8 +54,12 @@ spec:
         - name: static-sbom
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.staticSbom.image.fullPath }}
+          image: "{{ .Values.staticSbom.image.fullPath }}"
+          {{- else }}
           image: "{{ .Values.image.registry }}/{{ .Values.staticSbom.image.repository }}:{{ .Values.staticSbom.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.staticSbom.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
             - --tenant-name={{ .Values.miggo.tenantId }}

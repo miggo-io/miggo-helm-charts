@@ -54,8 +54,12 @@ spec:
         - name: k8s-read
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.k8sRead.image.fullPath }}
+          image: "{{ .Values.k8sRead.image.fullPath }}"
+          {{- else }}
           image: "{{ .Values.image.registry }}/{{ .Values.k8sRead.image.repository }}:{{ .Values.k8sRead.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.k8sRead.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
             - --tenant-name={{ .Values.miggo.tenantId }}
