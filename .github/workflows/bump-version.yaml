@@ -1,4 +1,4 @@
-name: Verify Chart Versions
+name: Bump Chart Versions
 on:
   workflow_dispatch:
   pull_request:
@@ -118,15 +118,13 @@ jobs:
               fi
             fi
           done
+      
       - name: Commit and push changes
         if: steps.version_check.outputs.versions_bumped == 'true'
-        run: |
-          # Make sure we're on the PR branch
-          git checkout ${{ github.head_ref }}
-          
-          # Add and commit changes
-          git add charts/*/Chart.yaml
-          git commit -m "[AUTO GITHUB] Bump chart versions"
-          
-          # Push to the PR branch
-          git push origin ${{ github.head_ref }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[AUTO GITHUB] Bump chart versions"
+          branch: ${{ github.head_ref }}
+          file_pattern: 'charts/*/Chart.yaml'
+          push_options: '--retry 5'
+          create_branch: false
