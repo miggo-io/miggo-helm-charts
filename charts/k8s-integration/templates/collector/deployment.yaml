@@ -35,7 +35,7 @@ spec:
         {{- end }}
       labels:
         component: collector
-        app: {{ include "k8s-integrations.fullname" . }}-collector
+        miggo.io/app: {{ include "k8s-integrations.fullname" . }}-collector
         {{- include "miggo-collector.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
