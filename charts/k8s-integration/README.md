@@ -85,6 +85,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | collector.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image  |
 | collector.image.repository | string | `"miggoprod/miggo-infra-agent"` | Image repository |
 | collector.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
+| collector.initContainers | list | `[]` | InitContainers to initialize the pod |
 | collector.labels | object | `{}` | Component-specific labels |
 | collector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | collector.podLabels | object | `{}` | Component-specific pod labels |

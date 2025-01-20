@@ -56,5 +56,4 @@ jobs:
           commit_message: "[AUTO GITHUB] Chart README.md"
           branch: ${{ github.head_ref }}
           file_pattern: 'charts/*/README.md'
-          push_options: '--retry 5'
           create_branch: false

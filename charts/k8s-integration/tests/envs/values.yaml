@@ -48,7 +48,6 @@ sensor:
     - name: component
       value: sensor
   
-    
   extraEnvsFrom:
     - configMapRef:
         name: sensor-cm
