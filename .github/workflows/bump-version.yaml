@@ -126,5 +126,4 @@ jobs:
           commit_message: "[AUTO GITHUB] Bump chart versions"
           branch: ${{ github.head_ref }}
           file_pattern: 'charts/*/Chart.yaml'
-          push_options: '--retry 5'
           create_branch: false
