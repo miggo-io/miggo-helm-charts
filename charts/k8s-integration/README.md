@@ -76,6 +76,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Pod affinity settings for all pods |
 | annotations | object | `{}` | Global annotations to add to all resources |
+| collector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | collector.annotations | object | `{}` | Component-specific annotations |
 | collector.config.logVerbosity | string | `"basic"` | Log verbosity level (detailed|normal|basic) |
 | collector.enabled | bool | `true` | Enable Collector component |

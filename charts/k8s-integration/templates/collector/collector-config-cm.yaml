@@ -10,7 +10,7 @@ data:
         endpoint: 0.0.0.0:{{ .Values.healthcheck.port }}
       oauth2client:
         client_id: {{ .Values.config.clientId }}
-        client_secret_file: /etc/miggo-access-key
+        client_secret_file: {{ .Values.collector.accessKeyMountLocation }}
         token_url: https://api.descope.com/oauth2/v1/token
         timeout: 1m
 
