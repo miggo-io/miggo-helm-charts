@@ -1,6 +1,6 @@
 # K8s Integration Helm Chart
 
-![Version: 0.0.26](https://img.shields.io/badge/Version-0.0.26-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
+![Version: 0.0.27](https://img.shields.io/badge/Version-0.0.27-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's Kubernetes integration components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -76,6 +76,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Pod affinity settings for all pods |
 | annotations | object | `{}` | Global annotations to add to all resources |
+| collector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | collector.annotations | object | `{}` | Component-specific annotations |
 | collector.config.logVerbosity | string | `"basic"` | Log verbosity level (detailed|normal|basic) |
 | collector.enabled | bool | `true` | Enable Collector component |

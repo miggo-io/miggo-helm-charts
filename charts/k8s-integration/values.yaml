@@ -245,6 +245,8 @@ collector:
   volumeMounts: []
   # -- InitContainers to initialize the pod
   initContainers: []
+  # -- An internal locaiton to mount the access key file within the container
+  accessKeyMountLocation: /etc/miggo-access-key
 
   image:
     # -- Image repository

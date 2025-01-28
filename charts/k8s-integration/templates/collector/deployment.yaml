@@ -100,7 +100,7 @@ spec:
             mountPath: /etc/collector
           {{ if (include "accessKeySecret" .) }}
           - name: access-key
-            mountPath: /etc/miggo-access-key
+            mountPath: {{ .Values.collector.accessKeyMountLocation }}
             subPath: ACCESS_KEY
           {{- end }}
           {{- with .Values.volumeMounts }}
