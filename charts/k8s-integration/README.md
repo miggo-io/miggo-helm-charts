@@ -1,6 +1,6 @@
 # K8s Integration Helm Chart
 
-![Version: 0.0.27](https://img.shields.io/badge/Version-0.0.27-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
+![Version: 0.0.28](https://img.shields.io/badge/Version-0.0.28-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's Kubernetes integration components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -113,6 +113,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | imagePullSecrets | list | `[]` |  |
 | k8sRead.annotations | object | `{}` | Component-specific annotations |
 | k8sRead.config.disableCompression | bool | `false` | Disable compression for data transfer |
+| k8sRead.config.exclude | string | `"pod"` | Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service) |
 | k8sRead.config.interval | string | `"6h"` | Interval for scanning Kubernetes resources |
 | k8sRead.enabled | bool | `true` | Enable K8s Read component |
 | k8sRead.extraEnvs | list | `[]` | Additional environment variables |

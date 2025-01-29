@@ -73,6 +73,7 @@ spec:
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
             - --interval={{ .Values.k8sRead.config.interval }}
+            - --exclude={{ .Values.k8sRead.config.exclude }}
             {{ if .Values.k8sRead.config.disableCompression }}
             - --disable-compression
             {{ end }}

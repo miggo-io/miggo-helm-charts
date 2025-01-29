@@ -5,15 +5,15 @@ metadata:
   name: k8s-read-cluster-role
 rules:
 - apiGroups: ["apps"]
-  resources: ["deployments", "statefulsets"]
+  resources: ["deployments", "statefulsets", "replicasets"]
   verbs: ["get", "list", "watch"]
 
 - apiGroups: [""]
-  resources: ["services", "pods", "serviceaccounts"]
+  resources: ["services", "pods", "serviceaccounts", "nodes", "namespaces", "persistentvolumes", "persistentvolumeclaims"]
   verbs: ["get", "list", "watch"]
 
 - apiGroups: ["networking.k8s.io"]
-  resources: ["ingresses", "ingressclasses"]
+  resources: ["ingresses", "ingressclasses", "networkpolicies"]
   verbs: ["get", "list", "watch"]
 
 - apiGroups: ["gateway.networking.k8s.io"]
@@ -25,6 +25,6 @@ rules:
   verbs: ["get", "list", "watch"]
 
 - apiGroups: ["batch"]
-  resources: ["cronjobs"]
+  resources: ["cronjobs", "jobs"]
   verbs: ["get", "list", "watch"]
 {{ end }}
