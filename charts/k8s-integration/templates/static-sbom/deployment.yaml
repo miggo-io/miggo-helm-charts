@@ -82,6 +82,7 @@ spec:
             - --cache-cm-name={{ include "static-sbom.configMapCacheName" . }}
             - --cache-cm-namespace={{ .Release.Namespace }}
             {{ end }}
+            {{- include "namespace.flags" . | nindent 12 }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
