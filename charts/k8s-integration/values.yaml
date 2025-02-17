@@ -50,7 +50,7 @@ config:
   # Takes precedence over allowedNamespaces - if a namespace is both allowed and denied,
   # it will be denied
   # Example: ["test", "deprecated"]
-  deniedNamespace:
+  deniedNamespaces:
   
   # -- When set to true, includes system namespaces like kube-system etc.
   # When false (default), automatically adds system namespaces to deniedNamespaces
