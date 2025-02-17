@@ -93,9 +93,9 @@ Namespace configuration flags
 {{- define "namespace.flags" -}}
 - --include-system-namespaces={{ .Values.config.includeSystemNamespaces }}
 {{- if .Values.config.allowedNamespaces }}
-- --allowed-namespaces="{{ join "," .Values.config.allowedNamespaces }}"
+- --allowed-namespaces={{ join "," .Values.config.allowedNamespaces }}
 {{- end }}
 {{- if .Values.config.deniedNamespaces }}
-- --denied-namespaces="{{ join "," .Values.config.deniedNamespaces }}"
+- --denied-namespaces={{ join "," .Values.config.deniedNamespaces }}
 {{- end }}
 {{- end -}}
