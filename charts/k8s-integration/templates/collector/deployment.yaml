@@ -69,6 +69,8 @@ spec:
           args:
             - --config
             - /etc/collector/config.yaml
+            - --feature-gates
+            - service.profilesSupport
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}

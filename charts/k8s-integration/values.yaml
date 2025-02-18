@@ -31,13 +31,13 @@ config:
   metrics:
     # -- Interval for metrics collection
     interval: 60s
-  
+
   # -- Client ID for authentication
   clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
-  
+
   # -- Access key for authentication (ignored when accessKeySecret is specified)
   accessKey: ""
-  
+
   # -- Name of the secret containing the access key. Leave empty to create default secrets based on config.accessKey
   accessKeySecret: ""
 
@@ -111,10 +111,10 @@ k8sRead:
     repository: miggoprod/k8s-read
     # -- Image tag (defaults to Chart appVersion if not set)
     tag: latest
-    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings. 
+    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
     # Useful for local development with Minikube or when needing to specify a complete custom image path
-    fullPath: 
-    # -- Image pull policy. Specifies when Kubernetes should pull the container image 
+    fullPath:
+    # -- Image pull policy. Specifies when Kubernetes should pull the container image
     pullPolicy:
 
   config:
@@ -158,10 +158,10 @@ staticSbom:
     repository: miggoprod/static-sbom
     # -- Image tag (defaults to Chart appVersion if not set)
     tag: latest
-    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings. 
+    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
     # Useful for local development with Minikube or when needing to specify a complete custom image path
-    fullPath: 
-    # -- Image pull policy. Specifies when Kubernetes should pull the container image 
+    fullPath:
+    # -- Image pull policy. Specifies when Kubernetes should pull the container image
     pullPolicy:
 
   config:
@@ -208,16 +208,16 @@ sensor:
     repository: miggoprod/dynamic-ebpf
     # -- Image tag (defaults to Chart appVersion if not set)
     tag: latest
-    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings. 
+    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
     # Useful for local development with Minikube or when needing to specify a complete custom image path
-    fullPath: 
-    # -- Image pull policy. Specifies when Kubernetes should pull the container image 
+    fullPath:
+    # -- Image pull policy. Specifies when Kubernetes should pull the container image
     pullPolicy:
 
   # -- Node selector settings
   nodeSelector:
     kubernetes.io/os: linux
-    
+
   resources:
     limits:
       cpu: 3000m
@@ -225,6 +225,15 @@ sensor:
     requests:
       cpu: 1000m
       memory: 2Gi
+
+profiler:
+  # -- Enable Profiler component
+  enabled: false
+  image:
+    repository: miggoprod/miggo-profiler
+    tag: latest
+    fullPath:
+    pullPolicy:
 
 collector:
   # -- Enable Collector component
@@ -255,10 +264,10 @@ collector:
     repository: miggoprod/miggo-infra-agent
     # -- Image tag (defaults to Chart appVersion if not set)
     tag: latest
-    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings. 
+    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
     # Useful for local development with Minikube or when needing to specify a complete custom image path
-    fullPath: 
-    # -- Image pull policy. Specifies when Kubernetes should pull the container image 
+    fullPath:
+    # -- Image pull policy. Specifies when Kubernetes should pull the container image
     pullPolicy:
 
   config:
@@ -273,7 +282,7 @@ collector:
     requests:
       cpu: 250m
       memory: 1Gi
-      
+
   service:
     # -- Service type
     type: ClusterIP
