@@ -63,14 +63,15 @@ spec:
             - --cluster-name={{ .Values.miggo.clusterName }}
             - --tenant-name={{ .Values.miggo.tenantId }}
             - --project-name={{ .Values.miggo.projectId }}
-            - --otlp-endpoint={{ (include "otlpEndpoint" .) }} 
+            - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --stdout={{ .Values.output.stdout }}
             - --port={{ .Values.healthcheck.port }}
-            - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }} 
+            - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
+            - --disable-profiler={{ not .Values.sensor.profiler.enabled }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
@@ -106,19 +107,65 @@ spec:
           resources:
             {{- toYaml .Values.sensor.resources | nindent 12 }}
           volumeMounts:
-          - mountPath: /sys/kernel/debug
-            name: debugfs
+          - name: debugfs
+            mountPath: /sys/kernel/debug
+            readOnly: true
+          {{- if .Values.sensor.profiler.enabled }}
+          - name: unix-socket
+            mountPath: /tmp/grpc
+          {{- end }}
           {{- with .Values.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
           {{- with .Values.sensor.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-      hostPID: true
+        {{- if .Values.sensor.profiler.enabled }}
+        - name: profiler
+          {{- if .Values.sensor.profiler.image.fullPath }}
+          image: "{{ .Values.sensor.profiler.image.fullPath }}"
+          {{- else }}
+          image: "{{ .Values.image.registry }}/{{ .Values.sensor.profiler.image.repository }}:{{ .Values.sensor.profiler.image.tag | default .Chart.AppVersion }}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.sensor.profiler.image.pullPolicy | default .Values.image.pullPolicy }}
+          command:
+            - /root/ebpf-profiler
+          args:
+            - -collection-agent={{ (include "otlpProfilesEndpoint" .) }}
+            - -disable-tls=true
+            - -reporter-interval={{ .Values.sensor.profiler.reporterInterval }}
+            - -samples-per-second={{ .Values.sensor.profiler.samplesPerSecond }}
+            - -monitor-interval={{ .Values.sensor.profiler.monitorInterval }}
+            - -off-cpu-threshold={{ .Values.sensor.profiler.offCpuThreshold }}
+            - -probabilistic-threshold={{ .Values.sensor.profiler.probabilisticThreshold }}
+            - -probabilistic-interval={{ .Values.sensor.profiler.probabilisticInterval }}
+          resources:
+            {{- toYaml .Values.sensor.profiler.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.sensor.profiler.securityContext | nindent 12 }}
+          volumeMounts:
+            - name: debugfs
+              mountPath: /sys/kernel/debug
+              readOnly: true
+            - name: cgroupfs
+              mountPath: /cgroup
+              readOnly: true
+            - name: unix-socket
+              mountPath: /tmp/grpc
+        {{- end }}
+      hostIPC: {{ .Values.sensor.hostIPC }}
+      hostPID: {{ .Values.sensor.hostPID }}
       volumes:
-      - hostPath:
+      - name: debugfs
+        hostPath:
           path: /sys/kernel/debug
-        name: debugfs
+      {{- if .Values.sensor.profiler.enabled }}
+      - name: unix-socket
+        emptyDir: { }
+      - name: cgroupfs
+        hostPath:
+          path: /sys/fs/cgroup
+      {{- end }}
       {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
@@ -129,7 +176,7 @@ spec:
       {{- with .Values.nodeSelector }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.staticSbom.nodeSelector }}
+      {{- with .Values.sensor.nodeSelector }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.affinity }}
