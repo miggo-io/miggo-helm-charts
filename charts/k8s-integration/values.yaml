@@ -40,6 +40,22 @@ config:
   
   # -- Name of the secret containing the access key. Leave empty to create default secrets based on config.accessKey
   accessKeySecret: ""
+  
+  # -- List of namespaces that are allowed to be processed
+  # If empty, all namespaces are included by default (before applying deniedNamespaces)
+  # Example: ["development", "staging", "production"]
+  allowedNamespaces:
+    
+  # -- List of namespaces that should be excluded from processing
+  # Takes precedence over allowedNamespaces - if a namespace is both allowed and denied,
+  # it will be denied
+  # Example: ["test", "deprecated"]
+  deniedNamespaces:
+  
+  # -- When set to true, includes system namespaces like kube-system etc.
+  # When false (default), automatically adds system namespaces to deniedNamespaces
+  # It's recommended to keep this false unless you specifically need to operate on system namespaces
+  includeSystemNamespaces: false
 
 output:
   # -- Enable stdout logging (for debugging)

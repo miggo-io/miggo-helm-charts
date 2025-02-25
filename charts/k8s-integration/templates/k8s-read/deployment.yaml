@@ -77,6 +77,7 @@ spec:
             {{ if .Values.k8sRead.config.disableCompression }}
             - --disable-compression
             {{ end }}
+            {{- include "namespace.flags" . | nindent 12 }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
