@@ -185,7 +185,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | staticSbom.resources.limits.memory | string | `"4Gi"` |  |
 | staticSbom.resources.requests.cpu | string | `"1000m"` |  |
 | staticSbom.resources.requests.memory | string | `"2Gi"` |  |
-| staticSbom.useGOMEMLIMIT | bool | `true` |  |
+| staticSbom.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | staticSbom.volumeMounts | list | `[]` | Additional volume mounts |
 | staticSbom.volumes | list | `[]` | Additional volumes |
 | tolerations | list | `[]` | Tolerations for all pods |
