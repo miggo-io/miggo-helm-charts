@@ -198,6 +198,12 @@ staticSbom:
         # -- Name of the ConfigMap (generated if not set)
         name: ""
 
+  # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
+  # configured resources.limits.memory. If no resources.limits.memory are
+  # defined then enabling does nothing. It is HIGHLY recommend to enable this
+  # setting and set a value for resources.limits.memory.
+  useGOMEMLIMIT: true
+
   resources:
     limits:
       cpu: 3000m

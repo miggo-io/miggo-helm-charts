@@ -64,12 +64,12 @@ spec:
             - --cluster-name={{ .Values.miggo.clusterName }}
             - --tenant-name={{ .Values.miggo.tenantId }}
             - --project-name={{ .Values.miggo.projectId }}
-            - --otlp-endpoint={{ (include "otlpEndpoint" .) }} 
+            - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --stdout={{ .Values.output.stdout }}
             - --port={{ .Values.healthcheck.port }}
-            - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }} 
+            - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
             - --queue-size={{ .Values.staticSbom.config.queueSize }}
@@ -91,6 +91,10 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+          {{- if and (.Values.staticSbom.useGOMEMLIMIT) ((((.Values.staticSbom.resources).limits).memory))  }}
+            - name: GOMEMLIMIT
+              value: {{ include "static-sbom.gomemlimit" .Values.staticSbom.resources.limits.memory | quote }}
+          {{- end }}
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
