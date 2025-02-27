@@ -185,6 +185,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | staticSbom.resources.limits.memory | string | `"4Gi"` |  |
 | staticSbom.resources.requests.cpu | string | `"1000m"` |  |
 | staticSbom.resources.requests.memory | string | `"2Gi"` |  |
+| staticSbom.useGOMEMLIMIT | bool | `true` |  |
 | staticSbom.volumeMounts | list | `[]` | Additional volume mounts |
 | staticSbom.volumes | list | `[]` | Additional volumes |
 | tolerations | list | `[]` | Tolerations for all pods |
