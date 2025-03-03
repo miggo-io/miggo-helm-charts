@@ -86,6 +86,8 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+          - name: GOMEMLIMIT
+            value: {{ .Values.k8sRead.resources.requests.memory }}B
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
