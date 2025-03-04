@@ -93,7 +93,7 @@ spec:
           env:
           {{- if and (.Values.staticSbom.useGOMEMLIMIT) ((((.Values.staticSbom.resources).limits).memory))  }}
             - name: GOMEMLIMIT
-              value: {{ include "static-sbom.gomemlimit" .Values.staticSbom.resources.limits.memory | quote }}
+              value: {{ include "gomemlimit" .Values.staticSbom.resources.limits.memory | quote }}
           {{- end }}
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}
