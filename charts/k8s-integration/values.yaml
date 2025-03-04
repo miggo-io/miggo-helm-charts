@@ -293,6 +293,12 @@ collector:
     # -- Log verbosity level (detailed|normal|basic)
     logVerbosity: basic
 
+  # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
+  # configured resources.limits.memory. If no resources.limits.memory are
+  # defined then enabling does nothing. It is HIGHLY recommend to enable this
+  # setting and set a value for resources.limits.memory.
+  useGOMEMLIMIT: true
+
   # -- Resource requirements
   resources:
     limits:
