@@ -128,10 +128,10 @@ The following table lists the configurable parameters of the k8s-integration cha
 | k8sRead.labels | object | `{}` | Component-specific labels |
 | k8sRead.podAnnotations | object | `{}` | Component-specific pod annotations |
 | k8sRead.podLabels | object | `{}` | Component-specific pod labels |
-| k8sRead.resources.limits.cpu | string | `"500m"` |  |
-| k8sRead.resources.limits.memory | string | `"1Gi"` |  |
-| k8sRead.resources.requests.cpu | string | `"100m"` |  |
-| k8sRead.resources.requests.memory | string | `"512Mi"` |  |
+| k8sRead.resources.limits.cpu | string | `"100m"` |  |
+| k8sRead.resources.limits.memory | string | `"256Mi"` |  |
+| k8sRead.resources.requests.cpu | string | `"10m"` |  |
+| k8sRead.resources.requests.memory | string | `"128Mi"` |  |
 | k8sRead.volumeMounts | list | `[]` | Additional volume mounts |
 | k8sRead.volumes | list | `[]` | Additional volumes |
 | labels | object | `{}` | Global labels to add to all resources |
