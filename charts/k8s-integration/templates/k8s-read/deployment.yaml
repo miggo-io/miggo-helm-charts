@@ -86,6 +86,10 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+          {{- if and (.Values.k8sRead.useGOMEMLIMIT) ((((.Values.k8sRead.resources).limits).memory))  }}
+          - name: GOMEMLIMIT
+            value: {{ include "gomemlimit" .Values.k8sRead.resources.limits.memory | quote }}
+          {{- end }}
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}

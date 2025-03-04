@@ -1,6 +1,6 @@
 # K8s Integration Helm Chart
 
-![Version: 0.0.31](https://img.shields.io/badge/Version-0.0.31-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
+![Version: 0.0.32](https://img.shields.io/badge/Version-0.0.32-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's Kubernetes integration components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -128,10 +128,11 @@ The following table lists the configurable parameters of the k8s-integration cha
 | k8sRead.labels | object | `{}` | Component-specific labels |
 | k8sRead.podAnnotations | object | `{}` | Component-specific pod annotations |
 | k8sRead.podLabels | object | `{}` | Component-specific pod labels |
-| k8sRead.resources.limits.cpu | string | `"500m"` |  |
-| k8sRead.resources.limits.memory | string | `"1Gi"` |  |
-| k8sRead.resources.requests.cpu | string | `"100m"` |  |
-| k8sRead.resources.requests.memory | string | `"512Mi"` |  |
+| k8sRead.resources.limits.cpu | string | `"100m"` |  |
+| k8sRead.resources.limits.memory | string | `"256Mi"` |  |
+| k8sRead.resources.requests.cpu | string | `"10m"` |  |
+| k8sRead.resources.requests.memory | string | `"128Mi"` |  |
+| k8sRead.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | k8sRead.volumeMounts | list | `[]` | Additional volume mounts |
 | k8sRead.volumes | list | `[]` | Additional volumes |
 | labels | object | `{}` | Global labels to add to all resources |

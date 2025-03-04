@@ -141,13 +141,19 @@ k8sRead:
     # -- Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service)
     exclude: "pod"
 
+  # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
+  # configured resources.limits.memory. If no resources.limits.memory are
+  # defined then enabling does nothing. It is HIGHLY recommend to enable this
+  # setting and set a value for resources.limits.memory.
+  useGOMEMLIMIT: true
+
   resources:
     limits:
-      cpu: 500m
-      memory: 1Gi
-    requests:
       cpu: 100m
-      memory: 512Mi
+      memory: 256Mi
+    requests:
+      cpu: 10m
+      memory: 128Mi
 
 staticSbom:
   # -- Enable Static SBOM component
