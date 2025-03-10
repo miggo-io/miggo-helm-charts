@@ -69,6 +69,10 @@ spec:
           args:
             - --config
             - /etc/collector/config.yaml
+            {{- if .Values.sensor.profiler.enabled }}
+            - --feature-gates
+            - service.profilesSupport
+            {{- end }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
