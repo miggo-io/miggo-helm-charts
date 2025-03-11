@@ -22,6 +22,25 @@ data:
           http:
             endpoint: "0.0.0.0:4318"
 
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: 'collector'
+              scrape_interval: {{ .Values.config.metrics.interval }}
+              static_configs:
+                - targets: [ 'localhost:8888' ]
+              metric_relabel_configs:
+                - source_labels: [__name__]
+                  regex: 'otelcol_(.*)'
+                  target_label: __name__
+                  replacement: 'miggocol_$1'
+                - target_label: "tenant_id"
+                  replacement: "{{ .Values.miggo.tenantId }}"
+                - target_label: "project_id"
+                  replacement: "{{ .Values.miggo.projectId }}"
+                - target_label: "miggo_name"
+                  replacement: "{{ .Values.miggo.clusterName }}"
+
     processors:
       batch:
         timeout: 10s
@@ -56,7 +75,7 @@ data:
           exporters: [otlphttp/profiles]
         {{- end }}
         metrics:
-          receivers: [otlp]
+          receivers: [otlp, prometheus]
           processors: [batch]
           exporters: [debug, prometheus, otlphttp]
         traces:
