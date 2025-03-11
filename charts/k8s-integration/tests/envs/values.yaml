@@ -23,44 +23,46 @@ k8sRead:
       value: k8s-read
     - name: type
       value: testing
-  
+
   extraEnvsFrom:
     - configMapRef:
         name: k8s-read-cm
     - secretRef:
         name: k8s-read-secret
-  
+
 staticSbom:
   enabled: true
   extraEnvs:
     - name: component
       value: static-sbom
-  
+
   extraEnvsFrom:
     - configMapRef:
         name: sbom-cm
     - secretRef:
         name: sbom-secret
-      
+
 sensor:
   enabled: true
   extraEnvs:
     - name: component
       value: sensor
-  
+
   extraEnvsFrom:
     - configMapRef:
         name: sensor-cm
     - secretRef:
         name: sensor-secret
 
+  profiler:
+    enabled: false
 
 collector:
   enabled: true
   extraEnvs:
     - name: component
       value: collector
-        
+
   extraEnvsFrom:
     - configMapRef:
         name: collector-cm

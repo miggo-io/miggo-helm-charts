@@ -65,6 +65,14 @@ http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4318
 {{- end -}}
 {{- end -}}
 
+{{- define "otlpProfilesEndpoint" -}}
+{{- if .Values.collector.enabled -}}
+miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4317
+{{- else -}}
+{{ .Values.output.otlp.otlpEndpoint }}
+{{- end -}}
+{{- end -}}
+
 {{- define "otlpEndpointHealthCheckPort" -}}
 {{- if .Values.collector.enabled -}}
 6666

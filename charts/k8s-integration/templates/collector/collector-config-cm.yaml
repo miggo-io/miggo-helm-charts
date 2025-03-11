@@ -46,23 +46,34 @@ data:
         timeout: 10s
 
     exporters:
-      
+
       debug:
         verbosity: {{ .Values.config.logVerbosity }}
-      
+
       prometheus:
         endpoint: 0.0.0.0:8889
-      
+
       otlphttp:
         traces_endpoint: {{ .Values.output.otlp.otlpEndpoint }}/v1/traces
         metrics_endpoint: {{ .Values.output.otlp.otlpEndpoint }}/v1/metrics
         logs_endpoint: {{ .Values.output.otlp.otlpEndpoint }}/v1/logs
         auth:
           authenticator: oauth2client
+      {{- if .Values.sensor.profiler.enabled }}
+      otlphttp/profiles:
+        endpoint: {{ .Values.output.otlp.otlpEndpoint }}
+        auth:
+          authenticator: oauth2client
+      {{- end }}
 
     service:
       extensions: [health_check, oauth2client]
       pipelines:
+        {{- if .Values.sensor.profiler.enabled }}
+        profiles:
+          receivers: [otlp]
+          exporters: [otlphttp/profiles]
+        {{- end }}
         metrics:
           receivers: [otlp, prometheus]
           processors: [batch]

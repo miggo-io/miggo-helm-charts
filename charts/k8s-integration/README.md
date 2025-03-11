@@ -82,8 +82,8 @@ The following table lists the configurable parameters of the k8s-integration cha
 | collector.enabled | bool | `true` | Enable Collector component |
 | collector.extraEnvs | list | `[]` | Additional environment variables |
 | collector.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
-| collector.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings.  Useful for local development with Minikube or when needing to specify a complete custom image path |
-| collector.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image  |
+| collector.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
+| collector.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | collector.image.repository | string | `"miggoprod/miggo-infra-agent"` | Image repository |
 | collector.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | collector.initContainers | list | `[]` | InitContainers to initialize the pod |
@@ -122,8 +122,8 @@ The following table lists the configurable parameters of the k8s-integration cha
 | k8sRead.enabled | bool | `true` | Enable K8s Read component |
 | k8sRead.extraEnvs | list | `[]` | Additional environment variables |
 | k8sRead.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
-| k8sRead.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings.  Useful for local development with Minikube or when needing to specify a complete custom image path |
-| k8sRead.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image  |
+| k8sRead.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
+| k8sRead.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | k8sRead.image.repository | string | `"miggoprod/k8s-read"` | Image repository |
 | k8sRead.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | k8sRead.labels | object | `{}` | Component-specific labels |
@@ -148,19 +148,40 @@ The following table lists the configurable parameters of the k8s-integration cha
 | podLabels | object | `{}` | Pod labels to add to all pods |
 | podSecurityContext | object | `{}` | Pod security context for all pods |
 | securityContext | object | `{}` | Container security context for all containers |
-| sensor.enabled | bool | `false` | Enable Sensor component |
+| sensor.enabled | bool | `false` | Install eBPF agent on each cluster node to provide package-level reachability analysis and other runtime insights. |
 | sensor.extraEnvs | list | `[]` | Additional environment variables |
 | sensor.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
-| sensor.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings.  Useful for local development with Minikube or when needing to specify a complete custom image path |
-| sensor.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image  |
+| sensor.hostIPC | bool | `true` | Use the host's ipc namespace. |
+| sensor.hostPID | bool | `true` | Use the host's pid namespace. |
+| sensor.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
+| sensor.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | sensor.image.repository | string | `"miggoprod/dynamic-ebpf"` | Image repository |
 | sensor.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | sensor.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
 | sensor.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector settings |
+| sensor.profiler.enabled | bool | `false` | Install profiler on each cluster node to provide function-level reachability analysis and other runtime insights. |
+| sensor.profiler.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
+| sensor.profiler.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
+| sensor.profiler.image.repository | string | `"miggoprod/miggo-profiler"` | Image repository |
+| sensor.profiler.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
+| sensor.profiler.monitorInterval | string | `"5s"` | Set the monitor interval in seconds. |
+| sensor.profiler.offCpuThreshold | int | `1000` | If set to a value between 1 and 999 will enable off-cpu profiling: Every time an off-cpu entry point is hit, a random number between 0 and 999 is chosen. If the given threshold is greater than this random number, the off-cpu trace is collected and reported. |
+| sensor.profiler.probabilisticInterval | string | `"1m0s"` | Time interval for which probabilistic profiling will be enabled or disabled. |
+| sensor.profiler.probabilisticThreshold | int | `100` | If set to a value between 1 and 99 will enable probabilistic profiling: every probabilistic-interval a random number between 0 and 99 is chosen. If the given probabilistic-threshold is greater than this random number, the agent will collect profiles from this system for the duration of the interval. |
+| sensor.profiler.reporterInterval | string | `"5s"` | Set the reporter's interval in seconds. |
+| sensor.profiler.resources.limits.cpu | string | `"1000m"` |  |
+| sensor.profiler.resources.limits.memory | string | `"1Gi"` |  |
+| sensor.profiler.resources.requests.cpu | string | `"200m"` |  |
+| sensor.profiler.resources.requests.memory | string | `"500Mi"` |  |
+| sensor.profiler.samplesPerSecond | int | `20` | Set the frequency (in Hz) of stack trace sampling. |
+| sensor.profiler.securityContext.allowPrivilegeEscalation | bool | `true` |  |
+| sensor.profiler.securityContext.capabilities.add[0] | string | `"SYS_ADMIN"` |  |
+| sensor.profiler.securityContext.privileged | bool | `true` |  |
 | sensor.resources.limits.cpu | string | `"3000m"` |  |
 | sensor.resources.limits.memory | string | `"4Gi"` |  |
 | sensor.resources.requests.cpu | string | `"1000m"` |  |
 | sensor.resources.requests.memory | string | `"2Gi"` |  |
+| sensor.securityContext.privileged | bool | `true` |  |
 | sensor.volumeMounts | list | `[]` | Additional volume mounts for all containers |
 | sensor.volumes | list | `[]` |  |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
@@ -176,8 +197,8 @@ The following table lists the configurable parameters of the k8s-integration cha
 | staticSbom.enabled | bool | `true` | Enable Static SBOM component |
 | staticSbom.extraEnvs | list | `[]` | Additional environment variables |
 | staticSbom.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
-| staticSbom.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings.  Useful for local development with Minikube or when needing to specify a complete custom image path |
-| staticSbom.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image  |
+| staticSbom.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
+| staticSbom.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | staticSbom.image.repository | string | `"miggoprod/static-sbom"` | Image repository |
 | staticSbom.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | staticSbom.labels | object | `{}` | Component-specific labels |
