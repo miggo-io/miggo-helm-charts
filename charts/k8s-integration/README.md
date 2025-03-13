@@ -90,7 +90,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | collector.labels | object | `{}` | Component-specific labels |
 | collector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | collector.podLabels | object | `{}` | Component-specific pod labels |
-| collector.resources | object | `{"limits":{"cpu":"500m","memory":"2Gi"},"requests":{"cpu":"250m","memory":"1Gi"}}` | Resource requirements |
+| collector.resources | object | `{"limits":{"cpu":"100m","memory":"500Mi"},"requests":{"cpu":"10m","memory":"200Mi"}}` | Resource requirements |
 | collector.service.annotations | object | `{}` | Service annotations |
 | collector.service.labels | object | `{}` | Service labels |
 | collector.service.ports | list | `[{"name":"http","port":4318,"protocol":"TCP","targetPort":4318},{"name":"grpc","port":4317,"protocol":"TCP","targetPort":4317}]` | Service ports |
