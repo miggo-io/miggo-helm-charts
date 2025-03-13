@@ -87,9 +87,11 @@ The following table lists the configurable parameters of the k8s-integration cha
 | collector.image.repository | string | `"miggoprod/miggo-infra-agent"` | Image repository |
 | collector.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
 | collector.initContainers | list | `[]` | InitContainers to initialize the pod |
+| collector.instancePerNode | bool | `false` | Run an instance per node |
 | collector.labels | object | `{}` | Component-specific labels |
 | collector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | collector.podLabels | object | `{}` | Component-specific pod labels |
+| collector.replicas | int | `1` | Number of replicas to run (relevant only if instancePerNode: false) |
 | collector.resources | object | `{"limits":{"cpu":"100m","memory":"500Mi"},"requests":{"cpu":"10m","memory":"200Mi"}}` | Resource requirements |
 | collector.service.annotations | object | `{}` | Service annotations |
 | collector.service.labels | object | `{}` | Service labels |
