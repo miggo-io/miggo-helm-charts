@@ -1,6 +1,6 @@
 {{ if .Values.collector.enabled }}
 apiVersion: apps/v1
-kind: Deployment
+kind: {{ if .Values.collector.instancePerNode }}DaemonSet{{ else }}Deployment{{ end }}
 metadata:
   name: {{ include "k8s-integrations.fullname" . }}-collector
   labels:
@@ -19,7 +19,9 @@ metadata:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
+  {{ if not .Values.collector.instancePerNode }}
   replicas: 1
+  {{ end }}
   selector:
     matchLabels:
       {{- include "miggo-collector.selectorLabels" . | nindent 6 }}
