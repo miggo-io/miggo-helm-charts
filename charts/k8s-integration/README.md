@@ -1,6 +1,6 @@
 # K8s Integration Helm Chart
 
-![Version: 0.0.35](https://img.shields.io/badge/Version-0.0.35-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
+![Version: 0.0.36](https://img.shields.io/badge/Version-0.0.36-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's Kubernetes integration components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -90,7 +90,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | collector.labels | object | `{}` | Component-specific labels |
 | collector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | collector.podLabels | object | `{}` | Component-specific pod labels |
-| collector.resources | object | `{"limits":{"cpu":"500m","memory":"2Gi"},"requests":{"cpu":"250m","memory":"1Gi"}}` | Resource requirements |
+| collector.resources | object | `{"limits":{"cpu":"100m","memory":"500Mi"},"requests":{"cpu":"10m","memory":"200Mi"}}` | Resource requirements |
 | collector.service.annotations | object | `{}` | Service annotations |
 | collector.service.labels | object | `{}` | Service labels |
 | collector.service.ports | list | `[{"name":"http","port":4318,"protocol":"TCP","targetPort":4318},{"name":"grpc","port":4317,"protocol":"TCP","targetPort":4317}]` | Service ports |
