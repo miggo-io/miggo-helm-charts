@@ -13,6 +13,9 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.collector.service.type }}
+  {{ if .Values.collector.instancePerNode }}
+  internalTrafficPolicy: Local
+  {{ end }}
   {{- with .Values.collector.service.externalTrafficPolicy }}
   externalTrafficPolicy: {{ . }}
   {{- end }}

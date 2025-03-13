@@ -1,0 +1,70 @@
+suite: collector per node
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/collector/deployment.yaml
+  - templates/collector/service.yaml
+  - templates/collector/collector-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  
+  - it: collector per node
+    template: templates/collector/deployment.yaml
+    set:
+      collector:
+        instancePerNode: true
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - isNull:
+          path: spec.replicas
+
+  - it: collector per node service
+    template: templates/collector/service.yaml
+    set:
+      collector:
+        instancePerNode: true
+    asserts:
+      - equal:
+          path: spec.internalTrafficPolicy
+          value: Local
+
+  - it: global collector
+    template: templates/collector/deployment.yaml
+    set:
+      collector:
+        instancePerNode: false
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.replicas
+          value: 1
+
+  - it: global collector replicas
+    template: templates/collector/deployment.yaml
+    set:
+      collector:
+        instancePerNode: false
+        replicas: 5
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.replicas
+          value: 5
+
+  - it: global collector service
+    template: templates/collector/service.yaml
+    set:
+      collector:
+        instancePerNode: false
+    asserts:
+      - isNull:
+          path: spec.internalTrafficPolicy
