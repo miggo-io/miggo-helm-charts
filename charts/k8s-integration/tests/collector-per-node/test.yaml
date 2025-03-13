@@ -43,9 +43,22 @@ tests:
     asserts:
       - isKind:
           of: Deployment
-      - notEqual:
+      - equal:
           path: spec.replicas
-          value: null
+          value: 1
+
+  - it: global collector replicas
+    template: templates/collector/deployment.yaml
+    set:
+      collector:
+        instancePerNode: false
+        replicas: 5
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.replicas
+          value: 5
 
   - it: global collector service
     template: templates/collector/service.yaml

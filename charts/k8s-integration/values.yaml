@@ -317,6 +317,8 @@ sensor:
 collector:
   # -- Enable Collector component
   enabled: true
+  # -- Number of replicas to run (relevant only if instancePerNode: false)
+  replicas: 1
   # -- Run an instance per node
   instancePerNode: false
   # -- Component-specific labels
@@ -372,7 +374,7 @@ collector:
 
   service:
     # -- Service type
-    clusterIP: None
+    type: ClusterIP
     # -- Service annotations
     annotations: {}
     # -- Service labels
