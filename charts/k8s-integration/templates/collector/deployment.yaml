@@ -82,8 +82,8 @@ spec:
           {{- end }}
           env:
           {{- if and (.Values.collector.useGOMEMLIMIT) ((((.Values.collector.resources).limits).memory))  }}
-          - name: GOMEMLIMIT
-            value: {{ include "gomemlimit" .Values.collector.resources.limits.memory | quote }}
+            - name: GOMEMLIMIT
+              value: {{ include "gomemlimit" .Values.collector.resources.limits.memory | quote }}
           {{- end }}
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}

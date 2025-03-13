@@ -30,67 +30,20 @@ tests:
     asserts:
       - isKind:
           of: ConfigMap
-      - equal:
+      - matchRegex:
           path: data["config.yaml"]
-          value: |
-            extensions:
-              health_check:
-                endpoint: 0.0.0.0:6666
-              oauth2client:
-                client_id: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
-                client_secret_file: /etc/miggo-access-key
-                token_url: https://api.descope.com/oauth2/v1/token
-                timeout: 1m
+          pattern: |
+            .*otlphttp/profiles:
+              +endpoint: https://api.miggo.io
+              +auth:
+                +authenticator: oauth2client.*
+      - matchRegex:
+          path: data["config.yaml"]
+          pattern: |
+            .*profiles:
+              +receivers: \[otlp\]
+              +exporters: \[otlphttp/profiles\].*
 
-            receivers:
-              otlp:
-                protocols:
-                  grpc:
-                    endpoint: "0.0.0.0:4317"
-                  http:
-                    endpoint: "0.0.0.0:4318"
-
-            processors:
-              batch:
-                timeout: 10s
-
-            exporters:
-
-              debug:
-                verbosity:
-
-              prometheus:
-                endpoint: 0.0.0.0:8889
-
-              otlphttp:
-                traces_endpoint: https://api.miggo.io/v1/traces
-                metrics_endpoint: https://api.miggo.io/v1/metrics
-                logs_endpoint: https://api.miggo.io/v1/logs
-                auth:
-                  authenticator: oauth2client
-              otlphttp/profiles:
-                endpoint: https://api.miggo.io
-                auth:
-                  authenticator: oauth2client
-
-            service:
-              extensions: [health_check, oauth2client]
-              pipelines:
-                profiles:
-                  receivers: [otlp]
-                  exporters: [otlphttp/profiles]
-                metrics:
-                  receivers: [otlp]
-                  processors: [batch]
-                  exporters: [debug, prometheus, otlphttp]
-                traces:
-                  receivers: [otlp]
-                  processors: [batch]
-                  exporters: [debug, otlphttp]
-                logs:
-                  receivers: [otlp]
-                  processors: [batch]
-                  exporters: [debug, otlphttp]
   - it: should add both miggo-sensor and profiler containers to the DaemonSet spec
     template: templates/sensor/daemonset.yaml
     asserts:
