@@ -83,6 +83,10 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           {{- if and (.Values.collector.useGOMEMLIMIT) ((((.Values.collector.resources).limits).memory))  }}
             - name: GOMEMLIMIT
               value: {{ include "gomemlimit" .Values.collector.resources.limits.memory | quote }}
