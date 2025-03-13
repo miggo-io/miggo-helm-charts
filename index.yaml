@@ -98,6 +98,16 @@ entries:
   k8s-integration:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2025-03-13T09:24:29.017273397Z"
+    description: A Helm chart for miggo's k8s-integration
+    digest: 7cf2ed882234643d330b46cf9288cdc44e6165a188440b420f2c1d13a0d5ce84
+    name: k8s-integration
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/k8s-integration-0.0.36/k8s-integration-0.0.36.tgz
+    version: 0.0.36
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2025-03-11T10:16:38.933650943Z"
     description: A Helm chart for miggo's k8s-integration
     digest: 94d930b4f6518dd863a5102091f9f5f55df17eb70a1dbc5e7d249ccd9297d8c3
@@ -1278,4 +1288,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.1/static-sbom-0.0.1.tgz
     version: 0.0.1
-generated: "2025-03-11T10:16:38.934063681Z"
+generated: "2025-03-13T09:24:29.017577594Z"
