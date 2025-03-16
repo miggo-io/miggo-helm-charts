@@ -1,6 +1,6 @@
 # K8s Integration Helm Chart
 
-![Version: 0.0.36](https://img.shields.io/badge/Version-0.0.36-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
+![Version: 0.0.36](https://img.shields.io/badge/Version-0.0.36-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.316.1](https://img.shields.io/badge/AppVersion-v25.316.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's Kubernetes integration components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -85,7 +85,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | collector.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
 | collector.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | collector.image.repository | string | `"miggoprod/miggo-infra-agent"` | Image repository |
-| collector.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
+| collector.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | collector.initContainers | list | `[]` | InitContainers to initialize the pod |
 | collector.labels | object | `{}` | Component-specific labels |
 | collector.podAnnotations | object | `{}` | Component-specific pod annotations |
@@ -104,15 +104,12 @@ The following table lists the configurable parameters of the k8s-integration cha
 | config.clientId | string | `"P2UjsJwOFdIeUAtW0pGTJ5SeJAlq"` | Client ID for authentication |
 | config.deniedNamespaces | string | `nil` | List of namespaces that should be excluded from processing Takes precedence over allowedNamespaces - if a namespace is both allowed and denied, it will be denied Example: ["test", "deprecated"] |
 | config.includeSystemNamespaces | bool | `false` | When set to true, includes system namespaces like kube-system etc. When false (default), automatically adds system namespaces to deniedNamespaces It's recommended to keep this false unless you specifically need to operate on system namespaces |
-| config.metrics | object | `{"interval":"60s"}` | Metrics configuration |
 | config.metrics.interval | string | `"60s"` | Interval for metrics collection |
-| config.updaterCron | string | `"0 */6 * * *"` | Cron schedule for the updater (default: every 6 hours) |
-| config.updaterEnabled | bool | `true` | Enable automatic updates for deployments |
 | extraEnvs | list | `[]` | Additional environment variables for all containers |
 | extraEnvsFrom | list | `[]` | Additional environment variables from sources for all containers |
 | healthcheck.port | int | `6666` | Port number for health check endpoints |
-| image | object | `{"pullPolicy":"Always","registry":"registry.miggo.io"}` | Docker registry settings |
-| image.pullPolicy | string | `"Always"` | Image pull policy for all images |
+| image | object | `{"pullPolicy":"IfNotPresent","registry":"registry.miggo.io"}` | Docker registry settings |
+| image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for all images |
 | image.registry | string | `"registry.miggo.io"` | Registry host for all images |
 | imagePullSecrets | list | `[]` |  |
 | k8sRead.annotations | object | `{}` | Component-specific annotations |
@@ -125,7 +122,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | k8sRead.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
 | k8sRead.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | k8sRead.image.repository | string | `"miggoprod/k8s-read"` | Image repository |
-| k8sRead.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
+| k8sRead.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | k8sRead.labels | object | `{}` | Component-specific labels |
 | k8sRead.podAnnotations | object | `{}` | Component-specific pod annotations |
 | k8sRead.podLabels | object | `{}` | Component-specific pod labels |
@@ -156,14 +153,14 @@ The following table lists the configurable parameters of the k8s-integration cha
 | sensor.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
 | sensor.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | sensor.image.repository | string | `"miggoprod/dynamic-ebpf"` | Image repository |
-| sensor.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
+| sensor.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | sensor.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
 | sensor.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector settings |
 | sensor.profiler.enabled | bool | `false` | Install profiler on each cluster node to provide function-level reachability analysis and other runtime insights. |
 | sensor.profiler.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
 | sensor.profiler.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | sensor.profiler.image.repository | string | `"miggoprod/miggo-profiler"` | Image repository |
-| sensor.profiler.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
+| sensor.profiler.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | sensor.profiler.monitorInterval | string | `"5s"` | Set the monitor interval in seconds. |
 | sensor.profiler.offCpuThreshold | int | `1000` | If set to a value between 1 and 999 will enable off-cpu profiling: Every time an off-cpu entry point is hit, a random number between 0 and 999 is chosen. If the given threshold is greater than this random number, the off-cpu trace is collected and reported. |
 | sensor.profiler.probabilisticInterval | string | `"1m0s"` | Time interval for which probabilistic profiling will be enabled or disabled. |
@@ -200,7 +197,7 @@ The following table lists the configurable parameters of the k8s-integration cha
 | staticSbom.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
 | staticSbom.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | staticSbom.image.repository | string | `"miggoprod/static-sbom"` | Image repository |
-| staticSbom.image.tag | string | `"latest"` | Image tag (defaults to Chart appVersion if not set) |
+| staticSbom.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | staticSbom.labels | object | `{}` | Component-specific labels |
 | staticSbom.podAnnotations | object | `{}` | Component-specific pod annotations |
 | staticSbom.podLabels | object | `{}` | Component-specific pod labels |
