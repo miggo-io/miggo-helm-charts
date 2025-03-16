@@ -3,4 +3,4 @@ name: k8s-integration
 description: A Helm chart for miggo's k8s-integration
 type: application
 version: 0.0.36
-appVersion: "0.0.1"
+appVersion: "v25.316.1"
