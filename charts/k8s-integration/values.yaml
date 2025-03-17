@@ -3,7 +3,7 @@ image:
   # -- Registry host for all images
   registry: registry.miggo.io
   # -- Image pull policy for all images
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 ## -- List of secrets to use for pulling images from authenticated repositories
 imagePullSecrets: []
@@ -23,11 +23,6 @@ healthcheck:
   port: 6666
 
 config:
-  # -- Enable automatic updates for deployments
-  updaterEnabled: true
-  # -- Cron schedule for the updater (default: every 6 hours)
-  updaterCron: "0 */6 * * *"
-  # -- Metrics configuration
   metrics:
     # -- Interval for metrics collection
     interval: 60s
@@ -126,7 +121,7 @@ k8sRead:
     # -- Image repository
     repository: miggoprod/k8s-read
     # -- Image tag (defaults to Chart appVersion if not set)
-    tag: latest
+    tag:
     # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
     # Useful for local development with Minikube or when needing to specify a complete custom image path
     fullPath:
@@ -179,7 +174,7 @@ staticSbom:
     # -- Image repository
     repository: miggoprod/static-sbom
     # -- Image tag (defaults to Chart appVersion if not set)
-    tag: latest
+    tag:
     # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
     # Useful for local development with Minikube or when needing to specify a complete custom image path
     fullPath:
@@ -236,7 +231,7 @@ sensor:
     # -- Image repository
     repository: miggoprod/dynamic-ebpf
     # -- Image tag (defaults to Chart appVersion if not set)
-    tag: latest
+    tag:
     # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
     # Useful for local development with Minikube or when needing to specify a complete custom image path
     fullPath:
@@ -271,7 +266,7 @@ sensor:
       # -- Image repository
       repository: miggoprod/miggo-profiler
       # -- Image tag (defaults to Chart appVersion if not set)
-      tag: latest
+      tag:
       # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
       # Useful for local development with Minikube or when needing to specify a complete custom image path
       fullPath:
@@ -342,7 +337,7 @@ collector:
     # -- Image repository
     repository: miggoprod/miggo-infra-agent
     # -- Image tag (defaults to Chart appVersion if not set)
-    tag: latest
+    tag:
     # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
     # Useful for local development with Minikube or when needing to specify a complete custom image path
     fullPath:
