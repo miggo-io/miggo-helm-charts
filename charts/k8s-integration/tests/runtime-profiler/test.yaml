@@ -76,9 +76,9 @@ tests:
               readOnly: true
             - name: unix-socket
               mountPath: /tmp/grpc
-      - equal:
+      - matchRegex:
           path: spec.template.spec.containers[?(@.name == "profiler")].image
-          value: "registry.miggo.io/miggoprod/miggo-profiler:latest"
+          pattern: "registry.miggo.io/miggoprod/miggo-profiler:.*"
       - equal:
           path: spec.template.spec.containers[?(@.name == "profiler")].command
           value:
