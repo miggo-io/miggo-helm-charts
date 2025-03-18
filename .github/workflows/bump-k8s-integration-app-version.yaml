@@ -1,0 +1,66 @@
+name: Update k8s integration app version
+
+on:
+  workflow_dispatch:
+    inputs:
+      appVersion:
+        description: 'Unified App Version name'
+        type: string
+        required: true
+  workflow_call:
+    inputs:
+      appVersion:
+        description: 'Unified App Version name'
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Update versions
+        id: version_check
+        run: |
+          set -x 
+          
+          # Function to bump patch version
+          bump_version() {
+            local version=$1
+            local major minor patch
+            IFS='.' read -r major minor patch <<< "$version"
+            echo "$major.$minor.$((patch + 1))"
+          }
+          
+          CHART_YAML=charts/k8s-integration
+          CURRENT_CHART_VERSION=$(yq eval '.version' "$CHART_YAML")
+          NEW_CHART_VERSION=$(bump_version "$CURRENT_CHART_VERSION")
+          yq eval ".version = \"$NEW_CHART_VERSION\"" -i "$CHART_YAML"
+          
+          NEW_APP_VERSION=${{ inputs.appVersion }}
+          yq eval ".appVersion = \"$NEW_VERSION\"" -i "$CHART_YAML"
+          
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[AUTO GITHUB] Bump k8s-integration app version"
+          branch: ${{ github.head_ref }}
+          file_pattern: 'charts/k8s-integration/Chart.yaml'
+          create_branch: false
