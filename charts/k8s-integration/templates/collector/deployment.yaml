@@ -1,6 +1,6 @@
 {{ if .Values.collector.enabled }}
 apiVersion: apps/v1
-kind: Deployment
+kind: {{ if .Values.collector.instancePerNode }}DaemonSet{{ else }}Deployment{{ end }}
 metadata:
   name: {{ include "k8s-integrations.fullname" . }}-collector
   labels:
@@ -19,7 +19,9 @@ metadata:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
-  replicas: 1
+  {{ if not .Values.collector.instancePerNode }}
+  replicas: {{ .Values.collector.replicas }}
+  {{ end }}
   selector:
     matchLabels:
       {{- include "miggo-collector.selectorLabels" . | nindent 6 }}
@@ -81,6 +83,10 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           {{- if and (.Values.collector.useGOMEMLIMIT) ((((.Values.collector.resources).limits).memory))  }}
             - name: GOMEMLIMIT
               value: {{ include "gomemlimit" .Values.collector.resources.limits.memory | quote }}
