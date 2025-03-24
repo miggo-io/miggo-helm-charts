@@ -21,9 +21,22 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GH_MIGGO_APP_ID }}
+          private-key: ${{ secrets.GH_MIGGO_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "miggo-helm-chart"
+          
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          repository: miggo-io/miggo-helm-chart
+          ref: feature/MIG-5591/unified-release-workflow # for testing
+          show-progress: false
+          token: ${{ steps.generate-token.outputs.token }}
           fetch-depth: 0
 
       - name: Configure Git
@@ -60,7 +73,7 @@ jobs:
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[AUTO GITHUB] Bump k8s-integration app version"
+          commit_message: "[AUTO GITHUB] Bump k8s-integration app & chart version"
           branch: ${{ github.head_ref }}
           file_pattern: 'charts/k8s-integration/Chart.yaml'
           create_branch: false
