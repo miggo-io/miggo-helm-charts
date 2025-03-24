@@ -28,6 +28,7 @@ jobs:
           ref: feature/MIG-5591/unified-release-workflow # for testing
           show-progress: false
           fetch-depth: 0
+          token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Configure Git
         run: |
@@ -67,3 +68,4 @@ jobs:
           branch: ${{ github.head_ref }}
           file_pattern: 'charts/k8s-integration/Chart.yaml'
           create_branch: false
+          
