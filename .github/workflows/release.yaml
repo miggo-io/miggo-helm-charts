@@ -2,9 +2,13 @@ name: Release Charts
 
 on:
   workflow_dispatch:
+  workflow_call:
+    
+  # Remove when unified release workflow is ready
   push:
     branches:
       - main
+
 permissions:
   contents: write
 
