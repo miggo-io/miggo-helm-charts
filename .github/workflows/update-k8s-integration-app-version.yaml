@@ -77,7 +77,7 @@ jobs:
           yq eval ".version = \"$NEW_CHART_VERSION\"" -i "$CHART_YAML"
           
           NEW_APP_VERSION=${{ inputs.appVersion }}
-          yq eval ".appVersion = \"$NEW_VERSION\"" -i "$CHART_YAML"
+          yq eval ".appVersion = \"$NEW_APP_VERSION\"" -i "$CHART_YAML"
 
       - name: Generate Helm Docs
         id: generate_docs
