@@ -6,7 +6,6 @@ on:
     paths:
       - 'charts/**'
   workflow_dispatch:
-  workflow_call:
 
 permissions:
   contents: write
@@ -21,23 +20,10 @@ jobs:
       pull-requests: write
       
     steps:
-      - name: Generate a token
-        id: generate-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ vars.GH_MIGGO_APP_ID }}
-          private-key: ${{ secrets.GH_MIGGO_APP_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: "miggo-helm-charts"
-          
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: miggo-io/miggo-helm-charts
-          ref: feature/MIG-5591/unified-release-workflow # for testing
-          show-progress: false
           fetch-depth: 0
-          token: "${{ steps.generate-token.outputs.token }}"
 
       - name: Configure Git
         run: |
