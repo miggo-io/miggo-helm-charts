@@ -80,7 +80,7 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
-          - name: DYNAMIC_EBPF_AGENT_NODE_NAME
+          - name: MIGGO_RUNTIME_NODE_NAME
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
