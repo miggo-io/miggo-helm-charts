@@ -28,7 +28,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/collector/collector-config-cm.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/miggo-collector/collector-config-cm.yaml") . | sha256sum }}
         {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
