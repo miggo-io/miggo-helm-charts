@@ -5,8 +5,8 @@ release:
   namespace: miggo-space
 
 templates:
-  - templates/k8s-read/deployment.yaml
-  - templates/static-sbom/deployment.yaml
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
   - templates/sensor/daemonset.yaml
   - templates/collector/deployment.yaml
   - templates/collector/collector-config-cm.yaml
@@ -49,8 +49,8 @@ tests:
             secretRef:
               name: collector-secret
 
-  - it: k8s-read deployment
-    template: templates/k8s-read/deployment.yaml
+  - it: miggo-watch deployment
+    template: templates/miggo-watch/deployment.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
@@ -61,7 +61,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: component
-            value: k8s-read
+            value: miggo-watch
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -81,15 +81,15 @@ tests:
           path: spec.template.spec.containers[0].envFrom
           content:
             configMapRef:
-              name: k8s-read-cm
+              name: miggo-watch-cm
       - contains:
           path: spec.template.spec.containers[0].envFrom
           content:
             secretRef:
-              name: k8s-read-secret
+              name: miggo-watch-secret
 
-  - it: static-sbom deployment
-    template: templates/static-sbom/deployment.yaml
+  - it: miggo-scanner deployment
+    template: templates/miggo-scanner/deployment.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
@@ -100,7 +100,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: component
-            value: static-sbom
+            value: miggo-scanner
       - contains:
           path: spec.template.spec.containers[0].envFrom
           content:

@@ -20,21 +20,21 @@ k8sRead:
   enabled: true
   extraEnvs:
     - name: component
-      value: k8s-read
+      value: miggo-watch
     - name: type
       value: testing
 
   extraEnvsFrom:
     - configMapRef:
-        name: k8s-read-cm
+        name: miggo-watch-cm
     - secretRef:
-        name: k8s-read-secret
+        name: miggo-watch-secret
 
 staticSbom:
   enabled: true
   extraEnvs:
     - name: component
-      value: static-sbom
+      value: miggo-scanner
 
   extraEnvsFrom:
     - configMapRef:

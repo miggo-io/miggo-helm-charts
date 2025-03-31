@@ -5,8 +5,8 @@ release:
   namespace: miggo-space
 
 templates:
-  - templates/k8s-read/deployment.yaml
-  - templates/static-sbom/deployment.yaml
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
   - templates/sensor/daemonset.yaml
   - templates/collector/deployment.yaml
   - templates/collector/collector-config-cm.yaml
@@ -23,16 +23,16 @@ tests:
           value:
             name: miggo-regcred
 
-  - it: k8s-read deployment
-    template: templates/k8s-read/deployment.yaml
+  - it: miggo-watch deployment
+    template: templates/miggo-watch/deployment.yaml
     asserts:
       - equal:
           path: spec.template.spec.imagePullSecrets[1]
           value:
             name: miggo-regcred
       
-  - it: static-sbom deployment
-    template: templates/static-sbom/deployment.yaml
+  - it: miggo-scanner deployment
+    template: templates/miggo-scanner/deployment.yaml
     asserts:
       - equal:
           path: spec.template.spec.imagePullSecrets[1]

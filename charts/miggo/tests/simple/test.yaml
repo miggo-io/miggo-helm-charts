@@ -5,8 +5,8 @@ release:
   namespace: miggo-space
 
 templates:
-  - templates/k8s-read/deployment.yaml
-  - templates/static-sbom/deployment.yaml
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
   - templates/sensor/daemonset.yaml
   - templates/collector/deployment.yaml
   - templates/collector/collector-config-cm.yaml
@@ -44,48 +44,48 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-collector")].imagePullPolicy
           value: IfNotPresent
 
-  - it: k8s-read deployment
-    template: templates/k8s-read/deployment.yaml
+  - it: miggo-watch deployment
+    template: templates/miggo-watch/deployment.yaml
     asserts:
       - isKind:
           of: Deployment
       - equal:
           path: metadata.name
-          value: miggo-k8s-read
+          value: miggo-miggo-watch
       - equal:
           path: spec.template.spec.serviceAccountName
-          value: miggo-k8s-read
+          value: miggo-miggo-watch
       - matchRegex:
-          path: spec.template.spec.containers[?(@.name == "k8s-read")].image
-          pattern: registry.miggo.io/miggoprod/k8s-read:.*
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].image
+          pattern: registry.miggo.io/miggoprod/miggo-watch:.*
       - contains:
           path: spec.template.spec.imagePullSecrets
           content:
             name: miggo-regcred
       - equal:
-          path: spec.template.spec.containers[?(@.name == "k8s-read")].imagePullPolicy
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].imagePullPolicy
           value: IfNotPresent
 
-  - it: static-sbom deployment
-    template: templates/static-sbom/deployment.yaml
+  - it: miggo-scanner deployment
+    template: templates/miggo-scanner/deployment.yaml
     asserts:
       - isKind:
           of: Deployment
       - equal:
           path: metadata.name
-          value: miggo-static-sbom
+          value: miggo-miggo-scanner
       - equal:
           path: spec.template.spec.serviceAccountName
-          value: miggo-static-sbom
+          value: miggo-miggo-scanner
       - matchRegex:
-          path: spec.template.spec.containers[?(@.name == "static-sbom")].image
-          pattern: registry.miggo.io/miggoprod/static-sbom:.*
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].image
+          pattern: registry.miggo.io/miggoprod/miggo-scanner:.*
       - contains:
           path: spec.template.spec.imagePullSecrets
           content:
             name: miggo-regcred
       - equal:
-          path: spec.template.spec.containers[?(@.name == "static-sbom")].imagePullPolicy
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].imagePullPolicy
           value: IfNotPresent
 
   - it: sensor daemonset
@@ -101,7 +101,7 @@ tests:
           value: miggo-sensor
       - matchRegex:
           path: spec.template.spec.containers[?(@.name == "miggo-sensor")].image
-          pattern: registry.miggo.io/miggoprod/dynamic-ebpf:.*
+          pattern: registry.miggo.io/miggoprod/miggo-runtime:.*
       - contains:
           path: spec.template.spec.imagePullSecrets
           content:

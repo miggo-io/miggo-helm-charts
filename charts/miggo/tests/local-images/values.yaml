@@ -9,7 +9,7 @@ config:
 k8sRead:
   enabled: true
   image:
-    fullPath: my-custom-k8s-read
+    fullPath: my-custom-miggo-watch
     pullPolicy: Never
 
 staticSbom:

@@ -5,8 +5,8 @@ release:
   namespace: miggo-space
 
 templates:
-  - templates/k8s-read/deployment.yaml
-  - templates/static-sbom/deployment.yaml
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
   - templates/sensor/daemonset.yaml
   - templates/collector/deployment.yaml
   - templates/collector/collector-config-cm.yaml
