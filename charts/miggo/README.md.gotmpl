@@ -1,15 +1,15 @@
-# K8s Integration Helm Chart
+# Miggo Helm Chart
 
 {{ template "chart.versionBadge" . }} {{ template "chart.typeBadge" . }} {{ template "chart.appVersionBadge" . }}
 
-This Helm chart deploys Miggo's Kubernetes integration components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
+This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
 ## Features
 
-- **K8s Resource Monitor**: Monitors Kubernetes resources and their changes
-- **Static SBOM Analysis**: Software Bill of Materials analysis for container images
-- **Dynamic eBPF Monitoring**: Runtime monitoring using eBPF technology
-- **OpenTelemetry Collection**: Centralized telemetry data collection and export
+- **Miggo Watch**: Monitors Kubernetes resources and their changes
+- **Miggo Scanner**: Software Bill of Materials analysis for container images
+- **Miggo Runtime**: Runtime monitoring using eBPF technology
+- **Miggo Collector**: Centralized telemetry data collection and export
 
 ## Prerequisites
 
@@ -23,19 +23,19 @@ This Helm chart deploys Miggo's Kubernetes integration components, providing com
 
 The chart deploys several components that work together:
 
-### K8s Read
+### Miggo Watch
 
 Monitors Kubernetes resources and tracks changes in your cluster's configuration. Provides insights into deployments, services, and other Kubernetes objects.
 
-### Static SBOM
+### Miggo Scanner
 
 Analyzes container images to generate Software Bill of Materials (SBOM), identifying dependencies and potential security vulnerabilities.
 
-### Container Monitor
+### Miggo Runtime
 
 Uses eBPF technology to monitor runtime behavior of containers and system calls, providing deep visibility into container activities.
 
-### Collector
+### Miggo Collector
 
 Collects telemetry data (metrics, traces, logs) using OpenTelemetry protocol and forwards it to Miggo's platform.
 
@@ -65,7 +65,7 @@ config:
 2. Install the chart:
 
 ```bash
-helm install k8s-integration miggo-charts/k8s-integration -f values.yaml --namespace miggo-space --create-namespace
+helm install miggo miggo-charts/miggo -f values.yaml --namespace miggo-space --create-namespace
 ```
 
 ## Configuration
@@ -91,7 +91,7 @@ config:
 ### Configure Resource Limits
 
 ```yaml
-k8sRead:
+miggoWatch:
   resources:
     limits:
       cpu: 1000m
@@ -100,7 +100,7 @@ k8sRead:
       cpu: 500m
       memory: 1Gi
 
-staticSbom:
+miggoScanner:
   resources:
     limits:
       cpu: 4000m
@@ -113,13 +113,13 @@ staticSbom:
 ### Enable/Disable Components
 
 ```yaml
-k8sRead:
+miggoWatch:
   enabled: true
 
-staticSbom:
+miggoScanner:
   enabled: true
 
-sensor:
+miggoRuntime:
   enabled: false
 
 collector:
@@ -131,7 +131,7 @@ collector:
 To upgrade the chart:
 
 ```bash
-helm upgrade k8s-integration miggo-charts/k8s-integration -f values.yaml --namespace miggo-space
+helm upgrade k8s-integration miggo-charts/miggo -f values.yaml --namespace miggo-space
 ```
 
 ## Uninstallation
@@ -139,7 +139,7 @@ helm upgrade k8s-integration miggo-charts/k8s-integration -f values.yaml --names
 To uninstall the chart:
 
 ```bash
-helm uninstall k8s-integration --namespace miggo-space
+helm uninstall miggo --namespace miggo-space
 ```
 
 ## Troubleshooting
@@ -153,10 +153,10 @@ helm uninstall k8s-integration --namespace miggo-space
 2. **Component Startup Issues**
    - Check component logs using:
      ```bash
-     kubectl -n miggo-space logs -l component=k8s-read
-     kubectl -n miggo-space logs -l component=static-sbom
-     kubectl -n miggo-space logs -l component=sensor
-     kubectl -n miggo-space logs -l component=collector
+     kubectl -n miggo-space logs -l component=miggo-watch
+     kubectl -n miggo-space logs -l component=miggo-scanner
+     kubectl -n miggo-space logs -l component=miggo-runtime
+     kubectl -n miggo-space logs -l component=miggo-collector
      ```
 
 3. **Permission Issues**
