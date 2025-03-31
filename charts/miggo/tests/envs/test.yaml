@@ -8,15 +8,15 @@ templates:
   - templates/miggo-watch/deployment.yaml
   - templates/miggo-scanner/deployment.yaml
   - templates/miggo-runtime/daemonset.yaml
-  - templates/collector/deployment.yaml
-  - templates/collector/collector-config-cm.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
 
 values:
   - values.yaml
 
 tests:
   - it: collector deployment
-    template: templates/collector/deployment.yaml
+    template: templates/miggo-collector/deployment.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env

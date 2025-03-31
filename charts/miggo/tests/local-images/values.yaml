@@ -24,7 +24,7 @@ miggoRuntime:
     fullPath: my-custom-k8s-sensor
     pullPolicy: IfNotPresent
 
-collector:
+miggoCollector:
   enabled: true
   image:
     fullPath: my-custom-collector

@@ -5,9 +5,9 @@ release:
   namespace: miggo-space
 
 templates:
-  - templates/collector/deployment.yaml
-  - templates/collector/service.yaml
-  - templates/collector/collector-config-cm.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/service.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
 
 values:
   - values.yaml
@@ -15,9 +15,9 @@ values:
 tests:
   
   - it: collector per node
-    template: templates/collector/deployment.yaml
+    template: templates/miggo-collector/deployment.yaml
     set:
-      collector:
+      miggoCollector:
         instancePerNode: true
     asserts:
       - isKind:
@@ -26,9 +26,9 @@ tests:
           path: spec.replicas
 
   - it: collector per node service
-    template: templates/collector/service.yaml
+    template: templates/miggo-collector/service.yaml
     set:
-      collector:
+      miggoCollector:
         instancePerNode: true
     asserts:
       - equal:
@@ -36,9 +36,9 @@ tests:
           value: Local
 
   - it: global collector
-    template: templates/collector/deployment.yaml
+    template: templates/miggo-collector/deployment.yaml
     set:
-      collector:
+      miggoCollector:
         instancePerNode: false
     asserts:
       - isKind:
@@ -48,9 +48,9 @@ tests:
           value: 1
 
   - it: global collector replicas
-    template: templates/collector/deployment.yaml
+    template: templates/miggo-collector/deployment.yaml
     set:
-      collector:
+      miggoCollector:
         instancePerNode: false
         replicas: 5
     asserts:
@@ -61,9 +61,9 @@ tests:
           value: 5
 
   - it: global collector service
-    template: templates/collector/service.yaml
+    template: templates/miggo-collector/service.yaml
     set:
-      collector:
+      miggoCollector:
         instancePerNode: false
     asserts:
       - isNull:

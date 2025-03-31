@@ -12,7 +12,7 @@ miggoScanner:
 miggoRuntime:
   enabled: false
 
-collector:
+miggoCollector:
   enabled: true
   initContainers:
     - name: init-access-key

@@ -57,7 +57,7 @@ miggoRuntime:
   profiler:
     enabled: false
 
-collector:
+miggoCollector:
   enabled: true
   extraEnvs:
     - name: component

@@ -7,5 +7,5 @@ miggoScanner:
 miggoRuntime:
   enabled: false
 
-collector:
+miggoCollector:
   enabled: false

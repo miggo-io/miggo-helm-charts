@@ -8,15 +8,15 @@ templates:
   - templates/miggo-watch/deployment.yaml
   - templates/miggo-scanner/deployment.yaml
   - templates/miggo-runtime/daemonset.yaml
-  - templates/collector/deployment.yaml
-  - templates/collector/collector-config-cm.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
 
 values:
   - values.yaml
 
 tests:
   - it: should set custom volumes and volumeMounts in collector deployment
-    template: templates/collector/deployment.yaml
+    template: templates/miggo-collector/deployment.yaml
     set:
       volumes:
         - name: config-volume
