@@ -1,43 +1,43 @@
-{{ if .Values.collector.enabled }}
+{{ if .Values.miggoCollector.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: miggo-collector
-  {{- with .Values.collector.service.annotations }}
+  {{- with .Values.miggoCollector.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with .Values.collector.service.labels }}
+  {{- with .Values.miggoCollector.service.labels }}
   labels:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  type: {{ .Values.collector.service.type }}
-  {{ if .Values.collector.instancePerNode }}
+  type: {{ .Values.miggoCollector.service.type }}
+  {{ if .Values.miggoCollector.instancePerNode }}
   internalTrafficPolicy: Local
   {{ end }}
-  {{- with .Values.collector.service.externalTrafficPolicy }}
+  {{- with .Values.miggoCollector.service.externalTrafficPolicy }}
   externalTrafficPolicy: {{ . }}
   {{- end }}
-  {{- with .Values.collector.service.loadBalancerIP }}
+  {{- with .Values.miggoCollector.service.loadBalancerIP }}
   loadBalancerIP: {{ . }}
   {{- end }}
-  {{- with .Values.collector.service.loadBalancerSourceRanges }}
+  {{- with .Values.miggoCollector.service.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   selector:
-    {{- with .Values.collector.service.selector }}
+    {{- with .Values.miggoCollector.service.selector }}
     {{- toYaml . | nindent 4 }}
     {{- else }}
-    miggo.io/app: {{ include "k8s-integrations.fullname" . }}-collector
+    miggo.io/app: {{ include "miggo.fullname" . }}-collector
     {{- end }}
   ports:
     - protocol: TCP
       port: {{ .Values.healthcheck.port }}
       targetPort: {{ .Values.healthcheck.port }}
       name: healthcheck
-    {{- with .Values.collector.service.ports }}
+    {{- with .Values.miggoCollector.service.ports }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 {{ end }}

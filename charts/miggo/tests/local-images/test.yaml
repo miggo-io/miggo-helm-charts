@@ -7,7 +7,7 @@ release:
 templates:
   - templates/miggo-watch/deployment.yaml
   - templates/miggo-scanner/deployment.yaml
-  - templates/sensor/daemonset.yaml
+  - templates/miggo-runtime/daemonset.yaml
   - templates/collector/deployment.yaml
   - templates/collector/collector-config-cm.yaml
 
@@ -46,11 +46,11 @@ tests:
           value: Never
 
   - it: sensor daemonset
-    template: templates/sensor/daemonset.yaml
+    template: templates/miggo-runtime/daemonset.yaml
     asserts:
       - equal:
-          path: spec.template.spec.containers[?(@.name == "miggo-sensor")].image
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].image
           value: my-custom-k8s-sensor
       - equal:
-          path: spec.template.spec.containers[?(@.name == "miggo-sensor")].imagePullPolicy
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].imagePullPolicy
           value: IfNotPresent

@@ -9,13 +9,13 @@ imagePullSecrets:
 config:
   accessKeySecret: "customer-managed-access-secret"
 
-k8sRead:
+miggoWatch:
   enabled: true
 
-staticSbom:
+miggoScanner:
   enabled: true
 
-sensor:
+miggoRuntime:
   enabled: true
 
 collector:

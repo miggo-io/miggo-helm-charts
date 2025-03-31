@@ -97,8 +97,8 @@ tolerations: []
 # -- Pod affinity settings for all pods
 affinity: {}
 
-k8sRead:
-  # -- Enable K8s Read component
+miggoWatch:
+  # -- Enable Miggo Watch component
   enabled: true
   # -- Component-specific labels
   labels: {}
@@ -119,7 +119,7 @@ k8sRead:
 
   image:
     # -- Image repository
-    repository: miggoprod/k8s-read
+    repository: miggo/miggo-watch
     # -- Image tag (defaults to Chart appVersion if not set)
     tag:
     # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
@@ -150,8 +150,8 @@ k8sRead:
       cpu: 10m
       memory: 128Mi
 
-staticSbom:
-  # -- Enable Static SBOM component
+miggoScanner:
+  # -- Enable Miggo Scanner component
   enabled: true
   # -- Component-specific labels
   labels: {}
@@ -172,7 +172,7 @@ staticSbom:
 
   image:
     # -- Image repository
-    repository: miggoprod/static-sbom
+    repository: miggo/miggo-scanner
     # -- Image tag (defaults to Chart appVersion if not set)
     tag:
     # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
@@ -213,7 +213,7 @@ staticSbom:
       cpu: 1000m
       memory: 2Gi
 
-sensor:
+miggoRuntime:
   # -- Install eBPF agent on each cluster node to provide package-level
   # reachability analysis and other runtime insights.
   enabled: false
@@ -229,7 +229,7 @@ sensor:
 
   image:
     # -- Image repository
-    repository: miggoprod/dynamic-ebpf
+    repository: miggo/miggo-runtime
     # -- Image tag (defaults to Chart appVersion if not set)
     tag:
     # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
@@ -264,7 +264,7 @@ sensor:
     enabled: false
     image:
       # -- Image repository
-      repository: miggoprod/miggo-profiler
+      repository: miggo/miggo-profiler
       # -- Image tag (defaults to Chart appVersion if not set)
       tag:
       # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
@@ -309,7 +309,7 @@ sensor:
     # -- Time interval for which probabilistic profiling will be enabled or disabled.
     probabilisticInterval: 1m0s
 
-collector:
+miggoCollector:
   # -- Enable Collector component
   enabled: true
   # -- Number of replicas to run (relevant only if instancePerNode: false)
@@ -339,7 +339,7 @@ collector:
 
   image:
     # -- Image repository
-    repository: miggoprod/miggo-infra-agent
+    repository: miggo/miggo-collector
     # -- Image tag (defaults to Chart appVersion if not set)
     tag:
     # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.

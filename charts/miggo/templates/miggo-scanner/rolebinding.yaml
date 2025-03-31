@@ -1,15 +1,15 @@
-{{ if .Values.staticSbom.enabled }}
+{{ if .Values.miggoScanner.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: static-sbom-cluster-binding
+  name: miggo-scanner-cluster-binding
 subjects:
 - kind: ServiceAccount
-  name: {{ include "k8s-integrations.serviceAccountName" . }}-static-sbom
+  name: {{ include "miggo.serviceAccountName" . }}-scanner
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: static-sbom-cluster-role
+  name: miggo-scanner-cluster-role
   apiGroup: rbac.authorization.k8s.io
 
 ---
@@ -17,13 +17,13 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: static-sbom-role-binding
+  name: miggo-scanner-role-binding
 subjects:
 - kind: ServiceAccount
-  name: {{ include "k8s-integrations.serviceAccountName" . }}-static-sbom
+  name: {{ include "miggo.serviceAccountName" . }}-scanner
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: static-sbom-role
+  name: miggo-scanner-role
   apiGroup: rbac.authorization.k8s.io
 {{ end }}

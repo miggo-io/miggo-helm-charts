@@ -1,9 +1,9 @@
 {{/*
 Common labels
 */}}
-{{- define "static-sbom.labels" -}}
-helm.sh/chart: {{ include "k8s-integrations.chart" . }}
-{{ include "static-sbom.selectorLabels" . }}
+{{- define "miggo-scanner.labels" -}}
+helm.sh/chart: {{ include "miggo.chart" . }}
+{{ include "miggo-scanner.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -13,11 +13,11 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "static-sbom.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "k8s-integrations.name" . }}-static-sbom
+{{- define "miggo-scanner.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "miggo.name" . }}-scanner
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{- define "static-sbom.configMapCacheName" -}}
-{{- default (printf "%s-cache" (include "k8s-integrations.fullname" .)) .Values.staticSbom.config.cache.configMap.name }}
+{{- define "miggo-scanner.configMapCacheName" -}}
+{{- default (printf "%s-cache" (include "miggo.fullname" .)) .Values.miggoScanner.config.cache.configMap.name }}
 {{- end }}

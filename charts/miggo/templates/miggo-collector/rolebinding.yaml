@@ -1,11 +1,11 @@
-{{ if .Values.collector.enabled }}
+{{ if .Values.miggoCollector.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: collector-role-binding
 subjects:
 - kind: ServiceAccount
-  name: {{ include "k8s-integrations.serviceAccountName" . }}-collector
+  name: {{ include "miggo.serviceAccountName" . }}-collector
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role

@@ -16,7 +16,7 @@ extraEnvsFrom:
   - secretRef:
       name: common-secret
 
-k8sRead:
+miggoWatch:
   enabled: true
   extraEnvs:
     - name: component
@@ -30,7 +30,7 @@ k8sRead:
     - secretRef:
         name: miggo-watch-secret
 
-staticSbom:
+miggoScanner:
   enabled: true
   extraEnvs:
     - name: component
@@ -42,7 +42,7 @@ staticSbom:
     - secretRef:
         name: sbom-secret
 
-sensor:
+miggoRuntime:
   enabled: true
   extraEnvs:
     - name: component

@@ -1,4 +1,4 @@
-{{ if .Values.collector.enabled }}
+{{ if .Values.miggoCollector.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,7 +10,7 @@ data:
         endpoint: 0.0.0.0:{{ .Values.healthcheck.port }}
       oauth2client:
         client_id: {{ .Values.config.clientId }}
-        client_secret_file: {{ .Values.collector.accessKeyMountLocation }}
+        client_secret_file: {{ .Values.miggoCollector.accessKeyMountLocation }}
         token_url: https://api.descope.com/oauth2/v1/token
         timeout: 1m
 
@@ -59,7 +59,7 @@ data:
         logs_endpoint: {{ .Values.output.otlp.otlpEndpoint }}/v1/logs
         auth:
           authenticator: oauth2client
-      {{- if .Values.sensor.profiler.enabled }}
+      {{- if .Values.miggoRuntime.profiler.enabled }}
       otlphttp/profiles:
         endpoint: {{ .Values.output.otlp.otlpEndpoint }}
         auth:
@@ -69,7 +69,7 @@ data:
     service:
       extensions: [health_check, oauth2client]
       pipelines:
-        {{- if .Values.sensor.profiler.enabled }}
+        {{- if .Values.miggoRuntime.profiler.enabled }}
         profiles:
           receivers: [otlp]
           exporters: [otlphttp/profiles]

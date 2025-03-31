@@ -1,9 +1,9 @@
 {{/*
 Common labels
 */}}
-{{- define "sensor.labels" -}}
-helm.sh/chart: {{ include "k8s-integrations.chart" . }}
-{{ include "sensor.selectorLabels" . }}
+{{- define "miggoRuntime.labels" -}}
+helm.sh/chart: {{ include "miggo.chart" . }}
+{{ include "miggoRuntime.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -13,7 +13,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "sensor.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "k8s-integrations.name" . }}-sensor
+{{- define "miggoRuntime.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "miggo.name" . }}-runtime
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

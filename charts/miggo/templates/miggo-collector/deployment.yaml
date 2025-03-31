@@ -1,26 +1,26 @@
-{{ if .Values.collector.enabled }}
+{{ if .Values.miggoCollector.enabled }}
 apiVersion: apps/v1
-kind: {{ if .Values.collector.instancePerNode }}DaemonSet{{ else }}Deployment{{ end }}
+kind: {{ if .Values.miggoCollector.instancePerNode }}DaemonSet{{ else }}Deployment{{ end }}
 metadata:
-  name: {{ include "k8s-integrations.fullname" . }}-collector
+  name: {{ include "miggo.fullname" . }}-collector
   labels:
     {{- include "miggo-collector.labels" . | nindent 4 }}
     {{- with .Values.labels }}
     {{- tpl (toYaml .) $ | nindent 4 }}
     {{- end }}
-    {{- with .Values.collector.labels }}
+    {{- with .Values.miggoCollector.labels }}
     {{- tpl (toYaml .) $ | nindent 4 }}
     {{- end }}
   annotations:
   {{- with .Values.annotations }}
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with .Values.collector.annotations }}
+  {{- with .Values.miggoCollector.annotations }}
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
-  {{ if not .Values.collector.instancePerNode }}
-  replicas: {{ .Values.collector.replicas }}
+  {{ if not .Values.miggoCollector.instancePerNode }}
+  replicas: {{ .Values.miggoCollector.replicas }}
   {{ end }}
   selector:
     matchLabels:
@@ -32,17 +32,17 @@ spec:
         {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-        {{- with .Values.collector.podAnnotations }}
+        {{- with .Values.miggoCollector.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
       labels:
         component: collector
-        miggo.io/app: {{ include "k8s-integrations.fullname" . }}-collector
+        miggo.io/app: {{ include "miggo.fullname" . }}-collector
         {{- include "miggo-collector.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-        {{- with .Values.collector.podLabels }}
+        {{- with .Values.miggoCollector.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
     spec:
@@ -53,25 +53,25 @@ spec:
         {{- include "miggoImagePullSecrets" . | nindent 8 }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      serviceAccountName: {{ include "k8s-integrations.serviceAccountName" . }}-collector
-      {{- if .Values.collector.initContainers }}
+      serviceAccountName: {{ include "miggo.serviceAccountName" . }}-collector
+      {{- if .Values.miggoCollector.initContainers }}
       initContainers:
-        {{ toYaml .Values.collector.initContainers | nindent 8 }}
+        {{ toYaml .Values.miggoCollector.initContainers | nindent 8 }}
       {{- end }}
       containers:
         - name: miggo-collector
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- if .Values.collector.image.fullPath }}
-          image: "{{ .Values.collector.image.fullPath }}"
+          {{- if .Values.miggoCollector.image.fullPath }}
+          image: "{{ .Values.miggoCollector.image.fullPath }}"
           {{- else }}
-          image: "{{ .Values.image.registry }}/{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.miggoCollector.image.repository }}:{{ .Values.miggoCollector.image.tag | default .Chart.AppVersion }}"
           {{- end }}
-          imagePullPolicy: {{ .Values.collector.image.pullPolicy | default .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.miggoCollector.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --config
             - /etc/collector/config.yaml
-            {{- if .Values.sensor.profiler.enabled }}
+            {{- if .Values.miggoRuntime.profiler.enabled }}
             - --feature-gates
             - service.profilesSupport
             {{- end }}
@@ -79,7 +79,7 @@ spec:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-          {{- with .Values.collector.extraEnvsFrom }}
+          {{- with .Values.miggoCollector.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
@@ -87,18 +87,18 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          {{- if and (.Values.collector.useGOMEMLIMIT) ((((.Values.collector.resources).limits).memory))  }}
+          {{- if and (.Values.miggoCollector.useGOMEMLIMIT) ((((.Values.miggoCollector.resources).limits).memory))  }}
             - name: GOMEMLIMIT
-              value: {{ include "gomemlimit" .Values.collector.resources.limits.memory | quote }}
+              value: {{ include "gomemlimit" .Values.miggoCollector.resources.limits.memory | quote }}
           {{- end }}
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.collector.extraEnvs }}
+          {{- with .Values.miggoCollector.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:
-            {{- toYaml .Values.collector.resources | nindent 12 }}
+            {{- toYaml .Values.miggoCollector.resources | nindent 12 }}
           livenessProbe:
             httpGet:
               path: /health
@@ -114,13 +114,13 @@ spec:
             mountPath: /etc/collector
           {{ if (include "accessKeySecret" .) }}
           - name: access-key
-            mountPath: {{ .Values.collector.accessKeyMountLocation }}
+            mountPath: {{ .Values.miggoCollector.accessKeyMountLocation }}
             subPath: ACCESS_KEY
           {{- end }}
           {{- with .Values.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-          {{- with .Values.collector.volumeMounts }}
+          {{- with .Values.miggoCollector.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
       volumes:
@@ -138,7 +138,7 @@ spec:
       {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      {{- with .Values.collector.volumes }}
+      {{- with .Values.miggoCollector.volumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- with .Values.nodeSelector }}

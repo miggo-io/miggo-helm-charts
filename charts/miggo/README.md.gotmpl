@@ -70,7 +70,7 @@ helm install miggo miggo-charts/miggo -f values.yaml --namespace miggo-space --c
 
 ## Configuration
 
-The following table lists the configurable parameters of the k8s-integration chart and their default values.
+The following table lists the configurable parameters of the miggo chart and their default values.
 
 {{ template "chart.valuesTable" . }}
 
@@ -131,7 +131,7 @@ collector:
 To upgrade the chart:
 
 ```bash
-helm upgrade k8s-integration miggo-charts/miggo -f values.yaml --namespace miggo-space
+helm upgrade miggo miggo-charts/miggo -f values.yaml --namespace miggo-space
 ```
 
 ## Uninstallation

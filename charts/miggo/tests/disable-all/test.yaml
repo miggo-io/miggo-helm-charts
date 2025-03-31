@@ -7,7 +7,7 @@ release:
 templates:
   - templates/miggo-watch/deployment.yaml
   - templates/miggo-scanner/deployment.yaml
-  - templates/sensor/daemonset.yaml
+  - templates/miggo-runtime/daemonset.yaml
   - templates/collector/deployment.yaml
   - templates/collector/collector-config-cm.yaml
   - templates/image-pull-secret.yaml
@@ -48,7 +48,7 @@ tests:
           count: 0
 
   - it: sensor daemonset
-    template: templates/sensor/daemonset.yaml
+    template: templates/miggo-runtime/daemonset.yaml
     asserts:
       - hasDocuments:
           count: 0

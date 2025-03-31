@@ -1,10 +1,10 @@
-k8sRead:
+miggoWatch:
   enabled: false
 
-staticSbom:
+miggoScanner:
   enabled: false
 
-sensor:
+miggoRuntime:
   enabled: false
 
 collector:

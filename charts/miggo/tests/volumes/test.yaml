@@ -7,7 +7,7 @@ release:
 templates:
   - templates/miggo-watch/deployment.yaml
   - templates/miggo-scanner/deployment.yaml
-  - templates/sensor/daemonset.yaml
+  - templates/miggo-runtime/daemonset.yaml
   - templates/collector/deployment.yaml
   - templates/collector/collector-config-cm.yaml
 
@@ -85,7 +85,7 @@ tests:
             mountPath: /etc/config
 
   - it: should set custom volumes and volumeMounts in sensor daemonset
-    template: templates/sensor/daemonset.yaml
+    template: templates/miggo-runtime/daemonset.yaml
     set:
       volumes:
         - name: config-volume

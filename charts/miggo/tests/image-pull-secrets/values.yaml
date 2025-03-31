@@ -9,13 +9,13 @@ config:
 imagePullSecrets:
   - name: "test-secrets"
 
-k8sRead:
+miggoWatch:
   enabled: true
 
-staticSbom:
+miggoScanner:
   enabled: true
 
-sensor:
+miggoRuntime:
   enabled: true
 
 collector:

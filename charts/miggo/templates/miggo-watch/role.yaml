@@ -1,8 +1,8 @@
-{{ if .Values.k8sRead.enabled }}
+{{ if .Values.miggoWatch.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: k8s-read-cluster-role
+  name: miggo-watch-cluster-role
 rules:
 - apiGroups: ["apps"]
   resources: ["deployments", "statefulsets", "replicasets"]

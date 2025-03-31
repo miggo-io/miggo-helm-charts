@@ -1,14 +1,14 @@
-{{ if .Values.k8sRead.enabled }}
+{{ if .Values.miggoWatch.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: k8s-read-cluster-rolebinding
+  name: miggo-watch-cluster-rolebinding
 subjects:
 - kind: ServiceAccount
-  name: {{ include "k8s-integrations.serviceAccountName" . }}-k8s-read
+  name: {{ include "miggo.serviceAccountName" . }}-watch
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: k8s-read-cluster-role
+  name: miggo-watch-cluster-role
   apiGroup: rbac.authorization.k8s.io
 {{ end }}

@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "k8s-integrations.name" -}}
+{{- define "miggo.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "k8s-integrations.fullname" -}}
+{{- define "miggo.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "k8s-integrations.chart" -}}
+{{- define "miggo.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "k8s-integrations.labels" -}}
-helm.sh/chart: {{ include "k8s-integrations.chart" . }}
-{{ include "k8s-integrations.selectorLabels" . }}
+{{- define "miggo.labels" -}}
+helm.sh/chart: {{ include "miggo.chart" . }}
+{{ include "miggo.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,20 +45,20 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "k8s-integrations.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "k8s-integrations.name" . }}
+{{- define "miggo.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "miggo.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "k8s-integrations.serviceAccountName" -}}
-{{- default (include "k8s-integrations.fullname" .) .Values.serviceAccount.name }}
+{{- define "miggo.serviceAccountName" -}}
+{{- default (include "miggo.fullname" .) .Values.serviceAccount.name }}
 {{- end }}
 
 {{- define "otlpEndpoint" -}}
-{{- if .Values.collector.enabled -}}
+{{- if .Values.miggoCollector.enabled -}}
 http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4318
 {{- else -}}
 {{ .Values.output.otlp.otlpEndpoint }}
@@ -66,7 +66,7 @@ http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4318
 {{- end -}}
 
 {{- define "otlpProfilesEndpoint" -}}
-{{- if .Values.collector.enabled -}}
+{{- if .Values.miggoCollector.enabled -}}
 miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4317
 {{- else -}}
 {{ .Values.output.otlp.otlpEndpoint }}
@@ -74,7 +74,7 @@ miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4317
 {{- end -}}
 
 {{- define "otlpEndpointHealthCheckPort" -}}
-{{- if .Values.collector.enabled -}}
+{{- if .Values.miggoCollector.enabled -}}
 6666
 {{- else -}}
 {{- 0 -}}
@@ -82,7 +82,7 @@ miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4317
 {{- end -}}
 
 {{- define "otlpTlsSkipVerify" -}}
-{{- if .Values.collector.enabled -}}
+{{- if .Values.miggoCollector.enabled -}}
 {{- false -}}
 {{- else -}}
 {{ .Values.output.otlp.tlsSkipVerify }}

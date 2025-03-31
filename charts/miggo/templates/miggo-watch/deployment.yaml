@@ -1,44 +1,44 @@
-{{ if .Values.k8sRead.enabled }}
+{{ if .Values.miggoWatch.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "k8s-integrations.fullname" . }}-k8s-read
+  name: {{ include "miggo.fullname" . }}-watch
   labels:
-    {{- include "k8s-integrations.labels" . | nindent 4 }}
+    {{- include "miggo.labels" . | nindent 4 }}
     {{- with .Values.labels }}
     {{- tpl (toYaml .) $ | nindent 4 }}
     {{- end }}
-    {{- with .Values.k8sRead.labels }}
+    {{- with .Values.miggoWatch.labels }}
     {{- tpl (toYaml .) $ | nindent 4 }}
     {{- end }}
   annotations:
   {{- with .Values.annotations }}
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with .Values.k8sRead.annotations }}
+  {{- with .Values.miggoWatch.annotations }}
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "k8s-read.selectorLabels" . | nindent 6 }}
+      {{- include "miggo-watch.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
         {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-        {{- with .Values.k8sRead.podAnnotations }}
+        {{- with .Values.miggoWatch.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
       labels:
-        component: k8s-read
-        {{- include "k8s-read.labels" . | nindent 8 }}
+        component: miggo-watch
+        {{- include "miggo-watch.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-        {{- with .Values.k8sRead.podLabels }}
+        {{- with .Values.miggoWatch.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
     spec:
@@ -47,19 +47,19 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         {{- include "miggoImagePullSecrets" . | nindent 8 }}
-      serviceAccountName: {{ include "k8s-integrations.serviceAccountName" . }}-k8s-read
+      serviceAccountName: {{ include "miggo.serviceAccountName" . }}-watch
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: k8s-read
+        - name: miggo-watch
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- if .Values.k8sRead.image.fullPath }}
-          image: "{{ .Values.k8sRead.image.fullPath }}"
+          {{- if .Values.miggoWatch.image.fullPath }}
+          image: "{{ .Values.miggoWatch.image.fullPath }}"
           {{- else }}
-          image: "{{ .Values.image.registry }}/{{ .Values.k8sRead.image.repository }}:{{ .Values.k8sRead.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.miggoWatch.image.repository }}:{{ .Values.miggoWatch.image.tag | default .Chart.AppVersion }}"
           {{- end }}
-          imagePullPolicy: {{ .Values.k8sRead.image.pullPolicy | default .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.miggoWatch.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
             - --tenant-name={{ .Values.miggo.tenantId }}
@@ -72,9 +72,9 @@ spec:
             - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
-            - --interval={{ .Values.k8sRead.config.interval }}
-            - --exclude={{ .Values.k8sRead.config.exclude }}
-            {{ if .Values.k8sRead.config.disableCompression }}
+            - --interval={{ .Values.miggoWatch.config.interval }}
+            - --exclude={{ .Values.miggoWatch.config.exclude }}
+            {{ if .Values.miggoWatch.config.disableCompression }}
             - --disable-compression
             {{ end }}
             {{- include "namespace.flags" . | nindent 12 }}
@@ -82,18 +82,18 @@ spec:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-          {{- with .Values.k8sRead.extraEnvsFrom }}
+          {{- with .Values.miggoWatch.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
-          {{- if and (.Values.k8sRead.useGOMEMLIMIT) ((((.Values.k8sRead.resources).limits).memory))  }}
+          {{- if and (.Values.miggoWatch.useGOMEMLIMIT) ((((.Values.miggoWatch.resources).limits).memory))  }}
             - name: GOMEMLIMIT
-              value: {{ include "gomemlimit" .Values.k8sRead.resources.limits.memory | quote }}
+              value: {{ include "gomemlimit" .Values.miggoWatch.resources.limits.memory | quote }}
           {{- end }}
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.k8sRead.extraEnvs }}
+          {{- with .Values.miggoWatch.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
@@ -109,19 +109,19 @@ spec:
               port: {{ .Values.healthcheck.port }}
             periodSeconds: 10
           resources:
-            {{- toYaml .Values.k8sRead.resources | nindent 12 }}
+            {{- toYaml .Values.miggoWatch.resources | nindent 12 }}
           volumeMounts:
           {{- with .Values.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-          {{- with .Values.k8sRead.volumeMounts }}
+          {{- with .Values.miggoWatch.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
       volumes:
       {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      {{- with .Values.k8sRead.volumes }}
+      {{- with .Values.miggoWatch.volumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
