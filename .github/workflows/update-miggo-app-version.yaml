@@ -70,7 +70,7 @@ jobs:
             echo "$major.$minor.$((patch + 1))"
           }
           
-          CHART_YAML=charts/k8s-integration/Chart.yaml
+          CHART_YAML=charts/miggo/Chart.yaml
           CURRENT_CHART_VERSION=$(yq eval '.version' "$CHART_YAML")
           NEW_CHART_VERSION=$(bump_version "$CURRENT_CHART_VERSION")
           yq eval ".version = \"$NEW_CHART_VERSION\"" -i "$CHART_YAML"
@@ -86,7 +86,7 @@ jobs:
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[AUTO GITHUB] Bump k8s-integration app & chart version"
+          commit_message: "[AUTO GITHUB] Bump miggo app & chart version"
           branch: ${{ github.head_ref }}
-          file_pattern: 'charts/k8s-integration/Chart.yaml charts/k8s-integration/README.md'
+          file_pattern: 'charts/miggo/Chart.yaml charts/miggo/README.md'
           create_branch: false
