@@ -34,6 +34,6 @@ jobs:
                 echo "Testing chart: $chart"
                 helm dependency update
                 ./run-tests.sh || exit 1
-                cd ../../
               fi
+              cd ../../
           done
