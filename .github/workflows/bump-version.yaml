@@ -39,7 +39,7 @@ jobs:
         run: |
           set -x 
           
-          UMBRELLA_CHARTS=(k8s-integration)
+          UMBRELLA_CHARTS=(miggo)
 
           # Function to bump patch version
           bump_version() {

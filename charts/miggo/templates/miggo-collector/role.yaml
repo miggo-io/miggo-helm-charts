@@ -1,0 +1,10 @@
+{{ if .Values.miggoCollector.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: collector-role
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create", "get", "delete", "update"]
+{{ end }}

@@ -1,0 +1,153 @@
+suite: runtime profiler
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+  - templates/miggo-runtime/daemonset.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: should configure collector to enable profiles signal
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].args
+          value:
+            - --config
+            - /etc/collector/config.yaml
+            - --feature-gates
+            - service.profilesSupport
+  - it: should configure collector to receive and export profiles
+    template: templates/miggo-collector/collector-config-cm.yaml
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["config.yaml"]
+          pattern: |
+            .*otlphttp/profiles:
+              +endpoint: https://api.miggo.io
+              +auth:
+                +authenticator: oauth2client.*
+      - matchRegex:
+          path: data["config.yaml"]
+          pattern: |
+            .*profiles:
+              +receivers: \[otlp\]
+              +exporters: \[otlphttp/profiles\].*
+
+  - it: should add both miggo-runtime and profiler containers to the DaemonSet spec
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          value:
+            - --cluster-name=simple-test
+            - --tenant-name=1b4a61e8-cdc8-4174-87bf-8201406ee65e
+            - --project-name=8f74294c-c769-4746-b1f3-cc20eecf0149
+            - --otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
+            - --collector-healthcheck-port=6666
+            - --tls-skip-verify=false
+            - --stdout=false
+            - --port=6666
+            - --metric-otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
+            - --metric-tls-skip-verify=false
+            - --metric-interval=60s
+            - --disable-profiler=false
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
+          value:
+            privileged: true
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].volumeMounts
+          value:
+            - name: debugfs
+              mountPath: /sys/kernel/debug
+              readOnly: true
+            - name: unix-socket
+              mountPath: /tmp/grpc
+      - matchRegex:
+          path: spec.template.spec.containers[?(@.name == "profiler")].image
+          pattern: "registry.miggo.io/miggo/miggo-profiler:.*"
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "profiler")].command
+          value:
+            - /root/ebpf-profiler
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "profiler")].args
+          value:
+            - -collection-agent=miggo-collector.miggo-space.svc.cluster.local:4317
+            - -disable-tls=true
+            - -reporter-interval=5s
+            - -samples-per-second=20
+            - -monitor-interval=5s
+            - -off-cpu-threshold=1000
+            - -probabilistic-threshold=100
+            - -probabilistic-interval=1m0s
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
+          value:
+            allowPrivilegeEscalation: true
+            privileged: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "profiler")].volumeMounts
+          value:
+            - name: debugfs
+              mountPath: /sys/kernel/debug
+              readOnly: true
+            - name: cgroupfs
+              mountPath: /cgroup
+              readOnly: true
+            - name: unix-socket
+              mountPath: /tmp/grpc
+      - equal:
+          path: spec.template.spec.volumes
+          value:
+            - name: debugfs
+              hostPath:
+                path: /sys/kernel/debug
+            - name: unix-socket
+              emptyDir: { }
+            - name: cgroupfs
+              hostPath:
+                path: /sys/fs/cgroup
+      - equal:
+          path: spec.template.spec.hostPID
+          value: true
+      - equal:
+          path: spec.template.spec.hostIPC
+          value: true
+  - it: should enable Off-CPU profiler
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime:
+        profiler:
+          offCpuThreshold: 1
+          probabilisticThreshold: 1
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "profiler")].args
+          value:
+            - -collection-agent=miggo-collector.miggo-space.svc.cluster.local:4317
+            - -disable-tls=true
+            - -reporter-interval=5s
+            - -samples-per-second=20
+            - -monitor-interval=5s
+            - -off-cpu-threshold=1
+            - -probabilistic-threshold=1
+            - -probabilistic-interval=1m0s

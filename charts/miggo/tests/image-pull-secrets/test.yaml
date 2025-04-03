@@ -1,0 +1,48 @@
+suite: custom image pull secrets
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: collector deployment
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets[1]
+          value:
+            name: miggo-regcred
+
+  - it: miggo-watch deployment
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets[1]
+          value:
+            name: miggo-regcred
+      
+  - it: miggo-scanner deployment
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets[1]
+          value:
+            name: miggo-regcred
+      
+  - it: sensor daemonset
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets[1]
+          value:
+            name: miggo-regcred
