@@ -905,6 +905,17 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/k8s-read-0.0.1/k8s-read-0.0.1.tgz
     version: 0.0.1
+  miggo:
+  - apiVersion: v2
+    appVersion: v25.401.1
+    created: "2025-04-03T09:29:19.454193555Z"
+    description: A Helm chart for Miggo
+    digest: e71e23eb54c89322dad5dbb6db0f165e7d30a3abc4ef8224380a64939dce1190
+    name: miggo
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-0.0.2/miggo-0.0.2.tgz
+    version: 0.0.2
   miggo-collector:
   - apiVersion: v2
     appVersion: 0.87.0
@@ -1358,4 +1369,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.1/static-sbom-0.0.1.tgz
     version: 0.0.1
-generated: "2025-03-26T11:24:35.594338256Z"
+generated: "2025-04-03T09:29:19.45439895Z"
