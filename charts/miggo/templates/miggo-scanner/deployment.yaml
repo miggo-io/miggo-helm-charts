@@ -91,6 +91,10 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+            - name: MIGGO_SCANNER_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           {{- if and (.Values.miggoScanner.useGOMEMLIMIT) ((((.Values.miggoScanner.resources).limits).memory))  }}
             - name: GOMEMLIMIT
               value: {{ include "gomemlimit" .Values.miggoScanner.resources.limits.memory | quote }}

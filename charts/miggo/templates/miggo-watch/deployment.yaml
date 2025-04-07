@@ -86,6 +86,10 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+            - name: MIGGO_WATCH_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           {{- if and (.Values.miggoWatch.useGOMEMLIMIT) ((((.Values.miggoWatch.resources).limits).memory))  }}
             - name: GOMEMLIMIT
               value: {{ include "gomemlimit" .Values.miggoWatch.resources.limits.memory | quote }}
