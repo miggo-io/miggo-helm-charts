@@ -34,14 +34,29 @@ data:
                   regex: 'otelcol_(.*)'
                   target_label: __name__
                   replacement: 'miggocol_$1'
-                - target_label: "tenant_id"
+                - target_label: "tenant-id"
                   replacement: "{{ .Values.miggo.tenantId }}"
-                - target_label: "project_id"
+                - target_label: "project-id"
                   replacement: "{{ .Values.miggo.projectId }}"
-                - target_label: "miggo_name"
+                - target_label: "miggo-name"
                   replacement: "{{ .Values.miggo.clusterName }}"
+                - target_label: "node-name"
+                  replacement: "${env:NODE_NAME}"
+                - target_label: "deployment-type"
+                  replacement: "{{ if .Values.miggoCollector.instancePerNode }}daemonset{{ else }}deployment{{ end }}"
 
     processors:
+      metricstransform:
+        transforms:
+          - include: miggocol_process_uptime
+            match_type: strict
+            new_name: miggo_component_status
+            action: combine
+            operations:
+              - action: add_label
+                new_label: component
+                new_value: collector
+
       batch:
         timeout: 10s
 
@@ -74,9 +89,13 @@ data:
           receivers: [otlp]
           exporters: [otlphttp/profiles]
         {{- end }}
-        metrics:
-          receivers: [otlp, prometheus]
+        metrics/sensors:
+          receivers: [otlp]
           processors: [batch]
+          exporters: [debug, prometheus, otlphttp]
+        metrics/collector:
+          receivers: [prometheus]
+          processors: [batch, metricstransform]
           exporters: [debug, prometheus, otlphttp]
         traces:
           receivers: [otlp]
