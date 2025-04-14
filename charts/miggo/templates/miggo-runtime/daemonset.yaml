@@ -139,6 +139,21 @@ spec:
             - -off-cpu-threshold={{ .Values.miggoRuntime.profiler.offCpuThreshold }}
             - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
+          env:
+            - name: MIGGO_RUNTIME_CLUSTER_NAME
+              value: {{ .Values.miggo.clusterName }}
+            - name: MIGGO_RUNTIME_TENANT_ID
+              value: {{ .Values.miggo.tenantId }}
+            - name: MIGGO_RUNTIME_PROJECT_ID
+              value: {{ .Values.miggo.projectId }}
+            - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
+              value: {{ (include "otlpEndpoint" .) }}
+            - name: MIGGO_RUNTIME_EXPORT_METRICS_INTERVAL
+              value: {{ .Values.config.metrics.interval }}
+            - name: MIGGO_RUNTIME_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           resources:
             {{- toYaml .Values.miggoRuntime.profiler.resources | nindent 12 }}
           securityContext:
