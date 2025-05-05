@@ -61,6 +61,10 @@ output:
     otlpEndpoint: "https://api.miggo.io"
     # -- Skip TLS verification
     tlsSkipVerify: false
+  
+  api:
+    enabled: true
+    apiEndpoint: ""
 
 serviceAccount:
   # -- Automatically mount API credentials for the service account
