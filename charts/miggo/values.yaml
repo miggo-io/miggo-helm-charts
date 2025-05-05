@@ -63,7 +63,9 @@ output:
     tlsSkipVerify: false
   
   api:
+    # -- Decide whether to communicate with Miggo Api
     enabled: true
+    # -- Miggo Api endpoint (defaults to otlp endpoint)
     apiEndpoint: ""
 
 serviceAccount:
