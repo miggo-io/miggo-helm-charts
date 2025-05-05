@@ -200,6 +200,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoWatch.volumes | list | `[]` | Additional volumes |
 | nodeSelector | object | `{}` | Node selector for all pods |
+| output.api.apiEndpoint | string | `""` |  |
+| output.api.enabled | bool | `true` |  |
 | output.otlp.otlpEndpoint | string | `"https://api.miggo.io"` | OTLP endpoint URL |
 | output.otlp.tlsSkipVerify | bool | `false` | Skip TLS verification |
 | output.stdout | bool | `false` | Enable stdout logging (for debugging) |
