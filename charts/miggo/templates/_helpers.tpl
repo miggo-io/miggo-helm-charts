@@ -65,6 +65,14 @@ http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4318
 {{- end -}}
 {{- end -}}
 
+{{- define "apiEndpoint" -}}
+{{- if .Values.output.api.apiEndpoint -}}
+{{- .Values.output.api.apiEndpoint  -}}
+{{- else -}}
+{{ .Values.output.otlp.otlpEndpoint }}
+{{- end -}}
+{{- end -}}
+
 {{- define "otlpProfilesEndpoint" -}}
 {{- if .Values.miggoCollector.enabled -}}
 miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4317

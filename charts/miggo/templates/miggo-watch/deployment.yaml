@@ -78,6 +78,9 @@ spec:
             - --disable-compression
             {{ end }}
             {{- include "namespace.flags" . | nindent 12 }}
+            {{ if .Values.output.api.enabled }}
+            - --api-url={{ (include "apiEndpoint" . )}}
+            {{ end }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
@@ -90,6 +93,12 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+          {{ if .Values.output.api.enabled }}
+            - name: MIGGO_WATCH_CLIENT_ID
+              value: {{ .Values.config.clientId }}
+            - name: MIGGO_WATCH_ACCESS_TOKEN
+              value: {{ .Values.config.accessKey }}
+          {{ end }}
           {{- if and (.Values.miggoWatch.useGOMEMLIMIT) ((((.Values.miggoWatch.resources).limits).memory))  }}
             - name: GOMEMLIMIT
               value: {{ include "gomemlimit" .Values.miggoWatch.resources.limits.memory | quote }}
