@@ -139,18 +139,18 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.probabilisticInterval | string | `"1m0s"` | Time interval for which probabilistic profiling will be enabled or disabled. |
 | miggoRuntime.profiler.probabilisticThreshold | int | `100` | If set to a value between 1 and 99 will enable probabilistic profiling: every probabilistic-interval a random number between 0 and 99 is chosen. If the given probabilistic-threshold is greater than this random number, the agent will collect profiles from this system for the duration of the interval. |
 | miggoRuntime.profiler.reporterInterval | string | `"5s"` | Set the reporter's interval in seconds. |
-| miggoRuntime.profiler.resources.limits.cpu | string | `"1000m"` |  |
-| miggoRuntime.profiler.resources.limits.memory | string | `"1Gi"` |  |
+| miggoRuntime.profiler.resources.limits.cpu | string | `"500m"` |  |
+| miggoRuntime.profiler.resources.limits.memory | string | `"500Mi"` |  |
 | miggoRuntime.profiler.resources.requests.cpu | string | `"200m"` |  |
-| miggoRuntime.profiler.resources.requests.memory | string | `"500Mi"` |  |
+| miggoRuntime.profiler.resources.requests.memory | string | `"256Mi"` |  |
 | miggoRuntime.profiler.samplesPerSecond | int | `20` | Set the frequency (in Hz) of stack trace sampling. |
 | miggoRuntime.profiler.securityContext.allowPrivilegeEscalation | bool | `true` |  |
 | miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"SYS_ADMIN"` |  |
 | miggoRuntime.profiler.securityContext.privileged | bool | `true` |  |
-| miggoRuntime.resources.limits.cpu | string | `"3000m"` |  |
-| miggoRuntime.resources.limits.memory | string | `"4Gi"` |  |
-| miggoRuntime.resources.requests.cpu | string | `"1000m"` |  |
-| miggoRuntime.resources.requests.memory | string | `"2Gi"` |  |
+| miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
+| miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
+| miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
+| miggoRuntime.resources.requests.memory | string | `"256Mi"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
 | miggoRuntime.volumes | list | `[]` |  |
