@@ -55,7 +55,7 @@ data:
             operations:
               - action: add_label
                 new_label: component
-                new_value: collector
+                new_value: Miggo Collector
 
       batch:
         timeout: 10s
