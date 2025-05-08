@@ -57,6 +57,14 @@ Create the name of the service account to use
 {{- default (include "miggo.fullname" .) .Values.serviceAccount.name }}
 {{- end }}
 
+{{- define "accessKeySecret" -}}
+{{- if .Values.config.accessKeySecret -}}
+{{- .Values.config.accessKeySecret -}}
+{{- else if .Values.config.accessKey -}}
+access-key-secret
+{{- end -}}
+{{- end -}}
+
 {{- define "otlpEndpoint" -}}
 {{- if .Values.miggoCollector.enabled -}}
 http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4318
