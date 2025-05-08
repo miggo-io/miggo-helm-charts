@@ -17,11 +17,3 @@ Selector labels
 app.kubernetes.io/name: {{ include "miggo.name" . }}-collector
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
-
-{{- define "accessKeySecret" -}}
-{{- if .Values.config.accessKeySecret -}}
-{{- .Values.config.accessKeySecret -}}
-{{- else if .Values.config.accessKey -}}
-access-key-secret
-{{- end -}}
-{{- end -}}

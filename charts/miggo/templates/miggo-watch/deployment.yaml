@@ -96,8 +96,13 @@ spec:
           {{ if .Values.output.api.enabled }}
             - name: MIGGO_WATCH_CLIENT_ID
               value: {{ .Values.config.clientId }}
+            {{ if (include "accessKeySecret" .) }}
             - name: MIGGO_WATCH_ACCESS_TOKEN
-              value: {{ .Values.config.accessKey }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "accessKeySecret" . }}
+                  key: ACCESS_KEY
+            {{- end }}
           {{ end }}
           {{- if and (.Values.miggoWatch.useGOMEMLIMIT) ((((.Values.miggoWatch.resources).limits).memory))  }}
             - name: GOMEMLIMIT
