@@ -61,7 +61,7 @@ output:
     otlpEndpoint: "https://api.miggo.io"
     # -- Skip TLS verification
     tlsSkipVerify: false
-  
+
   api:
     # -- Decide whether to communicate with Miggo Api
     enabled: true
@@ -249,12 +249,12 @@ miggoRuntime:
     kubernetes.io/os: linux
 
   resources:
-    limits:
-      cpu: 3000m
-      memory: 4Gi
     requests:
-      cpu: 1000m
-      memory: 2Gi
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
   securityContext:
     privileged: true
@@ -280,11 +280,11 @@ miggoRuntime:
       pullPolicy:
 
     resources:
-      limits:
-        cpu: 1000m
-        memory: 1Gi
       requests:
         cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 500m
         memory: 500Mi
 
     securityContext:
