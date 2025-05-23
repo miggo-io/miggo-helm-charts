@@ -315,6 +315,36 @@ miggoRuntime:
     # -- Time interval for which probabilistic profiling will be enabled or disabled.
     probabilisticInterval: 1m0s
 
+  analyzer:
+    # -- Install analyzer on each cluster node to provide endpoint URL to
+    # functions mapping and other runtime insights.
+    enabled: false
+    image:
+      # -- Image repository
+      repository: miggo/miggo-analyzer
+      # -- Image tag (defaults to Chart appVersion if not set)
+      tag:
+      # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
+      # Useful for local development with Minikube or when needing to specify a complete custom image path
+      fullPath:
+      # -- Image pull policy. Specifies when Kubernetes should pull the container image
+      pullPolicy:
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+    securityContext:
+      privileged: true
+
+    healthcheck:
+      # -- Port number for health check endpoints
+      port: 6667
+
 miggoCollector:
   # -- Enable Collector component
   enabled: true

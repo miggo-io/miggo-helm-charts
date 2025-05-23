@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.28](https://img.shields.io/badge/Version-0.0.28-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.523.2](https://img.shields.io/badge/AppVersion-v25.523.2-informational?style=flat-square)
+![Version: 0.0.29](https://img.shields.io/badge/Version-0.0.29-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.523.2](https://img.shields.io/badge/AppVersion-v25.523.2-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -118,6 +118,17 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoCollector.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoCollector.volumes | list | `[]` | Additional volumes |
+| miggoRuntime.analyzer.enabled | bool | `false` | Install analyzer on each cluster node to provide endpoint URL to functions mapping and other runtime insights. |
+| miggoRuntime.analyzer.healthcheck.port | int | `6667` | Port number for health check endpoints |
+| miggoRuntime.analyzer.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
+| miggoRuntime.analyzer.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
+| miggoRuntime.analyzer.image.repository | string | `"miggo/miggo-analyzer"` | Image repository |
+| miggoRuntime.analyzer.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
+| miggoRuntime.analyzer.resources.limits.cpu | string | `"500m"` |  |
+| miggoRuntime.analyzer.resources.limits.memory | string | `"512Mi"` |  |
+| miggoRuntime.analyzer.resources.requests.cpu | string | `"100m"` |  |
+| miggoRuntime.analyzer.resources.requests.memory | string | `"256Mi"` |  |
+| miggoRuntime.analyzer.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.enabled | bool | `false` | Install eBPF agent on each cluster node to provide package-level reachability analysis and other runtime insights. |
 | miggoRuntime.extraEnvs | list | `[]` | Additional environment variables |
 | miggoRuntime.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
