@@ -52,7 +52,7 @@ spec:
       containers:
         - name: miggo-runtime
           securityContext:
-            privileged: true
+            {{- toYaml .Values.miggoRuntime.securityContext | nindent 12 }}
           {{- if .Values.miggoRuntime.image.fullPath }}
           image: "{{ .Values.miggoRuntime.image.fullPath }}"
           {{- else }}
@@ -167,6 +167,48 @@ spec:
               readOnly: true
             - name: unix-socket
               mountPath: /tmp/grpc
+        {{- end }}
+        {{- if .Values.miggoRuntime.analyzer.enabled }}
+        - name: analyzer
+          {{- if .Values.miggoRuntime.analyzer.image.fullPath }}
+          image: "{{ .Values.miggoRuntime.analyzer.image.fullPath }}"
+          {{- else }}
+          image: "{{ .Values.image.registry }}/{{ .Values.miggoRuntime.analyzer.image.repository }}:{{ .Values.miggoRuntime.analyzer.image.tag | default .Chart.AppVersion }}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.miggoRuntime.analyzer.image.pullPolicy | default .Values.image.pullPolicy }}
+          args:
+            - --cluster-name={{ .Values.miggo.clusterName }}
+            - --tenant-name={{ .Values.miggo.tenantId }}
+            - --project-name={{ .Values.miggo.projectId }}
+            - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
+            - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
+            - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --metric-interval={{ .Values.config.metrics.interval }}
+            - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
+            - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --stdout={{ .Values.output.stdout }}
+            - --port={{ .Values.miggoRuntime.analyzer.healthcheck.port }}
+          env:
+            - name: RUNTIME_ANALYZER_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          ports:
+            - containerPort: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.miggoRuntime.analyzer.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.miggoRuntime.analyzer.securityContext | nindent 12 }}
         {{- end }}
       hostIPC: {{ .Values.miggoRuntime.hostIPC }}
       hostPID: {{ .Values.miggoRuntime.hostPID }}
