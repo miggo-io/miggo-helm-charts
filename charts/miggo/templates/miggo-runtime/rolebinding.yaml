@@ -1,4 +1,4 @@
-{{ if .Values.miggoRuntime.enabled }}
+{{- if .Values.miggoRuntime.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -13,4 +13,22 @@ subjects:
 - kind: ServiceAccount
   name: {{ include "miggo.fullname" . }}-runtime
   namespace: '{{ .Release.Namespace }}'
-{{ end }}
+{{- end }}
+
+{{- if and .Values.miggoRuntime.enabled (eq .Values.config.platform "openshift") }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "miggo.fullname" . }}-scc-privileged
+  labels:
+  {{- include "miggo.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "miggo.fullname" . }}-scc-privileged
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "miggo.fullname" . }}-runtime
+    namespace: '{{ .Release.Namespace }}'
+{{- end }}

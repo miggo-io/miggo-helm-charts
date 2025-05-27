@@ -23,6 +23,10 @@ healthcheck:
   port: 6666
 
 config:
+  # -- The Kubernetes platform acronym. Allowed values are:
+  # - gke: Google Kubernetes Engine
+  # - openshift: Red Hat OpenShift/OCP
+  platform: ""
   metrics:
     # -- Interval for metrics collection
     interval: 60s
