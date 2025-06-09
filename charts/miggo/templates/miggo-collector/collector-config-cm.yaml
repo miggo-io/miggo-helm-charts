@@ -4,7 +4,10 @@ kind: ConfigMap
 metadata:
   name: collector-config-cm
 data:
-  config.yaml: |
+  collector-init-script.sh: |
+    {{ .Files.Get "files/collector-init-script.sh" | nindent 4 }}
+  
+  config-template.yaml: |
     extensions:
       health_check:
         endpoint: 0.0.0.0:{{ .Values.healthcheck.port }}
@@ -35,9 +38,9 @@ data:
                   target_label: __name__
                   replacement: 'miggocol_$1'
                 - target_label: "tenant-id"
-                  replacement: "{{ .Values.miggo.tenantId }}"
+                  replacement: "${MIGGO_TENANT_ID}"
                 - target_label: "project-id"
-                  replacement: "{{ .Values.miggo.projectId }}"
+                  replacement: "${MIGGO_PROJECT_ID}"
                 - target_label: "miggo-name"
                   replacement: "{{ .Values.miggo.clusterName }}"
                 - target_label: "node-name"
@@ -61,7 +64,6 @@ data:
         timeout: 10s
 
     exporters:
-
       debug:
         verbosity: {{ .Values.config.logVerbosity }}
 
