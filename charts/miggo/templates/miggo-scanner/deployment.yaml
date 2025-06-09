@@ -95,6 +95,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: MIGGO_SCANNER_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           {{- if and (.Values.miggoScanner.useGOMEMLIMIT) ((((.Values.miggoScanner.resources).limits).memory))  }}
             - name: GOMEMLIMIT
               value: {{ include "gomemlimit" .Values.miggoScanner.resources.limits.memory | quote }}

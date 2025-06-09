@@ -93,6 +93,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: MIGGO_WATCH_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           {{ if .Values.output.api.enabled }}
             - name: MIGGO_WATCH_CLIENT_ID
               value: {{ .Values.config.clientId }}
