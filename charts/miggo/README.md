@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.32](https://img.shields.io/badge/Version-0.0.32-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.527.2](https://img.shields.io/badge/AppVersion-v25.527.2-informational?style=flat-square)
+![Version: 0.0.33](https://img.shields.io/badge/Version-0.0.33-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.527.2](https://img.shields.io/badge/AppVersion-v25.527.2-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -192,7 +192,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.volumes | list | `[]` | Additional volumes |
 | miggoWatch.annotations | object | `{}` | Component-specific annotations |
 | miggoWatch.config.disableCompression | bool | `false` | Disable compression for data transfer |
-| miggoWatch.config.exclude | string | `"pod"` | Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service) |
+| miggoWatch.config.exclude | string | `"pod,replica-set"` | Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service) |
 | miggoWatch.config.interval | string | `"6h"` | Interval for scanning Kubernetes resources |
 | miggoWatch.enabled | bool | `true` | Enable Miggo Watch component |
 | miggoWatch.extraEnvs | list | `[]` | Additional environment variables |
