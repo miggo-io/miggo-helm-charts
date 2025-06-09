@@ -144,7 +144,7 @@ miggoWatch:
     # -- Disable compression for data transfer
     disableCompression: false
     # -- Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service)
-    exclude: "pod,replica-set"
+    exclude: "pod,replica-set" 
 
   # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
   # configured resources.limits.memory. If no resources.limits.memory are
