@@ -192,7 +192,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.volumes | list | `[]` | Additional volumes |
 | miggoWatch.annotations | object | `{}` | Component-specific annotations |
 | miggoWatch.config.disableCompression | bool | `false` | Disable compression for data transfer |
-| miggoWatch.config.exclude | string | `"pod"` | Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service) |
+| miggoWatch.config.exclude | string | `"pod,replica-set"` | Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service) |
 | miggoWatch.config.interval | string | `"6h"` | Interval for scanning Kubernetes resources |
 | miggoWatch.enabled | bool | `true` | Enable Miggo Watch component |
 | miggoWatch.extraEnvs | list | `[]` | Additional environment variables |
