@@ -84,6 +84,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
+          - name: MIGGO_RUNTIME_INSTANCE_ID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           - name: KUBERNETES_CLUSTER_DOMAIN
             value: {{ quote .Values.kubernetesClusterDomain }}
           {{- with .Values.extraEnvs }}
