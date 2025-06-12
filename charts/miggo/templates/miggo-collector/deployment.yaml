@@ -54,10 +54,41 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       serviceAccountName: {{ include "miggo.serviceAccountName" . }}-collector
-      {{- if .Values.miggoCollector.initContainers }}
       initContainers:
+      {{- if .Values.miggoCollector.initContainers }}
         {{ toYaml .Values.miggoCollector.initContainers | nindent 8 }}
       {{- end }}
+        - name: collector-init-container
+          image: alpine:latest
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              apk update --no-cache
+              apk add --no-cache curl jq envsubst bash
+              
+              bash /etc/collector-cm/collector-init-script.sh
+          env:
+            - name: CLIENT_ID
+              value: {{ .Values.config.clientId }}
+            - name: ACCESS_KEY_MOUNT_LOCATION
+              value: {{ .Values.miggoCollector.accessKeyMountLocation }}
+          volumeMounts:
+            - name: collector-config-cm
+              mountPath: /etc/collector-cm
+            - name: collector-config
+              mountPath: /etc/collector
+          {{ if (include "accessKeySecret" .) }}
+            - name: access-key
+              mountPath: {{ .Values.miggoCollector.accessKeyMountLocation }}
+              subPath: ACCESS_KEY
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.miggoCollector.volumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
       containers:
         - name: miggo-collector
           securityContext:
@@ -125,6 +156,8 @@ spec:
           {{- end }}
       volumes:
       - name: collector-config
+        emptyDir: {}
+      - name: collector-config-cm
         configMap:
           name: collector-config-cm
       {{ if (include "accessKeySecret" .) }}
