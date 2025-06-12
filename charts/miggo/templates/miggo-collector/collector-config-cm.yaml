@@ -49,6 +49,24 @@ data:
                   replacement: "{{ if .Values.miggoCollector.instancePerNode }}daemonset{{ else }}deployment{{ end }}"
 
     processors:
+      resource:
+        attributes:
+          - key: project
+            value: "${MIGGO_PROJECT_ID}"
+            action: insert
+          - key: tenant
+            value: "${MIGGO_TENANT_ID}"
+            action: insert
+      
+      attributes:
+        actions:
+          - key: project
+            value: "${MIGGO_PROJECT_ID}"
+            action: insert
+          - key: tenant
+            value: "${MIGGO_TENANT_ID}"
+            action: insert
+    
       metricstransform:
         transforms:
           - include: miggocol_process_uptime
@@ -93,18 +111,18 @@ data:
         {{- end }}
         metrics/sensors:
           receivers: [otlp]
-          processors: [batch]
+          processors: [batch, resource, attributes]
           exporters: [debug, prometheus, otlphttp]
         metrics/collector:
           receivers: [prometheus]
-          processors: [batch, metricstransform]
+          processors: [batch, metricstransform, resource, attributes]
           exporters: [debug, prometheus, otlphttp]
         traces:
           receivers: [otlp]
-          processors: [batch]
+          processors: [batch, resource, attributes]
           exporters: [debug, otlphttp]
         logs:
           receivers: [otlp]
-          processors: [batch]
+          processors: [batch, resource, attributes]
           exporters: [debug, otlphttp]
 {{ end }}
