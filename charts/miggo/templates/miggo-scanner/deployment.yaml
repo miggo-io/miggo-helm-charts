@@ -62,8 +62,6 @@ spec:
           imagePullPolicy: {{ .Values.miggoScanner.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
-            - --tenant-name={{ .Values.miggo.tenantId }}
-            - --project-name={{ .Values.miggo.projectId }}
             - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}

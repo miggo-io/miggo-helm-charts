@@ -61,8 +61,6 @@ spec:
           imagePullPolicy: {{ .Values.miggoRuntime.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
-            - --tenant-name={{ .Values.miggo.tenantId }}
-            - --project-name={{ .Values.miggo.projectId }}
             - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
@@ -88,6 +86,15 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          {{ if (include "accessKeySecret" .) }}
+          - name: MIGGO_RUNTIME_CLIENT_ID
+            value: {{ .Values.config.clientId }}
+          - name: MIGGO_RUNTIME_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "accessKeySecret" . }}
+                key: ACCESS_KEY
+          {{- end }}
           - name: KUBERNETES_CLUSTER_DOMAIN
             value: {{ quote .Values.kubernetesClusterDomain }}
           {{- with .Values.extraEnvs }}
@@ -146,10 +153,6 @@ spec:
           env:
             - name: MIGGO_RUNTIME_CLUSTER_NAME
               value: {{ .Values.miggo.clusterName }}
-            - name: MIGGO_RUNTIME_TENANT_ID
-              value: {{ .Values.miggo.tenantId }}
-            - name: MIGGO_RUNTIME_PROJECT_ID
-              value: {{ .Values.miggo.projectId }}
             - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
               value: {{ (include "otlpEndpoint" .) }}
             - name: MIGGO_RUNTIME_EXPORT_METRICS_INTERVAL
@@ -182,8 +185,6 @@ spec:
           imagePullPolicy: {{ .Values.miggoRuntime.analyzer.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
-            - --tenant-name={{ .Values.miggo.tenantId }}
-            - --project-name={{ .Values.miggo.projectId }}
             - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
