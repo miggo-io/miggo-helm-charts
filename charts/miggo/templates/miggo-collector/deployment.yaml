@@ -84,10 +84,10 @@ spec:
               subPath: ACCESS_KEY
           {{- end }}
           {{- with .Values.volumeMounts }}
-          {{- toYaml . | nindent 10 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.miggoCollector.volumeMounts }}
-          {{- toYaml . | nindent 10 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
       containers:
         - name: miggo-collector
