@@ -20,6 +20,12 @@ rules:
   resources: ["cronjobs", "jobs"]
   verbs: ["get", "list", "watch"]
 
+{{- if eq .Values.config.platform "gke" }}
+- apiGroups: [""]
+  resources: ["serviceaccounts/token"]
+  verbs: ["create"]
+{{- end }}
+
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
