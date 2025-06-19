@@ -86,9 +86,9 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
-          {{ if (include "accessKeySecret" .) }}
           - name: MIGGO_RUNTIME_CLIENT_ID
             value: {{ .Values.config.clientId }}
+          {{ if (include "accessKeySecret" .) }}
           - name: MIGGO_RUNTIME_ACCESS_TOKEN
             valueFrom:
               secretKeyRef:
