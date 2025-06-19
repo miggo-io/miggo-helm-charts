@@ -60,6 +60,9 @@ spec:
       {{- end }}
         - name: collector-init-container
           image: alpine:latest
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          imagePullPolicy: {{ .Values.miggoCollector.image.pullPolicy | default .Values.image.pullPolicy }}
           command: ["/bin/sh"]
           args:
             - -c
@@ -68,11 +71,24 @@ spec:
               apk add --no-cache curl jq envsubst bash
               
               bash /etc/collector-cm/collector-init-script.sh
+          envFrom:
+          {{- with .Values.extraEnvsFrom }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.miggoCollector.extraEnvsFrom }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
             - name: CLIENT_ID
               value: {{ .Values.config.clientId }}
             - name: ACCESS_KEY_MOUNT_LOCATION
               value: {{ .Values.miggoCollector.accessKeyMountLocation }}
+          {{- with .Values.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.miggoCollector.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: collector-config-cm
               mountPath: /etc/collector-cm
