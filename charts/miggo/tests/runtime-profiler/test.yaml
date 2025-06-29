@@ -31,14 +31,14 @@ tests:
       - isKind:
           of: ConfigMap
       - matchRegex:
-          path: data["config.yaml"]
+          path: data["config-template.yaml"]
           pattern: |
             .*otlphttp/profiles:
               +endpoint: https://api.miggo.io
               +auth:
                 +authenticator: oauth2client.*
       - matchRegex:
-          path: data["config.yaml"]
+          path: data["config-template.yaml"]
           pattern: |
             .*profiles:
               +receivers: \[otlp\]
@@ -53,8 +53,6 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           value:
             - --cluster-name=simple-test
-            - --tenant-name=1b4a61e8-cdc8-4174-87bf-8201406ee65e
-            - --project-name=8f74294c-c769-4746-b1f3-cc20eecf0149
             - --otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
             - --collector-healthcheck-port=6666
             - --tls-skip-verify=false

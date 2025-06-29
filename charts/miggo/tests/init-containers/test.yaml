@@ -22,7 +22,7 @@ tests:
     asserts:
       - lengthEqual:
           path: spec.template.spec.initContainers
-          count: 1
+          count: 2
       - equal:
           path: spec.template.spec.initContainers[0].image
           value: busybox

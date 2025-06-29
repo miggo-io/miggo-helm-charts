@@ -11,10 +11,6 @@ imagePullSecrets: []
   # - name: ""
 
 miggo:
-  # -- Tenant ID for the Miggo platform
-  tenantId: ""
-  # -- Project ID for the Miggo platform
-  projectId: ""
   # -- Name of the Kubernetes cluster
   clusterName: "kubernetes-cluster"
 
