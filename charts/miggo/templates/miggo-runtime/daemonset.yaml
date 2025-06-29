@@ -193,11 +193,25 @@ spec:
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --stdout={{ .Values.output.stdout }}
             - --port={{ .Values.miggoRuntime.analyzer.healthcheck.port }}
+            {{ if .Values.output.api.enabled }}
+            - --api-url={{ (include "apiEndpoint" . )}}
+            {{ end }}
           env:
             - name: RUNTIME_ANALYZER_NODE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+          {{ if .Values.output.api.enabled }}
+            - name: RUNTIME_ANALYZER_CLIENT_ID
+              value: {{ .Values.config.clientId }}
+            {{ if (include "accessKeySecret" .) }}
+            - name: RUNTIME_ANALYZER_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "accessKeySecret" . }}
+                  key: ACCESS_KEY
+            {{- end }}
+          {{ end }}
           ports:
             - containerPort: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
           livenessProbe:
