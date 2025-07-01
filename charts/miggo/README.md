@@ -54,8 +54,6 @@ helm repo update
 
 ```yaml
 miggo:
-  tenantId: "your-tenant-id"
-  projectId: "your-project-id"
   clusterName: "your-cluster-name"
 
 config:
@@ -93,8 +91,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | imagePullSecrets | list | `[]` |  |
 | labels | object | `{}` | Global labels to add to all resources |
 | miggo.clusterName | string | `"kubernetes-cluster"` | Name of the Kubernetes cluster |
-| miggo.projectId | string | `""` | Project ID for the Miggo platform |
-| miggo.tenantId | string | `""` | Tenant ID for the Miggo platform |
 | miggoCollector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | miggoCollector.annotations | object | `{}` | Component-specific annotations |
 | miggoCollector.config.logVerbosity | string | `"basic"` | Log verbosity level (detailed|normal|basic) |
