@@ -62,6 +62,8 @@ tests:
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
             - --disable-profiler=false
+            - --enable-network-tracing=false
+            - --enable-file-access-tracing=false
       - equal:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
           value:
