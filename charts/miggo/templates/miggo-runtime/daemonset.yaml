@@ -70,6 +70,8 @@ spec:
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
             - --disable-profiler={{ not .Values.miggoRuntime.profiler.enabled }}
+            - --enable-network-tracing={{ .Values.miggoRuntime.enableNetworkTracing }}
+            - --enable-file-access-tracing={{ .Values.miggoRuntime.enableFileAccessTracing }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}

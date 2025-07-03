@@ -225,6 +225,10 @@ miggoRuntime:
   enabled: false
   # -- Kubernetes cluster domain
   kubernetesClusterDomain: ""
+  # -- Enable tracing network connections.
+  enableNetworkTracing: false
+  # -- Enable tracing file access.
+  enableFileAccessTracing: false
   # -- Additional environment variables
   extraEnvs: []
   # -- Additional environment variables from sources
