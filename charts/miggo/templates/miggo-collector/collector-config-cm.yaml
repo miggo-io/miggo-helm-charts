@@ -120,6 +120,10 @@ data:
       {{- end }}
 
     service:
+      telemetry:
+        metrics:
+          level: detailed
+          address: 0.0.0.0:8888
       extensions: [health_check, oauth2client]
       pipelines:
         {{- if .Values.miggoRuntime.profiler.enabled }}
@@ -130,7 +134,7 @@ data:
         metrics/sensors:
           receivers: [otlp]
           processors: [batch, resource/metrics, attributes/metrics]
-          exporters: [debug, prometheus, otlphttp]
+          exporters: [debug, otlphttp]
         metrics/collector:
           receivers: [prometheus]
           processors: [batch, metricstransform, resource/metrics, attributes/metrics]
