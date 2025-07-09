@@ -52,5 +52,5 @@ jobs:
           charts_dir: charts
           repository: miggo-io/miggo-helm-charts
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_TOKEN: "${{ steps.generate-token.outputs.token }}"
           CR_GENERATE_RELEASE_NOTES: true
