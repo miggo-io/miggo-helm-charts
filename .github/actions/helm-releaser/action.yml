@@ -30,6 +30,10 @@ inputs:
     description: The charts directory
     required: false
     default: charts
+  repository:
+    description: The charts repository
+    required: false
+    default: ""
   install_dir:
     description: "Where to install the cr tool"
     required: false
@@ -127,6 +131,8 @@ runs:
         if [ "${{ runner.arch }}" == "ARM64" ]; then
             args+=(--use-arm "true")
         fi
+        
+        echo "Running ./cr.sh" "${args[@]}"
         "$GITHUB_ACTION_PATH/cr.sh" "${args[@]}"
 
         if [[ -f changed_charts.txt ]]; then
