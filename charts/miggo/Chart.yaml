@@ -2,5 +2,5 @@ apiVersion: v2
 name: miggo
 description: A Helm chart for Miggo
 type: application
-version: 0.0.51
-appVersion: "v25.709.2"
+version: 0.0.52
+appVersion: "v25.709.3"
