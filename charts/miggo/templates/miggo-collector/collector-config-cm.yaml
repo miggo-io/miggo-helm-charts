@@ -134,7 +134,7 @@ data:
         metrics/sensors:
           receivers: [otlp]
           processors: [batch, resource/metrics, attributes/metrics]
-          exporters: [debug, otlphttp]
+          exporters: [debug, prometheus, otlphttp]
         metrics/collector:
           receivers: [prometheus]
           processors: [batch, metricstransform, resource/metrics, attributes/metrics]
