@@ -124,7 +124,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.analyzer.resources.limits.cpu | string | `"500m"` |  |
 | miggoRuntime.analyzer.resources.limits.memory | string | `"512Mi"` |  |
 | miggoRuntime.analyzer.resources.requests.cpu | string | `"100m"` |  |
-| miggoRuntime.analyzer.resources.requests.memory | string | `"256Mi"` |  |
+| miggoRuntime.analyzer.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.analyzer.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.enableFileAccessTracing | bool | `false` | Enable tracing file access. |
 | miggoRuntime.enableNetworkTracing | bool | `false` | Enable tracing network connections. |
@@ -150,9 +150,9 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.probabilisticThreshold | int | `100` | If set to a value between 1 and 99 will enable probabilistic profiling: every probabilistic-interval a random number between 0 and 99 is chosen. If the given probabilistic-threshold is greater than this random number, the agent will collect profiles from this system for the duration of the interval. |
 | miggoRuntime.profiler.reporterInterval | string | `"5s"` | Set the reporter's interval in seconds. |
 | miggoRuntime.profiler.resources.limits.cpu | string | `"500m"` |  |
-| miggoRuntime.profiler.resources.limits.memory | string | `"500Mi"` |  |
+| miggoRuntime.profiler.resources.limits.memory | string | `"512Mi"` |  |
 | miggoRuntime.profiler.resources.requests.cpu | string | `"200m"` |  |
-| miggoRuntime.profiler.resources.requests.memory | string | `"256Mi"` |  |
+| miggoRuntime.profiler.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.profiler.samplesPerSecond | int | `20` | Set the frequency (in Hz) of stack trace sampling. |
 | miggoRuntime.profiler.securityContext.allowPrivilegeEscalation | bool | `true` |  |
 | miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"SYS_ADMIN"` |  |
@@ -160,7 +160,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
 | miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
-| miggoRuntime.resources.requests.memory | string | `"256Mi"` |  |
+| miggoRuntime.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
 | miggoRuntime.volumes | list | `[]` |  |
