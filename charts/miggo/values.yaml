@@ -252,6 +252,10 @@ miggoRuntime:
   nodeSelector:
     kubernetes.io/os: linux
 
+  # -- If enabled sets the GOMEMLIMIT environment variable to limit the amount of space available to the
+  # go runtime
+  useGOMEMLIMIT: true
+
   resources:
     requests:
       cpu: 100m
@@ -282,6 +286,10 @@ miggoRuntime:
       fullPath:
       # -- Image pull policy. Specifies when Kubernetes should pull the container image
       pullPolicy:
+
+    # -- If enabled sets the GOMEMLIMIT environment variable to limit the amount of space available to the
+    # go runtime
+    useGOMEMLIMIT: true
 
     resources:
       requests:
@@ -333,6 +341,10 @@ miggoRuntime:
       fullPath:
       # -- Image pull policy. Specifies when Kubernetes should pull the container image
       pullPolicy:
+
+    # -- If enabled sets the GOMEMLIMIT environment variable to limit the amount of space available to the
+    # go runtime
+    useGOMEMLIMIT: true
 
     resources:
       requests:
