@@ -80,6 +80,10 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+          {{- if and .Values.miggoRuntime.useGOMEMLIMIT .Values.miggoRuntime.resources.limits.memory }}
+          - name: GOMEMLIMIT
+            value: {{ include "gomemlimit" .Values.miggoRuntime.resources.limits.memory | quote }}
+          {{- end }}
           - name: MIGGO_RUNTIME_NODE_NAME
             valueFrom:
               fieldRef:
@@ -153,6 +157,10 @@ spec:
             - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
           env:
+          {{- if and .Values.miggoRuntime.profiler.useGOMEMLIMIT .Values.miggoRuntime.profiler.resources.limits.memory  }}
+            - name: GOMEMLIMIT
+              value: {{ include "gomemlimit" .Values.miggoRuntime.profiler.resources.limits.memory | quote }}
+          {{- end }}
             - name: MIGGO_RUNTIME_CLUSTER_NAME
               value: {{ .Values.miggo.clusterName }}
             - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
@@ -199,6 +207,10 @@ spec:
             - --api-url={{ (include "apiEndpoint" . )}}
             {{ end }}
           env:
+          {{- if and .Values.miggoRuntime.analyzer.useGOMEMLIMIT .Values.miggoRuntime.analyzer.resources.limits.memory }}
+            - name: GOMEMLIMIT
+              value: {{ include "gomemlimit" .Values.miggoRuntime.analyzer.resources.limits.memory | quote }}
+          {{- end }}
             - name: RUNTIME_ANALYZER_NODE_NAME
               valueFrom:
                 fieldRef:

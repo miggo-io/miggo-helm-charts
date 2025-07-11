@@ -27,7 +27,7 @@ tests:
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
           content: --exclude=pod, statefulset
-  
+
   - it: miggo-scanner config
     template: templates/miggo-scanner/deployment.yaml
     asserts:
@@ -46,10 +46,29 @@ tests:
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
           content: --cache-cm-name=test
-  
+
   - it: miggo-runtime config
     template: templates/miggo-runtime/daemonset.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           content: --metric-interval=1h
+
+  - it: miggo-runtime useGOMEMLIMIT
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime:
+        useGOMEMLIMIT: false
+        analyzer:
+          useGOMEMLIMIT: true
+          enabled: true
+        profiler:
+          useGOMEMLIMIT: true
+          enabled: true
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env[?(@.name == "GOMEMLIMIT")]
+      - exists:
+          path: spec.template.spec.containers[?(@.name == "profiler")].env[?(@.name == "GOMEMLIMIT")]
+      - exists:
+          path: spec.template.spec.containers[?(@.name == "analyzer")].env[?(@.name == "GOMEMLIMIT")]
