@@ -37,9 +37,9 @@ data:
                   regex: 'otelcol_(.*)'
                   target_label: __name__
                   replacement: 'miggocol_$1'
-                - target_label: "tenant-id"
+                - target_label: "tenant_id"
                   replacement: "${MIGGO_TENANT_ID}"
-                - target_label: "project-id"
+                - target_label: "project_id"
                   replacement: "${MIGGO_PROJECT_ID}"
                 - target_label: "miggo-name"
                   replacement: "{{ .Values.miggo.clusterName }}"
@@ -96,7 +96,13 @@ data:
                 new_label: component
                 new_value: Miggo Collector
 
-      batch:
+      batch/metrics:
+        timeout: 10s
+
+      batch/logs:
+        timeout: 10s
+
+      batch/traces:
         timeout: 10s
 
     exporters:
@@ -133,18 +139,18 @@ data:
         {{- end }}
         metrics/sensors:
           receivers: [otlp]
-          processors: [batch, resource/metrics, attributes/metrics]
+          processors: [batch/metrics, resource/metrics, attributes/metrics]
           exporters: [debug, prometheus, otlphttp]
         metrics/collector:
           receivers: [prometheus]
-          processors: [batch, metricstransform, resource/metrics, attributes/metrics]
+          processors: [batch/metrics, metricstransform, resource/metrics, attributes/metrics]
           exporters: [debug, prometheus, otlphttp]
         traces:
           receivers: [otlp]
-          processors: [batch, resource, attributes]
+          processors: [batch/traces, resource, attributes]
           exporters: [debug, otlphttp]
         logs:
           receivers: [otlp]
-          processors: [batch, resource, attributes]
+          processors: [batch/logs, resource, attributes]
           exporters: [debug, otlphttp]
 {{ end }}
