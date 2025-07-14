@@ -126,6 +126,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.analyzer.resources.requests.cpu | string | `"100m"` |  |
 | miggoRuntime.analyzer.resources.requests.memory | string | `"256Mi"` |  |
 | miggoRuntime.analyzer.securityContext.privileged | bool | `true` |  |
+| miggoRuntime.analyzer.useGOMEMLIMIT | bool | `false` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.enableFileAccessTracing | bool | `false` | Enable tracing file access. |
 | miggoRuntime.enableNetworkTracing | bool | `false` | Enable tracing network connections. |
 | miggoRuntime.enabled | bool | `false` | Install eBPF agent on each cluster node to provide package-level reachability analysis and other runtime insights. |
@@ -157,11 +158,13 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.securityContext.allowPrivilegeEscalation | bool | `true` |  |
 | miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"SYS_ADMIN"` |  |
 | miggoRuntime.profiler.securityContext.privileged | bool | `true` |  |
+| miggoRuntime.profiler.useGOMEMLIMIT | bool | `false` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
 | miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
 | miggoRuntime.resources.requests.memory | string | `"256Mi"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
+| miggoRuntime.useGOMEMLIMIT | bool | `false` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
 | miggoRuntime.volumes | list | `[]` |  |
 | miggoScanner.annotations | object | `{}` | Component-specific annotations |
