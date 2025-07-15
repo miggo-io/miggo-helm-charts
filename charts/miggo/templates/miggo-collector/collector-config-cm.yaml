@@ -6,7 +6,7 @@ metadata:
 data:
   collector-init-script.sh: |
     {{ .Files.Get "files/collector-init-script.sh" | nindent 4 }}
-  
+
   config-template.yaml: |
     extensions:
       health_check:
@@ -37,9 +37,9 @@ data:
                   regex: 'otelcol_(.*)'
                   target_label: __name__
                   replacement: 'miggocol_$1'
-                - target_label: "tenant_id"
+                - target_label: "tenant-id"
                   replacement: "${MIGGO_TENANT_ID}"
-                - target_label: "project_id"
+                - target_label: "project-id"
                   replacement: "${MIGGO_PROJECT_ID}"
                 - target_label: "miggo-name"
                   replacement: "{{ .Values.miggo.clusterName }}"
@@ -57,7 +57,7 @@ data:
           - key: tenant
             value: "${MIGGO_TENANT_ID}"
             action: insert
-      
+
       attributes:
         actions:
           - key: project
@@ -66,25 +66,25 @@ data:
           - key: tenant
             value: "${MIGGO_TENANT_ID}"
             action: insert
-      
+
       resource/metrics:
         attributes:
-          - key: project_id
+          - key: project-id
             value: "${MIGGO_PROJECT_ID}"
             action: insert
-          - key: tenant_id
+          - key: tenant-id
             value: "${MIGGO_TENANT_ID}"
             action: insert
-      
+
       attributes/metrics:
         actions:
-          - key: project_id
+          - key: project-id
             value: "${MIGGO_PROJECT_ID}"
             action: insert
-          - key: tenant_id
+          - key: tenant-id
             value: "${MIGGO_TENANT_ID}"
             action: insert
-      
+
       metricstransform:
         transforms:
           - include: miggocol_process_uptime
