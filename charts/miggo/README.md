@@ -122,9 +122,9 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.analyzer.image.repository | string | `"miggo/miggo-analyzer"` | Image repository |
 | miggoRuntime.analyzer.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoRuntime.analyzer.resources.limits.cpu | string | `"500m"` |  |
-| miggoRuntime.analyzer.resources.limits.memory | string | `"512Mi"` |  |
+| miggoRuntime.analyzer.resources.limits.memory | string | `"300Mi"` |  |
 | miggoRuntime.analyzer.resources.requests.cpu | string | `"100m"` |  |
-| miggoRuntime.analyzer.resources.requests.memory | string | `"256Mi"` |  |
+| miggoRuntime.analyzer.resources.requests.memory | string | `"300Mi"` |  |
 | miggoRuntime.analyzer.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.analyzer.useGOMEMLIMIT | bool | `false` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.enableFileAccessTracing | bool | `false` | Enable tracing file access. |
@@ -151,18 +151,18 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.probabilisticThreshold | int | `100` | If set to a value between 1 and 99 will enable probabilistic profiling: every probabilistic-interval a random number between 0 and 99 is chosen. If the given probabilistic-threshold is greater than this random number, the agent will collect profiles from this system for the duration of the interval. |
 | miggoRuntime.profiler.reporterInterval | string | `"5s"` | Set the reporter's interval in seconds. |
 | miggoRuntime.profiler.resources.limits.cpu | string | `"500m"` |  |
-| miggoRuntime.profiler.resources.limits.memory | string | `"500Mi"` |  |
+| miggoRuntime.profiler.resources.limits.memory | string | `"300Mi"` |  |
 | miggoRuntime.profiler.resources.requests.cpu | string | `"200m"` |  |
-| miggoRuntime.profiler.resources.requests.memory | string | `"256Mi"` |  |
+| miggoRuntime.profiler.resources.requests.memory | string | `"300Mi"` |  |
 | miggoRuntime.profiler.samplesPerSecond | int | `20` | Set the frequency (in Hz) of stack trace sampling. |
 | miggoRuntime.profiler.securityContext.allowPrivilegeEscalation | bool | `true` |  |
 | miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"SYS_ADMIN"` |  |
 | miggoRuntime.profiler.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.profiler.useGOMEMLIMIT | bool | `false` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
-| miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
+| miggoRuntime.resources.limits.memory | string | `"350Mi"` |  |
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
-| miggoRuntime.resources.requests.memory | string | `"256Mi"` |  |
+| miggoRuntime.resources.requests.memory | string | `"350Mi"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.useGOMEMLIMIT | bool | `false` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
