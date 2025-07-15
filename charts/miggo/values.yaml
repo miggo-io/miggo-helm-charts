@@ -256,7 +256,7 @@ miggoRuntime:
   # configured resources.limits.memory. If no resources.limits.memory are
   # defined then enabling does nothing. It is HIGHLY recommend to enable this
   # setting and set a value for resources.limits.memory.
-  useGOMEMLIMIT: false
+  useGOMEMLIMIT: true
 
   resources:
     requests:
@@ -293,7 +293,7 @@ miggoRuntime:
     # configured resources.limits.memory. If no resources.limits.memory are
     # defined then enabling does nothing. It is HIGHLY recommend to enable this
     # setting and set a value for resources.limits.memory.
-    useGOMEMLIMIT: false
+    useGOMEMLIMIT: true
 
     resources:
       requests:
@@ -350,7 +350,7 @@ miggoRuntime:
     # configured resources.limits.memory. If no resources.limits.memory are
     # defined then enabling does nothing. It is HIGHLY recommend to enable this
     # setting and set a value for resources.limits.memory.
-    useGOMEMLIMIT: false
+    useGOMEMLIMIT: true
 
     resources:
       requests:
