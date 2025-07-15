@@ -907,6 +907,16 @@ entries:
     version: 0.0.1
   miggo:
   - apiVersion: v2
+    appVersion: v25.715.1
+    created: "2025-07-15T13:28:24.523252176Z"
+    description: A Helm chart for Miggo
+    digest: 3c96adff7f9dd94a8ea3d134166f035cea622604e8037cdb1025261e3c3bc18b
+    name: miggo
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-0.0.67/miggo-0.0.67.tgz
+    version: 0.0.67
+  - apiVersion: v2
     appVersion: v25.713.1
     created: "2025-07-14T12:07:07.114307687Z"
     description: A Helm chart for Miggo
@@ -1809,4 +1819,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.1/static-sbom-0.0.1.tgz
     version: 0.0.1
-generated: "2025-07-14T12:07:07.114791633Z"
+generated: "2025-07-15T13:28:24.523967253Z"
