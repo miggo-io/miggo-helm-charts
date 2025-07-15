@@ -59,7 +59,11 @@ spec:
         {{ toYaml .Values.miggoCollector.initContainers | nindent 8 }}
       {{- end }}
         - name: collector-init-container
-          image: alpine:latest
+          {{- if .Values.miggoCollector.image.fullPath }}
+          image: "{{ .Values.miggoCollector.image.fullPath }}"
+          {{- else }}
+          image: "{{ .Values.image.registry }}/{{ .Values.miggoCollector.image.repository }}:{{ .Values.miggoCollector.image.tag | default .Chart.AppVersion }}"
+          {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           imagePullPolicy: {{ .Values.miggoCollector.image.pullPolicy | default .Values.image.pullPolicy }}
@@ -67,9 +71,6 @@ spec:
           args:
             - -c
             - |
-              apk update --no-cache
-              apk add --no-cache curl jq envsubst bash
-              
               bash /etc/collector-cm/collector-init-script.sh
           envFrom:
           {{- with .Values.extraEnvsFrom }}
