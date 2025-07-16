@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.70](https://img.shields.io/badge/Version-0.0.70-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.715.2](https://img.shields.io/badge/AppVersion-v25.715.2-informational?style=flat-square)
+![Version: 0.0.71](https://img.shields.io/badge/Version-0.0.71-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.715.2](https://img.shields.io/badge/AppVersion-v25.715.2-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -126,7 +126,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.analyzer.resources.requests.cpu | string | `"100m"` |  |
 | miggoRuntime.analyzer.resources.requests.memory | string | `"300Mi"` |  |
 | miggoRuntime.analyzer.securityContext.privileged | bool | `true` |  |
-| miggoRuntime.analyzer.useGOMEMLIMIT | bool | `false` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
+| miggoRuntime.analyzer.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.enableFileAccessTracing | bool | `false` | Enable tracing file access. |
 | miggoRuntime.enableNetworkTracing | bool | `false` | Enable tracing network connections. |
 | miggoRuntime.enabled | bool | `false` | Install eBPF agent on each cluster node to provide package-level reachability analysis and other runtime insights. |
@@ -158,13 +158,13 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.securityContext.allowPrivilegeEscalation | bool | `true` |  |
 | miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"SYS_ADMIN"` |  |
 | miggoRuntime.profiler.securityContext.privileged | bool | `true` |  |
-| miggoRuntime.profiler.useGOMEMLIMIT | bool | `false` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
+| miggoRuntime.profiler.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
 | miggoRuntime.resources.limits.memory | string | `"350Mi"` |  |
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
 | miggoRuntime.resources.requests.memory | string | `"350Mi"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
-| miggoRuntime.useGOMEMLIMIT | bool | `false` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
+| miggoRuntime.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
 | miggoRuntime.volumes | list | `[]` |  |
 | miggoScanner.annotations | object | `{}` | Component-specific annotations |
