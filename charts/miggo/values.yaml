@@ -261,10 +261,10 @@ miggoRuntime:
   resources:
     requests:
       cpu: 100m
-      memory: 350Mi
+      memory: 512Mi
     limits:
       cpu: 500m
-      memory: 350Mi
+      memory: 512Mi
 
   securityContext:
     privileged: true
@@ -298,10 +298,10 @@ miggoRuntime:
     resources:
       requests:
         cpu: 200m
-        memory: 300Mi
+        memory: 512Mi
       limits:
         cpu: 500m
-        memory: 300Mi
+        memory: 512Mi
 
     securityContext:
       privileged: true
@@ -355,10 +355,10 @@ miggoRuntime:
     resources:
       requests:
         cpu: 100m
-        memory: 300Mi
+        memory: 512Mi
       limits:
         cpu: 500m
-        memory: 300Mi
+        memory: 512Mi
 
     securityContext:
       privileged: true
