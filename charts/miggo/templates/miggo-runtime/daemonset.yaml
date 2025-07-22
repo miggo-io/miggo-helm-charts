@@ -72,6 +72,9 @@ spec:
             - --disable-profiler={{ not .Values.miggoRuntime.profiler.enabled }}
             - --enable-network-tracing={{ .Values.miggoRuntime.enableNetworkTracing }}
             - --enable-file-access-tracing={{ .Values.miggoRuntime.enableFileAccessTracing }}
+          {{- range $key, $value := .Values.miggoRuntime.extraArgs }}
+            - "--{{ $key }}={{ $value }}"
+          {{- end }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
@@ -156,6 +159,9 @@ spec:
             - -off-cpu-threshold={{ .Values.miggoRuntime.profiler.offCpuThreshold }}
             - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
+          {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
+            - "--{{ $key }}={{ $value }}"
+          {{- end }}
           env:
           {{- if and .Values.miggoRuntime.profiler.useGOMEMLIMIT .Values.miggoRuntime.profiler.resources.limits.memory  }}
             - name: GOMEMLIMIT
@@ -171,6 +177,9 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+          {{- with .Values.miggoRuntime.profiler.extraEnvs }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.miggoRuntime.profiler.resources | nindent 12 }}
           securityContext:
@@ -206,6 +215,9 @@ spec:
             {{ if .Values.output.api.enabled }}
             - --api-url={{ (include "apiEndpoint" . )}}
             {{ end }}
+          {{- range $key, $value := .Values.miggoRuntime.analyzer.extraArgs }}
+            - "--{{ $key }}={{ $value }}"
+          {{- end }}
           env:
           {{- if and .Values.miggoRuntime.analyzer.useGOMEMLIMIT .Values.miggoRuntime.analyzer.resources.limits.memory }}
             - name: GOMEMLIMIT
@@ -226,6 +238,9 @@ spec:
                   key: ACCESS_KEY
             {{- end }}
           {{ end }}
+          {{- with .Values.miggoRuntime.analyzer.extraEnvs }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           ports:
             - containerPort: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
           livenessProbe:
