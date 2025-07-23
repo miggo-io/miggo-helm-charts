@@ -160,9 +160,9 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.profiler.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
-| miggoRuntime.resources.limits.memory | string | `"256Mi"` |  |
+| miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
-| miggoRuntime.resources.requests.memory | string | `"128Mi"` |  |
+| miggoRuntime.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
