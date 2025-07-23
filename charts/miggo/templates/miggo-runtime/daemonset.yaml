@@ -83,9 +83,9 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
-          {{- if and .Values.miggoRuntime.useGOMEMLIMIT .Values.miggoRuntime.resources.limits.memory }}
+          {{- if and .Values.miggoRuntime.useGOMEMLIMIT .Values.miggoRuntime.resources.requests.memory }}
           - name: GOMEMLIMIT
-            value: {{ include "gomemlimit" .Values.miggoRuntime.resources.limits.memory | quote }}
+            value: {{ include "gomemlimit" .Values.miggoRuntime.resources.requests.memory | quote }}
           {{- end }}
           - name: MIGGO_RUNTIME_NODE_NAME
             valueFrom:
