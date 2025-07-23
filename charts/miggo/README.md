@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.3](https://img.shields.io/badge/Version-0.0.3-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.403.1](https://img.shields.io/badge/AppVersion-v25.403.1-informational?style=flat-square)
+![Version: 0.0.76](https://img.shields.io/badge/Version-0.0.76-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.722.1](https://img.shields.io/badge/AppVersion-v25.722.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -54,8 +54,6 @@ helm repo update
 
 ```yaml
 miggo:
-  tenantId: "your-tenant-id"
-  projectId: "your-project-id"
   clusterName: "your-cluster-name"
 
 config:
@@ -83,6 +81,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | config.deniedNamespaces | string | `nil` | List of namespaces that should be excluded from processing Takes precedence over allowedNamespaces - if a namespace is both allowed and denied, it will be denied Example: ["test", "deprecated"] |
 | config.includeSystemNamespaces | bool | `false` | When set to true, includes system namespaces like kube-system etc. When false (default), automatically adds system namespaces to deniedNamespaces It's recommended to keep this false unless you specifically need to operate on system namespaces |
 | config.metrics.interval | string | `"60s"` | Interval for metrics collection |
+| config.platform | string | `""` | The Kubernetes platform acronym. Allowed values are: - gke: Google Kubernetes Engine - openshift: Red Hat OpenShift/OCP |
 | extraEnvs | list | `[]` | Additional environment variables for all containers |
 | extraEnvsFrom | list | `[]` | Additional environment variables from sources for all containers |
 | healthcheck.port | int | `6666` | Port number for health check endpoints |
@@ -92,8 +91,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | imagePullSecrets | list | `[]` |  |
 | labels | object | `{}` | Global labels to add to all resources |
 | miggo.clusterName | string | `"kubernetes-cluster"` | Name of the Kubernetes cluster |
-| miggo.projectId | string | `""` | Project ID for the Miggo platform |
-| miggo.tenantId | string | `""` | Tenant ID for the Miggo platform |
 | miggoCollector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | miggoCollector.annotations | object | `{}` | Component-specific annotations |
 | miggoCollector.config.logVerbosity | string | `"basic"` | Log verbosity level (detailed|normal|basic) |
@@ -118,6 +115,20 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoCollector.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoCollector.volumes | list | `[]` | Additional volumes |
+| miggoRuntime.analyzer.enabled | bool | `false` | Install analyzer on each cluster node to provide endpoint URL to functions mapping and other runtime insights. |
+| miggoRuntime.analyzer.healthcheck.port | int | `6667` | Port number for health check endpoints |
+| miggoRuntime.analyzer.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
+| miggoRuntime.analyzer.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
+| miggoRuntime.analyzer.image.repository | string | `"miggo/miggo-analyzer"` | Image repository |
+| miggoRuntime.analyzer.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
+| miggoRuntime.analyzer.resources.limits.cpu | string | `"500m"` |  |
+| miggoRuntime.analyzer.resources.limits.memory | string | `"512Mi"` |  |
+| miggoRuntime.analyzer.resources.requests.cpu | string | `"100m"` |  |
+| miggoRuntime.analyzer.resources.requests.memory | string | `"512Mi"` |  |
+| miggoRuntime.analyzer.securityContext.privileged | bool | `true` |  |
+| miggoRuntime.analyzer.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
+| miggoRuntime.enableFileAccessTracing | bool | `false` | Enable tracing file access. |
+| miggoRuntime.enableNetworkTracing | bool | `false` | Enable tracing network connections. |
 | miggoRuntime.enabled | bool | `false` | Install eBPF agent on each cluster node to provide package-level reachability analysis and other runtime insights. |
 | miggoRuntime.extraEnvs | list | `[]` | Additional environment variables |
 | miggoRuntime.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
@@ -139,19 +150,21 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.probabilisticInterval | string | `"1m0s"` | Time interval for which probabilistic profiling will be enabled or disabled. |
 | miggoRuntime.profiler.probabilisticThreshold | int | `100` | If set to a value between 1 and 99 will enable probabilistic profiling: every probabilistic-interval a random number between 0 and 99 is chosen. If the given probabilistic-threshold is greater than this random number, the agent will collect profiles from this system for the duration of the interval. |
 | miggoRuntime.profiler.reporterInterval | string | `"5s"` | Set the reporter's interval in seconds. |
-| miggoRuntime.profiler.resources.limits.cpu | string | `"1000m"` |  |
-| miggoRuntime.profiler.resources.limits.memory | string | `"1Gi"` |  |
+| miggoRuntime.profiler.resources.limits.cpu | string | `"500m"` |  |
+| miggoRuntime.profiler.resources.limits.memory | string | `"512Mi"` |  |
 | miggoRuntime.profiler.resources.requests.cpu | string | `"200m"` |  |
-| miggoRuntime.profiler.resources.requests.memory | string | `"500Mi"` |  |
+| miggoRuntime.profiler.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.profiler.samplesPerSecond | int | `20` | Set the frequency (in Hz) of stack trace sampling. |
 | miggoRuntime.profiler.securityContext.allowPrivilegeEscalation | bool | `true` |  |
 | miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"SYS_ADMIN"` |  |
 | miggoRuntime.profiler.securityContext.privileged | bool | `true` |  |
-| miggoRuntime.resources.limits.cpu | string | `"3000m"` |  |
-| miggoRuntime.resources.limits.memory | string | `"4Gi"` |  |
-| miggoRuntime.resources.requests.cpu | string | `"1000m"` |  |
-| miggoRuntime.resources.requests.memory | string | `"2Gi"` |  |
+| miggoRuntime.profiler.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
+| miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
+| miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
+| miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
+| miggoRuntime.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
+| miggoRuntime.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
 | miggoRuntime.volumes | list | `[]` |  |
 | miggoScanner.annotations | object | `{}` | Component-specific annotations |
@@ -180,7 +193,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.volumes | list | `[]` | Additional volumes |
 | miggoWatch.annotations | object | `{}` | Component-specific annotations |
 | miggoWatch.config.disableCompression | bool | `false` | Disable compression for data transfer |
-| miggoWatch.config.exclude | string | `"pod"` | Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service) |
+| miggoWatch.config.exclude | string | `"pod,replica-set"` | Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service) |
 | miggoWatch.config.interval | string | `"6h"` | Interval for scanning Kubernetes resources |
 | miggoWatch.enabled | bool | `true` | Enable Miggo Watch component |
 | miggoWatch.extraEnvs | list | `[]` | Additional environment variables |
@@ -200,6 +213,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoWatch.volumes | list | `[]` | Additional volumes |
 | nodeSelector | object | `{}` | Node selector for all pods |
+| output.api.apiEndpoint | string | `""` | Miggo Api endpoint (defaults to otlp endpoint) |
+| output.api.enabled | bool | `true` | Decide whether to communicate with Miggo Api |
 | output.otlp.otlpEndpoint | string | `"https://api.miggo.io"` | OTLP endpoint URL |
 | output.otlp.tlsSkipVerify | bool | `false` | Skip TLS verification |
 | output.stdout | bool | `false` | Enable stdout logging (for debugging) |

@@ -11,10 +11,6 @@ imagePullSecrets: []
   # - name: ""
 
 miggo:
-  # -- Tenant ID for the Miggo platform
-  tenantId: ""
-  # -- Project ID for the Miggo platform
-  projectId: ""
   # -- Name of the Kubernetes cluster
   clusterName: "kubernetes-cluster"
 
@@ -23,6 +19,10 @@ healthcheck:
   port: 6666
 
 config:
+  # -- The Kubernetes platform acronym. Allowed values are:
+  # - gke: Google Kubernetes Engine
+  # - openshift: Red Hat OpenShift/OCP
+  platform: ""
   metrics:
     # -- Interval for metrics collection
     interval: 60s
@@ -61,6 +61,12 @@ output:
     otlpEndpoint: "https://api.miggo.io"
     # -- Skip TLS verification
     tlsSkipVerify: false
+
+  api:
+    # -- Decide whether to communicate with Miggo Api
+    enabled: true
+    # -- Miggo Api endpoint (defaults to otlp endpoint)
+    apiEndpoint: ""
 
 serviceAccount:
   # -- Automatically mount API credentials for the service account
@@ -134,7 +140,7 @@ miggoWatch:
     # -- Disable compression for data transfer
     disableCompression: false
     # -- Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service)
-    exclude: "pod"
+    exclude: "pod,replica-set"
 
   # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
   # configured resources.limits.memory. If no resources.limits.memory are
@@ -219,6 +225,10 @@ miggoRuntime:
   enabled: false
   # -- Kubernetes cluster domain
   kubernetesClusterDomain: ""
+  # -- Enable tracing network connections.
+  enableNetworkTracing: false
+  # -- Enable tracing file access.
+  enableFileAccessTracing: false
   # -- Additional environment variables
   extraEnvs: []
   # -- Additional environment variables from sources
@@ -242,13 +252,19 @@ miggoRuntime:
   nodeSelector:
     kubernetes.io/os: linux
 
+  # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
+  # configured resources.limits.memory. If no resources.limits.memory are
+  # defined then enabling does nothing. It is HIGHLY recommend to enable this
+  # setting and set a value for resources.limits.memory.
+  useGOMEMLIMIT: true
+
   resources:
-    limits:
-      cpu: 3000m
-      memory: 4Gi
     requests:
-      cpu: 1000m
-      memory: 2Gi
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
   securityContext:
     privileged: true
@@ -273,13 +289,19 @@ miggoRuntime:
       # -- Image pull policy. Specifies when Kubernetes should pull the container image
       pullPolicy:
 
+    # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
+    # configured resources.limits.memory. If no resources.limits.memory are
+    # defined then enabling does nothing. It is HIGHLY recommend to enable this
+    # setting and set a value for resources.limits.memory.
+    useGOMEMLIMIT: true
+
     resources:
-      limits:
-        cpu: 1000m
-        memory: 1Gi
       requests:
         cpu: 200m
-        memory: 500Mi
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
 
     securityContext:
       privileged: true
@@ -308,6 +330,42 @@ miggoRuntime:
     probabilisticThreshold: 100
     # -- Time interval for which probabilistic profiling will be enabled or disabled.
     probabilisticInterval: 1m0s
+
+  analyzer:
+    # -- Install analyzer on each cluster node to provide endpoint URL to
+    # functions mapping and other runtime insights.
+    enabled: false
+    image:
+      # -- Image repository
+      repository: miggo/miggo-analyzer
+      # -- Image tag (defaults to Chart appVersion if not set)
+      tag:
+      # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
+      # Useful for local development with Minikube or when needing to specify a complete custom image path
+      fullPath:
+      # -- Image pull policy. Specifies when Kubernetes should pull the container image
+      pullPolicy:
+
+    # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
+    # configured resources.limits.memory. If no resources.limits.memory are
+    # defined then enabling does nothing. It is HIGHLY recommend to enable this
+    # setting and set a value for resources.limits.memory.
+    useGOMEMLIMIT: true
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+    securityContext:
+      privileged: true
+
+    healthcheck:
+      # -- Port number for health check endpoints
+      port: 6667
 
 miggoCollector:
   # -- Enable Collector component

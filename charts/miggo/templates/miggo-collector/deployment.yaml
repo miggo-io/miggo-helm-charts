@@ -54,10 +54,58 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       serviceAccountName: {{ include "miggo.serviceAccountName" . }}-collector
-      {{- if .Values.miggoCollector.initContainers }}
       initContainers:
+      {{- if .Values.miggoCollector.initContainers }}
         {{ toYaml .Values.miggoCollector.initContainers | nindent 8 }}
       {{- end }}
+        - name: collector-init-container
+          {{- if .Values.miggoCollector.image.fullPath }}
+          image: "{{ .Values.miggoCollector.image.fullPath }}"
+          {{- else }}
+          image: "{{ .Values.image.registry }}/{{ .Values.miggoCollector.image.repository }}:{{ .Values.miggoCollector.image.tag | default .Chart.AppVersion }}"
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          imagePullPolicy: {{ .Values.miggoCollector.image.pullPolicy | default .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              bash /etc/collector-cm/collector-init-script.sh
+          envFrom:
+          {{- with .Values.extraEnvsFrom }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.miggoCollector.extraEnvsFrom }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: CLIENT_ID
+              value: {{ .Values.config.clientId }}
+            - name: ACCESS_KEY_MOUNT_LOCATION
+              value: {{ .Values.miggoCollector.accessKeyMountLocation }}
+          {{- with .Values.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.miggoCollector.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: collector-config-cm
+              mountPath: /etc/collector-cm
+            - name: collector-config
+              mountPath: /etc/collector
+          {{ if (include "accessKeySecret" .) }}
+            - name: access-key
+              mountPath: {{ .Values.miggoCollector.accessKeyMountLocation }}
+              subPath: ACCESS_KEY
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.miggoCollector.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       containers:
         - name: miggo-collector
           securityContext:
@@ -125,6 +173,8 @@ spec:
           {{- end }}
       volumes:
       - name: collector-config
+        emptyDir: {}
+      - name: collector-config-cm
         configMap:
           name: collector-config-cm
       {{ if (include "accessKeySecret" .) }}

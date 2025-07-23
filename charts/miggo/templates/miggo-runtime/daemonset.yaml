@@ -52,7 +52,7 @@ spec:
       containers:
         - name: miggo-runtime
           securityContext:
-            privileged: true
+            {{- toYaml .Values.miggoRuntime.securityContext | nindent 12 }}
           {{- if .Values.miggoRuntime.image.fullPath }}
           image: "{{ .Values.miggoRuntime.image.fullPath }}"
           {{- else }}
@@ -61,8 +61,6 @@ spec:
           imagePullPolicy: {{ .Values.miggoRuntime.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
-            - --tenant-name={{ .Values.miggo.tenantId }}
-            - --project-name={{ .Values.miggo.projectId }}
             - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
@@ -72,6 +70,11 @@ spec:
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
             - --disable-profiler={{ not .Values.miggoRuntime.profiler.enabled }}
+            - --enable-network-tracing={{ .Values.miggoRuntime.enableNetworkTracing }}
+            - --enable-file-access-tracing={{ .Values.miggoRuntime.enableFileAccessTracing }}
+          {{- range $key, $value := .Values.miggoRuntime.extraArgs }}
+            - "--{{ $key }}={{ $value }}"
+          {{- end }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
@@ -80,10 +83,27 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+          {{- if and .Values.miggoRuntime.useGOMEMLIMIT .Values.miggoRuntime.resources.limits.memory }}
+          - name: GOMEMLIMIT
+            value: {{ include "gomemlimit" .Values.miggoRuntime.resources.limits.memory | quote }}
+          {{- end }}
           - name: MIGGO_RUNTIME_NODE_NAME
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
+          - name: MIGGO_RUNTIME_INSTANCE_ID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MIGGO_RUNTIME_CLIENT_ID
+            value: {{ .Values.config.clientId }}
+          {{ if (include "accessKeySecret" .) }}
+          - name: MIGGO_RUNTIME_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "accessKeySecret" . }}
+                key: ACCESS_KEY
+          {{- end }}
           - name: KUBERNETES_CLUSTER_DOMAIN
             value: {{ quote .Values.kubernetesClusterDomain }}
           {{- with .Values.extraEnvs }}
@@ -139,6 +159,27 @@ spec:
             - -off-cpu-threshold={{ .Values.miggoRuntime.profiler.offCpuThreshold }}
             - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
+          {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
+            - "--{{ $key }}={{ $value }}"
+          {{- end }}
+          env:
+          {{- if and .Values.miggoRuntime.profiler.useGOMEMLIMIT .Values.miggoRuntime.profiler.resources.limits.memory  }}
+            - name: GOMEMLIMIT
+              value: {{ include "gomemlimit" .Values.miggoRuntime.profiler.resources.limits.memory | quote }}
+          {{- end }}
+            - name: MIGGO_RUNTIME_CLUSTER_NAME
+              value: {{ .Values.miggo.clusterName }}
+            - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
+              value: {{ (include "otlpEndpoint" .) }}
+            - name: MIGGO_RUNTIME_EXPORT_METRICS_INTERVAL
+              value: {{ .Values.config.metrics.interval }}
+            - name: MIGGO_RUNTIME_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          {{- with .Values.miggoRuntime.profiler.extraEnvs }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.miggoRuntime.profiler.resources | nindent 12 }}
           securityContext:
@@ -152,6 +193,70 @@ spec:
               readOnly: true
             - name: unix-socket
               mountPath: /tmp/grpc
+        {{- end }}
+        {{- if .Values.miggoRuntime.analyzer.enabled }}
+        - name: analyzer
+          {{- if .Values.miggoRuntime.analyzer.image.fullPath }}
+          image: "{{ .Values.miggoRuntime.analyzer.image.fullPath }}"
+          {{- else }}
+          image: "{{ .Values.image.registry }}/{{ .Values.miggoRuntime.analyzer.image.repository }}:{{ .Values.miggoRuntime.analyzer.image.tag | default .Chart.AppVersion }}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.miggoRuntime.analyzer.image.pullPolicy | default .Values.image.pullPolicy }}
+          args:
+            - --cluster-name={{ .Values.miggo.clusterName }}
+            - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
+            - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
+            - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --metric-interval={{ .Values.config.metrics.interval }}
+            - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
+            - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --stdout={{ .Values.output.stdout }}
+            - --port={{ .Values.miggoRuntime.analyzer.healthcheck.port }}
+            {{ if .Values.output.api.enabled }}
+            - --api-url={{ (include "apiEndpoint" . )}}
+            {{ end }}
+          {{- range $key, $value := .Values.miggoRuntime.analyzer.extraArgs }}
+            - "--{{ $key }}={{ $value }}"
+          {{- end }}
+          env:
+          {{- if and .Values.miggoRuntime.analyzer.useGOMEMLIMIT .Values.miggoRuntime.analyzer.resources.limits.memory }}
+            - name: GOMEMLIMIT
+              value: {{ include "gomemlimit" .Values.miggoRuntime.analyzer.resources.limits.memory | quote }}
+          {{- end }}
+            - name: RUNTIME_ANALYZER_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          {{ if .Values.output.api.enabled }}
+            - name: RUNTIME_ANALYZER_CLIENT_ID
+              value: {{ .Values.config.clientId }}
+            {{ if (include "accessKeySecret" .) }}
+            - name: RUNTIME_ANALYZER_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "accessKeySecret" . }}
+                  key: ACCESS_KEY
+            {{- end }}
+          {{ end }}
+          {{- with .Values.miggoRuntime.analyzer.extraEnvs }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          ports:
+            - containerPort: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.miggoRuntime.analyzer.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.miggoRuntime.analyzer.securityContext | nindent 12 }}
         {{- end }}
       hostIPC: {{ .Values.miggoRuntime.hostIPC }}
       hostPID: {{ .Values.miggoRuntime.hostPID }}

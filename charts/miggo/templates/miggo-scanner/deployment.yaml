@@ -62,8 +62,6 @@ spec:
           imagePullPolicy: {{ .Values.miggoScanner.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
-            - --tenant-name={{ .Values.miggo.tenantId }}
-            - --project-name={{ .Values.miggo.projectId }}
             - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
@@ -91,6 +89,14 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+            - name: MIGGO_SCANNER_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MIGGO_SCANNER_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           {{- if and (.Values.miggoScanner.useGOMEMLIMIT) ((((.Values.miggoScanner.resources).limits).memory))  }}
             - name: GOMEMLIMIT
               value: {{ include "gomemlimit" .Values.miggoScanner.resources.limits.memory | quote }}

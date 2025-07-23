@@ -62,8 +62,6 @@ spec:
           imagePullPolicy: {{ .Values.miggoWatch.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
-            - --tenant-name={{ .Values.miggo.tenantId }}
-            - --project-name={{ .Values.miggo.projectId }}
             - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
@@ -78,6 +76,9 @@ spec:
             - --disable-compression
             {{ end }}
             {{- include "namespace.flags" . | nindent 12 }}
+            {{ if .Values.output.api.enabled }}
+            - --api-url={{ (include "apiEndpoint" . )}}
+            {{ end }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
@@ -86,6 +87,25 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+            - name: MIGGO_WATCH_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MIGGO_WATCH_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          {{ if .Values.output.api.enabled }}
+            - name: MIGGO_WATCH_CLIENT_ID
+              value: {{ .Values.config.clientId }}
+            {{ if (include "accessKeySecret" .) }}
+            - name: MIGGO_WATCH_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "accessKeySecret" . }}
+                  key: ACCESS_KEY
+            {{- end }}
+          {{ end }}
           {{- if and (.Values.miggoWatch.useGOMEMLIMIT) ((((.Values.miggoWatch.resources).limits).memory))  }}
             - name: GOMEMLIMIT
               value: {{ include "gomemlimit" .Values.miggoWatch.resources.limits.memory | quote }}

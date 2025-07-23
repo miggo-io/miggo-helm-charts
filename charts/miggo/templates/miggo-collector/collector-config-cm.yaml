@@ -4,7 +4,10 @@ kind: ConfigMap
 metadata:
   name: collector-config-cm
 data:
-  config.yaml: |
+  collector-init-script.sh: |
+    {{ .Files.Get "files/collector-init-script.sh" | nindent 4 }}
+
+  config-template.yaml: |
     extensions:
       health_check:
         endpoint: 0.0.0.0:{{ .Values.healthcheck.port }}
@@ -34,19 +37,75 @@ data:
                   regex: 'otelcol_(.*)'
                   target_label: __name__
                   replacement: 'miggocol_$1'
-                - target_label: "tenant_id"
-                  replacement: "{{ .Values.miggo.tenantId }}"
-                - target_label: "project_id"
-                  replacement: "{{ .Values.miggo.projectId }}"
-                - target_label: "miggo_name"
+                - target_label: "tenant-id"
+                  replacement: "${MIGGO_TENANT_ID}"
+                - target_label: "project-id"
+                  replacement: "${MIGGO_PROJECT_ID}"
+                - target_label: "miggo-name"
                   replacement: "{{ .Values.miggo.clusterName }}"
+                - target_label: "node-name"
+                  replacement: "${env:NODE_NAME}"
+                - target_label: "deployment-type"
+                  replacement: "{{ if .Values.miggoCollector.instancePerNode }}daemonset{{ else }}deployment{{ end }}"
 
     processors:
-      batch:
+      resource:
+        attributes:
+          - key: project
+            value: "${MIGGO_PROJECT_ID}"
+            action: insert
+          - key: tenant
+            value: "${MIGGO_TENANT_ID}"
+            action: insert
+
+      attributes:
+        actions:
+          - key: project
+            value: "${MIGGO_PROJECT_ID}"
+            action: insert
+          - key: tenant
+            value: "${MIGGO_TENANT_ID}"
+            action: insert
+
+      resource/metrics:
+        attributes:
+          - key: project-id
+            value: "${MIGGO_PROJECT_ID}"
+            action: insert
+          - key: tenant-id
+            value: "${MIGGO_TENANT_ID}"
+            action: insert
+
+      attributes/metrics:
+        actions:
+          - key: project-id
+            value: "${MIGGO_PROJECT_ID}"
+            action: insert
+          - key: tenant-id
+            value: "${MIGGO_TENANT_ID}"
+            action: insert
+
+      metricstransform:
+        transforms:
+          - include: miggocol_process_uptime
+            match_type: strict
+            new_name: miggo_component_status
+            action: combine
+            operations:
+              - action: add_label
+                new_label: component
+                new_value: Miggo Collector
+
+      batch/metrics:
+        timeout: 10s
+
+      batch/logs:
+        timeout: 10s
+
+      batch/traces:
         timeout: 10s
 
     exporters:
-
       debug:
         verbosity: {{ .Values.config.logVerbosity }}
 
@@ -67,6 +126,10 @@ data:
       {{- end }}
 
     service:
+      telemetry:
+        metrics:
+          level: detailed
+          address: 0.0.0.0:8888
       extensions: [health_check, oauth2client]
       pipelines:
         {{- if .Values.miggoRuntime.profiler.enabled }}
@@ -74,16 +137,20 @@ data:
           receivers: [otlp]
           exporters: [otlphttp/profiles]
         {{- end }}
-        metrics:
-          receivers: [otlp, prometheus]
-          processors: [batch]
+        metrics/sensors:
+          receivers: [otlp]
+          processors: [batch/metrics, resource/metrics, attributes/metrics]
+          exporters: [debug, prometheus, otlphttp]
+        metrics/collector:
+          receivers: [prometheus]
+          processors: [batch/metrics, metricstransform, resource/metrics, attributes/metrics]
           exporters: [debug, prometheus, otlphttp]
         traces:
           receivers: [otlp]
-          processors: [batch]
+          processors: [batch/traces, resource, attributes]
           exporters: [debug, otlphttp]
         logs:
           receivers: [otlp]
-          processors: [batch]
+          processors: [batch/logs, resource, attributes]
           exporters: [debug, otlphttp]
 {{ end }}

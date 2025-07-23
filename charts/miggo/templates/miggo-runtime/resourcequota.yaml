@@ -1,4 +1,4 @@
-{{ if .Values.miggoRuntime.enabled }}
+{{- if and .Values.miggoRuntime.enabled (eq .Values.config.platform "gke") }}
 apiVersion: v1
 kind: ResourceQuota
 metadata:
