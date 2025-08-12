@@ -44,7 +44,6 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: {{ include "miggo.fullname" . }}-analyzer-role
-  namespace: '{{ .Release.Namespace }}'
 subjects:
 - kind: ServiceAccount
   name: {{ include "miggo.fullname" . }}-runtime
