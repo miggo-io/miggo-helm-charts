@@ -227,6 +227,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: RUNTIME_ANALYZER_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: RUNTIME_ANALYZER_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
           {{ if .Values.output.api.enabled }}
             - name: RUNTIME_ANALYZER_CLIENT_ID
               value: {{ .Values.config.clientId }}
