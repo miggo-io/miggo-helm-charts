@@ -70,6 +70,7 @@ spec:
             - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
+            - --chart-version={{ .Chart.Version }}
             - --interval={{ .Values.miggoWatch.config.interval }}
             - --exclude={{ .Values.miggoWatch.config.exclude }}
             {{ if .Values.miggoWatch.config.disableCompression }}

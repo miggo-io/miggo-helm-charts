@@ -69,6 +69,7 @@ spec:
             - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
+            - --chart-version={{ .Chart.Version }}
             - --disable-profiler={{ not .Values.miggoRuntime.profiler.enabled }}
             - --enable-network-tracing={{ .Values.miggoRuntime.enableNetworkTracing }}
             - --enable-file-access-tracing={{ .Values.miggoRuntime.enableFileAccessTracing }}
@@ -208,6 +209,7 @@ spec:
             - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
+            - --chart-version={{ .Chart.Version }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --stdout={{ .Values.output.stdout }}

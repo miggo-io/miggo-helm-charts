@@ -70,6 +70,7 @@ spec:
             - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
+            - --chart-version={{ .Chart.Version }}
             - --queue-size={{ .Values.miggoScanner.config.queueSize }}
             {{ if .Values.miggoScanner.config.disableCompression }}
             - --disable-compression
