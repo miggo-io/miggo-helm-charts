@@ -95,6 +95,9 @@ data:
               - action: add_label
                 new_label: component
                 new_value: Miggo Collector
+              - action: add_label
+                new_label: chart_version
+                new_value: {{ .Chart.Version }}
 
       batch/metrics:
         timeout: 10s
