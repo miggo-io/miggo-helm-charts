@@ -105,7 +105,7 @@ make_api_request() {
         if response=$(curl -s -w "\n%{http_code}" \
             --max-time "$TIMEOUT" \
             --retry 0 \
-            -X POST "https://api.descope.com/v1/auth/accesskey/exchange" \
+            -X POST "https://auth.miggo.io/v1/auth/accesskey/exchange" \
             -H "Authorization: Bearer ${client_id}:${access_key}" \
             -H "Content-Type: application/json" 2>/dev/null); then
             

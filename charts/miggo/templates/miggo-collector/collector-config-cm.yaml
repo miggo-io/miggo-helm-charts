@@ -14,7 +14,7 @@ data:
       oauth2client:
         client_id: {{ .Values.config.clientId }}
         client_secret_file: {{ .Values.miggoCollector.accessKeyMountLocation }}
-        token_url: https://api.descope.com/oauth2/v1/token
+        token_url: https://auth.miggo.io/oauth2/v1/token
         timeout: 1m
 
     receivers:
