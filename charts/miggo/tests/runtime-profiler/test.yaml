@@ -61,6 +61,7 @@ tests:
             - --metric-otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
+            - --chart-version=0.0.99
             - --disable-profiler=false
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
@@ -91,7 +92,6 @@ tests:
             - -reporter-interval=5s
             - -samples-per-second=20
             - -monitor-interval=5s
-            - -off-cpu-threshold=1000
             - -probabilistic-threshold=100
             - -probabilistic-interval=1m0s
       - equal:
@@ -135,7 +135,6 @@ tests:
     set:
       miggoRuntime:
         profiler:
-          offCpuThreshold: 1
           probabilisticThreshold: 1
     asserts:
       - isKind:
@@ -148,6 +147,5 @@ tests:
             - -reporter-interval=5s
             - -samples-per-second=20
             - -monitor-interval=5s
-            - -off-cpu-threshold=1
             - -probabilistic-threshold=1
             - -probabilistic-interval=1m0s
