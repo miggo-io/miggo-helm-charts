@@ -157,7 +157,6 @@ spec:
             - -reporter-interval={{ .Values.miggoRuntime.profiler.reporterInterval }}
             - -samples-per-second={{ .Values.miggoRuntime.profiler.samplesPerSecond }}
             - -monitor-interval={{ .Values.miggoRuntime.profiler.monitorInterval }}
-            - -off-cpu-threshold={{ .Values.miggoRuntime.profiler.offCpuThreshold }}
             - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
           {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}

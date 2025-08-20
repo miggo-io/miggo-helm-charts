@@ -317,11 +317,6 @@ miggoRuntime:
     # -- Set the monitor interval in seconds.
     monitorInterval: 5s
 
-    # -- If set to a value between 1 and 999 will enable off-cpu profiling:
-    # Every time an off-cpu entry point is hit, a random number between 0 and
-    # 999 is chosen. If the given threshold is greater than this random number,
-    # the off-cpu trace is collected and reported.
-    offCpuThreshold: 1000
     # --  If set to a value between 1 and 99 will enable probabilistic
     # profiling: every probabilistic-interval a random number between 0 and 99
     # is chosen. If the given probabilistic-threshold is greater than this
