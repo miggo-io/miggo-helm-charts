@@ -146,7 +146,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.image.repository | string | `"miggo/miggo-profiler"` | Image repository |
 | miggoRuntime.profiler.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoRuntime.profiler.monitorInterval | string | `"5s"` | Set the monitor interval in seconds. |
-| miggoRuntime.profiler.offCpuThreshold | int | `1000` | If set to a value between 1 and 999 will enable off-cpu profiling: Every time an off-cpu entry point is hit, a random number between 0 and 999 is chosen. If the given threshold is greater than this random number, the off-cpu trace is collected and reported. |
 | miggoRuntime.profiler.probabilisticInterval | string | `"1m0s"` | Time interval for which probabilistic profiling will be enabled or disabled. |
 | miggoRuntime.profiler.probabilisticThreshold | int | `100` | If set to a value between 1 and 99 will enable probabilistic profiling: every probabilistic-interval a random number between 0 and 99 is chosen. If the given probabilistic-threshold is greater than this random number, the agent will collect profiles from this system for the duration of the interval. |
 | miggoRuntime.profiler.reporterInterval | string | `"5s"` | Set the reporter's interval in seconds. |
