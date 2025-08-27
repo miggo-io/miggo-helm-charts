@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.100](https://img.shields.io/badge/Version-0.0.100-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.822.1](https://img.shields.io/badge/AppVersion-v25.822.1-informational?style=flat-square)
+![Version: 0.0.101](https://img.shields.io/badge/Version-0.0.101-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.822.1](https://img.shields.io/badge/AppVersion-v25.822.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -122,9 +122,9 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.analyzer.image.repository | string | `"miggo/miggo-analyzer"` | Image repository |
 | miggoRuntime.analyzer.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoRuntime.analyzer.resources.limits.cpu | string | `"500m"` |  |
-| miggoRuntime.analyzer.resources.limits.memory | string | `"512Mi"` |  |
+| miggoRuntime.analyzer.resources.limits.memory | string | `"256Mi"` |  |
 | miggoRuntime.analyzer.resources.requests.cpu | string | `"100m"` |  |
-| miggoRuntime.analyzer.resources.requests.memory | string | `"512Mi"` |  |
+| miggoRuntime.analyzer.resources.requests.memory | string | `"256Mi"` |  |
 | miggoRuntime.analyzer.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.analyzer.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.enableFileAccessTracing | bool | `false` | Enable tracing file access. |
