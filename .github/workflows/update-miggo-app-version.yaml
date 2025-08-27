@@ -84,7 +84,7 @@ jobs:
           helm-docs
 
       - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "[AUTO GITHUB] Bump miggo app & chart version"
           branch: ${{ github.head_ref }}
