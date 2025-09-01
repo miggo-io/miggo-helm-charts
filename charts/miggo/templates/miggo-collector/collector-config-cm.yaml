@@ -87,7 +87,7 @@ data:
 
       metricstransform:
         transforms:
-          - include: miggocol_process_uptime
+          - include: miggocol_process_uptime_seconds_total
             match_type: strict
             new_name: miggo_component_status
             action: combine
