@@ -11,14 +11,19 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  # Prevent race condition with any other actions that push changes to the branch
+  group: ${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   generate-helm-docs:
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: write
       pull-requests: write
-      
+
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -29,7 +34,7 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-    
+
       - name: Install Helm Docs
         run: |
           cd /tmp
