@@ -73,6 +73,7 @@ spec:
             - --disable-profiler={{ not .Values.miggoRuntime.profiler.enabled }}
             - --enable-network-tracing={{ .Values.miggoRuntime.enableNetworkTracing }}
             - --enable-file-access-tracing={{ .Values.miggoRuntime.enableFileAccessTracing }}
+            - --enable-web-app-process-detection={{ .Values.miggoRuntime.enableWebAppProcessDetection }}
           {{- range $key, $value := .Values.miggoRuntime.extraArgs }}
             - "--{{ $key }}={{ $value }}"
           {{- end }}
