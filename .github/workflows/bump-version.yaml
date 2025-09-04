@@ -9,15 +9,20 @@ on:
       - 'charts/**/values.schema.json'
     on:
       - main
-      
+
+concurrency:
+  # Prevent race condition with any other actions that push changes to the branch
+  group: ${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   verify-and-bump:
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: write
       pull-requests: write
-      
+
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -37,8 +42,8 @@ jobs:
       - name: Check and bump versions
         id: version_check
         run: |
-          set -x 
-          
+          set -x
+
           UMBRELLA_CHARTS=(miggo)
 
           # Function to bump patch version
@@ -48,18 +53,18 @@ jobs:
             IFS='.' read -r major minor patch <<< "$version"
             echo "$major.$minor.$((patch + 1))"
           }
-          
+
           update_umbrella_charts() {
             for umbrella_chart in ${UMBRELLA_CHARTS[@]}; do
               local chart_file="charts/$umbrella_chart/Chart.yaml"
-              
+
               CURRENT_VERSION=$(yq eval '.version' "$chart_file")
               NEW_VERSION=$(bump_version "$CURRENT_VERSION")
-              
+
               if [[ ! $CHANGED_CHARTS =~ $umbrella_chart ]]; then
                 echo "Processing Chart.yaml: $CHART_YAML"
                 CHANGED_CHARTS="$CHANGED_CHARTS $umbrella_chart"
-                
+
                 yq eval ".version = \"$NEW_VERSION\"" -i "$chart_file"
               fi
             done
@@ -73,11 +78,11 @@ jobs:
 
           # Get list of changed files
           CHANGED_FILES=$(git diff --name-only $BASE_COMMIT_SHA $PR_COMMIT_SHA)
-          
+
           # Track which charts need bumping
           NEEDS_BUMP=false
           CHANGED_CHARTS=""
-          
+
           # Check each changed file
           echo "$CHANGED_FILES" | while read -r file; do
             echo "Processing file: $file"
@@ -91,12 +96,12 @@ jobs:
               if [[ ! $CHANGED_CHARTS =~ $CHART_NAME ]]; then
                 echo "Processing Chart.yaml: $CHART_YAML"
                 CHANGED_CHARTS="$CHANGED_CHARTS $CHART_NAME"
-                
+
                 if [ -f "$CHART_YAML" ]; then
                   # Get current version in PR
                   CURRENT_VERSION=$(yq eval '.version' "$CHART_YAML")
                   echo "Current version: $CURRENT_VERSION"
-                  
+
                   # Get version from base branch
                   BASE_VERSION=$(git show $BASE_COMMIT_SHA:"$CHART_YAML" | yq eval '.version' -)
                   echo "Base version: $BASE_VERSION"
@@ -108,7 +113,7 @@ jobs:
                     yq eval ".version = \"$NEW_VERSION\"" -i "$CHART_YAML"
                     update_umbrella_charts
                     echo "Bumped $CHART_NAME version from $CURRENT_VERSION to $NEW_VERSION"
-                    
+
                     # Set output for next step
                     echo "versions_bumped=true" >> $GITHUB_OUTPUT
                   else
@@ -118,7 +123,7 @@ jobs:
               fi
             fi
           done
-      
+
       - name: Commit and push changes
         if: steps.version_check.outputs.versions_bumped == 'true'
         uses: stefanzweifel/git-auto-commit-action@v6
