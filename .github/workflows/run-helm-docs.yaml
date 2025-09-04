@@ -14,7 +14,6 @@ permissions:
 concurrency:
   # Prevent race condition with any other actions that push changes to the branch
   group: ${{ github.head_ref || github.ref_name }}
-  cancel-in-progress: true
 
 jobs:
   generate-helm-docs:
