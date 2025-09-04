@@ -2,9 +2,8 @@ name: Release Charts
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_call:
+
 permissions:
   contents: write
 
@@ -12,11 +11,34 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Generate a token
+        id: generate-token
+        if: vars.GH_MIGGO_APP_ID != ''
+        uses: actions/create-github-app-token@v2
         with:
-          fetch-depth: 0
+          app-id: ${{ vars.GH_MIGGO_APP_ID }}
+          private-key: ${{ secrets.GH_MIGGO_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "miggo-helm-charts"
 
+      - name: Set token for checkout
+        id: set-token
+        run: |
+          if [ -n "${{ steps.generate-token.outputs.token }}" ]; then
+            echo "checkout_token=${{ steps.generate-token.outputs.token }}" >> $GITHUB_OUTPUT
+          else
+            echo "checkout_token=${{ github.token }}" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          repository: miggo-io/miggo-helm-charts
+          show-progress: false
+          fetch-depth: 0
+          token: "${{ steps.set-token.outputs.checkout_token }}"
+          ref: 'main'
+      
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
@@ -35,9 +57,10 @@ jobs:
           helm repo add jaeger https://jaegertracing.github.io/helm-charts
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
+        uses: ./.github/actions/helm-releaser
         with:
-          charts_dir: charts/k8s-read
+          charts_dir: charts
+          repository: miggo-io/miggo-helm-charts
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_TOKEN: "${{ steps.set-token.outputs.checkout_token }}"
           CR_GENERATE_RELEASE_NOTES: true

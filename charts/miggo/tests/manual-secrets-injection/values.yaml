@@ -1,0 +1,14 @@
+miggo:
+  clusterName: "simple-test"
+
+miggoWatch:
+  enabled: true
+
+miggoScanner:
+  enabled: true
+
+miggoRuntime:
+  enabled: true
+
+miggoCollector:
+  enabled: true

@@ -1,0 +1,32 @@
+miggo:
+  clusterName: "simple-test"
+
+config:
+  accessKey: "d6918ba5-b727-4d51-bae5-31c2a8ba59cb98944bab-d97a-4e3a-9b22-dae633070ba9"
+  metrics:
+    interval: 1h
+
+miggoWatch:
+  enabled: true
+  config:
+    interval: 1h
+    disableCompression: true
+    exclude: "pod, statefulset"
+
+miggoScanner:
+  enabled: true
+  config:
+    queueSize: 4321
+    disableCompression: true
+    cache:
+      flushInterval: "1m"
+      maxEntries: 1234
+      configMap:
+        enabled: true
+        name: "test"
+
+miggoRuntime:
+  enabled: true
+
+miggoCollector:
+  enabled: true

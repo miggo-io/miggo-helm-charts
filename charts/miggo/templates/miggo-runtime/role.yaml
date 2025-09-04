@@ -1,0 +1,65 @@
+{{- if .Values.miggoRuntime.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "miggo.fullname" . }}-pod-watcher-cr
+  labels:
+  {{- include "miggo.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - watch
+  - list
+{{- end }}
+
+{{- if and .Values.miggoRuntime.enabled (eq .Values.config.platform "openshift") }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "miggo.fullname" . }}-scc-privileged
+  labels:
+  {{- include "miggo.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+    - "security.openshift.io"
+    resources:
+    - "securitycontextconstraints"
+    resourceNames:
+    - "privileged"
+    verbs:
+    - "use"
+{{- end }}
+---
+{{- if .Values.miggoRuntime.analyzer.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "miggo.fullname" . }}-analyzer-role
+  labels:
+  {{- include "miggo.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - "batch"
+  resources:
+  - jobs
+  verbs:
+  - get
+  - watch
+  - list
+  - create
+  - delete
+{{- end }}

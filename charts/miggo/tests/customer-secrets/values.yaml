@@ -1,0 +1,20 @@
+miggo:
+  clusterName: "simple-test"
+
+imagePullSecrets:
+  - name: "customer-managed-pull-secret"
+
+config:
+  accessKeySecret: "customer-managed-access-secret"
+
+miggoWatch:
+  enabled: true
+
+miggoScanner:
+  enabled: true
+
+miggoRuntime:
+  enabled: true
+
+miggoCollector:
+  enabled: true

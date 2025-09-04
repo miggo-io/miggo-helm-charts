@@ -1,0 +1,160 @@
+{{ if .Values.miggoWatch.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "miggo.fullname" . }}-watch
+  labels:
+    {{- include "miggo.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+    {{- with .Values.miggoWatch.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+  annotations:
+  {{- with .Values.annotations }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with .Values.miggoWatch.annotations }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "miggo-watch.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with .Values.miggoWatch.podAnnotations }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+      labels:
+        component: miggo-watch
+        {{- include "miggo-watch.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with .Values.miggoWatch.podLabels }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+    spec:
+      imagePullSecrets:
+        {{- with .Values.imagePullSecrets }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- include "miggoImagePullSecrets" . | nindent 8 }}
+      serviceAccountName: {{ include "miggo.serviceAccountName" . }}-watch
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: miggo-watch
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.miggoWatch.image.fullPath }}
+          image: "{{ .Values.miggoWatch.image.fullPath }}"
+          {{- else }}
+          image: "{{ .Values.image.registry }}/{{ .Values.miggoWatch.image.repository }}:{{ .Values.miggoWatch.image.tag | default .Chart.AppVersion }}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.miggoWatch.image.pullPolicy | default .Values.image.pullPolicy }}
+          args:
+            - --cluster-name={{ .Values.miggo.clusterName }}
+            - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
+            - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
+            - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --stdout={{ .Values.output.stdout }}
+            - --port={{ .Values.healthcheck.port }}
+            - --metric-otlp-endpoint={{ (include "otlpEndpoint" .) }}
+            - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
+            - --metric-interval={{ .Values.config.metrics.interval }}
+            - --chart-version={{ .Chart.Version }}
+            - --interval={{ .Values.miggoWatch.config.interval }}
+            - --exclude={{ .Values.miggoWatch.config.exclude }}
+            {{ if .Values.miggoWatch.config.disableCompression }}
+            - --disable-compression
+            {{ end }}
+            {{- include "namespace.flags" . | nindent 12 }}
+            {{ if .Values.output.api.enabled }}
+            - --api-url={{ (include "apiEndpoint" . )}}
+            {{ end }}
+          envFrom:
+          {{- with .Values.extraEnvsFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.miggoWatch.extraEnvsFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          env:
+            - name: MIGGO_WATCH_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MIGGO_WATCH_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          {{ if .Values.output.api.enabled }}
+            - name: MIGGO_WATCH_CLIENT_ID
+              value: {{ .Values.config.clientId }}
+            {{ if (include "accessKeySecret" .) }}
+            - name: MIGGO_WATCH_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "accessKeySecret" . }}
+                  key: ACCESS_KEY
+            {{- end }}
+          {{ end }}
+          {{- if and (.Values.miggoWatch.useGOMEMLIMIT) ((((.Values.miggoWatch.resources).limits).memory))  }}
+            - name: GOMEMLIMIT
+              value: {{ include "gomemlimit" .Values.miggoWatch.resources.limits.memory | quote }}
+          {{- end }}
+          {{- with .Values.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.miggoWatch.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+          - containerPort: {{ .Values.healthcheck.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.healthcheck.port }}
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.miggoWatch.resources | nindent 12 }}
+          volumeMounts:
+          {{- with .Values.volumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.miggoWatch.volumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+      volumes:
+      {{- with .Values.volumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.miggoWatch.volumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}

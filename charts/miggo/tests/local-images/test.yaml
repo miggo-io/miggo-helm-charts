@@ -1,0 +1,56 @@
+suite: local images
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: collector deployment
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].image
+          value: my-custom-collector
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].imagePullPolicy
+          value: IfNotPresent
+
+  - it: miggo-watch deployment
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].image
+          value: my-custom-miggo-watch
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].imagePullPolicy
+          value: Never
+
+  - it: miggo-scanner deployment
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].image
+          value: my-custom-sbom:latest
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].imagePullPolicy
+          value: Never
+
+  - it: sensor daemonset
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].image
+          value: my-custom-k8s-sensor
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].imagePullPolicy
+          value: IfNotPresent

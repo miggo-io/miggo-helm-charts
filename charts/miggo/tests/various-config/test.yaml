@@ -1,0 +1,74 @@
+suite: simple installation
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: miggo-watch config
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
+          content: --interval=1h
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
+          content: --disable-compression
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
+          content: --exclude=pod, statefulset
+
+  - it: miggo-scanner config
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --queue-size=4321
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --disable-compression
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --cache-size=1234
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --cache-flush-interval=1m
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --cache-cm-name=test
+
+  - it: miggo-runtime config
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --metric-interval=1h
+
+  - it: miggo-runtime useGOMEMLIMIT
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime:
+        useGOMEMLIMIT: false
+        analyzer:
+          useGOMEMLIMIT: true
+          enabled: true
+        profiler:
+          useGOMEMLIMIT: true
+          enabled: true
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env[?(@.name == "GOMEMLIMIT")]
+      - exists:
+          path: spec.template.spec.containers[?(@.name == "profiler")].env[?(@.name == "GOMEMLIMIT")]
+      - exists:
+          path: spec.template.spec.containers[?(@.name == "analyzer")].env[?(@.name == "GOMEMLIMIT")]

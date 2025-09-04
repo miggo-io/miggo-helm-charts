@@ -1,0 +1,11 @@
+miggoWatch:
+  enabled: false
+
+miggoScanner:
+  enabled: false
+
+miggoRuntime:
+  enabled: false
+
+miggoCollector:
+  enabled: false

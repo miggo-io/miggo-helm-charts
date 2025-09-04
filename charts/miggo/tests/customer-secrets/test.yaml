@@ -1,0 +1,80 @@
+suite: customer secrets
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+  - templates/image-pull-secret.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: collector deployment
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: customer-managed-pull-secret
+      - notContains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: miggo-regcred
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: access-key
+            secret:
+              items:
+                - key: ACCESS_KEY
+                  path: ACCESS_KEY
+              secretName: customer-managed-access-secret
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            mountPath: /etc/miggo-access-key
+            name: access-key
+            subPath: ACCESS_KEY
+
+  - it: miggo-watch deployment
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: customer-managed-pull-secret
+      - notContains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: miggo-regcred
+      
+  - it: miggo-scanner deployment
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: customer-managed-pull-secret
+      - notContains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: miggo-regcred
+      
+  - it: sensor daemonset
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: customer-managed-pull-secret
+      - notContains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: miggo-regcred

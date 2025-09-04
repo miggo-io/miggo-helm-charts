@@ -1,0 +1,20 @@
+miggo:
+  clusterName: "simple-test"
+
+miggoWatch:
+  enabled: false
+
+miggoScanner:
+  enabled: false
+
+miggoRuntime:
+  enabled: false
+
+miggoCollector:
+  enabled: true
+  initContainers:
+    - name: init-access-key
+      image: busybox
+      env:
+      - name: MIGGO_ACCESS_KEY
+        value: "test"

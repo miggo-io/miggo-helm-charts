@@ -1,0 +1,33 @@
+suite: manual secrets injection
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+  - templates/image-pull-secret.yaml
+  - templates/access-key-secret.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: collector deployment
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - lengthEqual:
+          path: spec.template.spec.initContainers
+          count: 2
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: busybox
+      - contains:
+          path: spec.template.spec.initContainers[0].env
+          content:
+            name: MIGGO_ACCESS_KEY
+            value: test

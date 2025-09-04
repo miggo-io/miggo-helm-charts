@@ -1,0 +1,27 @@
+name: Dummy Tests
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - '.github'
+      - 'README.md'
+      - 'LICENCE'
+      - 'Makefile'
+      - 'ct.yaml'
+      - '.gitignore'
+    branches:
+      - main
+
+jobs:
+  helm-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Exit with success
+        run: exit 0
+
+  generate-helm-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Exit with success
+        run: exit 0

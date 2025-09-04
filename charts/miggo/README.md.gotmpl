@@ -1,0 +1,189 @@
+# Miggo Helm Chart
+
+{{ template "chart.versionBadge" . }} {{ template "chart.typeBadge" . }} {{ template "chart.appVersionBadge" . }}
+
+This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
+
+## Features
+
+- **Miggo Watch**: Monitors Kubernetes resources and their changes
+- **Miggo Scanner**: Software Bill of Materials analysis for container images
+- **Miggo Runtime**: Runtime monitoring using eBPF technology
+- **Miggo Collector**: Centralized telemetry data collection and export
+
+## Prerequisites
+
+- Kubernetes 1.23+
+- Helm 3.9+
+- Kernel 4.19+ (for eBPF support)
+- Access to Miggo's container registry
+- A valid Miggo platform tenant ID and project ID
+
+## Components
+
+The chart deploys several components that work together:
+
+### Miggo Watch
+
+Monitors Kubernetes resources and tracks changes in your cluster's configuration. Provides insights into deployments, services, and other Kubernetes objects.
+
+### Miggo Scanner
+
+Analyzes container images to generate Software Bill of Materials (SBOM), identifying dependencies and potential security vulnerabilities.
+
+### Miggo Runtime
+
+Uses eBPF technology to monitor runtime behavior of containers and system calls, providing deep visibility into container activities.
+
+### Miggo Collector
+
+Collects telemetry data (metrics, traces, logs) using OpenTelemetry protocol and forwards it to Miggo's platform.
+
+## Getting Started
+
+### Add Helm Repository
+
+```bash
+helm repo add miggo-charts https://miggo-io.github.io/miggo-helm-charts
+helm repo update
+```
+
+### Installation
+
+1. Create a values file (e.g., `my-values.yaml`):
+
+```yaml
+miggo:
+  clusterName: "your-cluster-name"
+
+config:
+  accessKey: "your-access-key"
+```
+
+2. Install the chart:
+
+```bash
+helm install miggo miggo-charts/miggo -f values.yaml --namespace miggo-space --create-namespace
+```
+
+## Configuration
+
+The following table lists the configurable parameters of the miggo chart and their default values.
+
+{{ template "chart.valuesTable" . }}
+
+## Examples
+
+### Basic Installation
+
+```yaml
+miggo:
+  tenantId: "tenant-123"
+  projectId: "project-456"
+  clusterName: "prod-cluster"
+
+config:
+  accessKey: "your-access-key"
+```
+
+### Configure Resource Limits
+
+```yaml
+miggoWatch:
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+miggoScanner:
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 6Gi
+    requests:
+      cpu: 2000m
+      memory: 3Gi
+```
+
+### Enable/Disable Components
+
+```yaml
+miggoWatch:
+  enabled: true
+
+miggoScanner:
+  enabled: true
+
+miggoRuntime:
+  enabled: false
+
+miggoCollector:
+  enabled: true
+```
+
+## Upgrade
+
+To upgrade the chart:
+
+```bash
+helm upgrade miggo miggo-charts/miggo -f values.yaml --namespace miggo-space
+```
+
+## Uninstallation
+
+To uninstall the chart:
+
+```bash
+helm uninstall miggo --namespace miggo-space
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Image Pull Errors**
+   - Verify your access key is correct
+   - Check if the image pull secret is properly configured
+
+2. **Component Startup Issues**
+   - Check component logs using:
+     ```bash
+     kubectl -n miggo-space logs -l component=miggo-watch
+     kubectl -n miggo-space logs -l component=miggo-scanner
+     kubectl -n miggo-space logs -l component=miggo-runtime
+     kubectl -n miggo-space logs -l component=miggo-collector
+     ```
+
+3. **Permission Issues**
+   - Verify RBAC resources are properly created
+   - Check if service accounts have necessary permissions
+
+### Health Checks
+
+All components expose health check endpoints on the configured port (default: 6666):
+
+```bash
+kubectl -n miggo-space port-forward svc/miggo-collector 6666:6666
+curl http://localhost:6666/health
+```
+
+## Security Considerations
+
+1. **Access Key Protection**
+   - Store the access key in a Kubernetes secret
+   - Use `config.accessKeySecret` instead of `config.accessKey`
+
+2. **RBAC Permissions**
+   - Components use least-privilege RBAC roles
+   - Review and adjust permissions as needed
+
+3. **Network Security**
+   - Configure appropriate network policies
+   - Use TLS for OTLP communication
+
+---
+
+For more information, visit [Miggo Documentation](https://docs.miggo.io)
