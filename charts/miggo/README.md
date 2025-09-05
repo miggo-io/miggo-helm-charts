@@ -129,6 +129,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.analyzer.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.enableFileAccessTracing | bool | `false` | Enable tracing file access. |
 | miggoRuntime.enableNetworkTracing | bool | `false` | Enable tracing network connections. |
+| miggoRuntime.enableWebAppProcessDetection | bool | `true` | Enable web app process detection. |
 | miggoRuntime.enabled | bool | `false` | Install eBPF agent on each cluster node to provide package-level reachability analysis and other runtime insights. |
 | miggoRuntime.extraEnvs | list | `[]` | Additional environment variables |
 | miggoRuntime.extraEnvsFrom | list | `[]` | Additional environment variables from sources |

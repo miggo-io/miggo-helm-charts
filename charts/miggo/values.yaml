@@ -229,6 +229,8 @@ miggoRuntime:
   enableNetworkTracing: false
   # -- Enable tracing file access.
   enableFileAccessTracing: false
+  # -- Enable web app process detection.
+  enableWebAppProcessDetection: true
   # -- Additional environment variables
   extraEnvs: []
   # -- Additional environment variables from sources
