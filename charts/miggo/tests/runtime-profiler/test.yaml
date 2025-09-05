@@ -46,6 +46,9 @@ tests:
 
   - it: should add both miggo-runtime and profiler containers to the DaemonSet spec
     template: templates/miggo-runtime/daemonset.yaml
+    chart:
+      version: '1.0.0'
+      appVersion: '1.0.0'
     asserts:
       - isKind:
           of: DaemonSet
@@ -61,7 +64,7 @@ tests:
             - --metric-otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.101
+            - --chart-version=1.0.0
             - --disable-profiler=false
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
