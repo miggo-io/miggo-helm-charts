@@ -1,6 +1,7 @@
 name: Generate Helm Docs
 on:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write

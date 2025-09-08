@@ -1,6 +1,7 @@
 name: Bump Chart Versions
 on:
   workflow_dispatch:
+  workflow_call:
 
 concurrency:
   # Prevent race condition with any other actions that push changes to the branch
