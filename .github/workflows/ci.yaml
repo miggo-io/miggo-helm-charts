@@ -5,21 +5,19 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'charts/**'
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
+  verify-and-bump:
+    needs: generate-helm-docs
+    uses: ./.github/workflows/bump-version.yaml
+    
   helm-test:
     uses: ./.github/workflows/run-unittests.yaml
 
   generate-helm-docs:
     needs: helm-test
     uses: ./.github/workflows/run-helm-docs.yaml
-
-  verify-and-bump:
-    needs: generate-helm-docs
-    uses: ./.github/workflows/bump-version.yaml
