@@ -8,6 +8,10 @@ on:
     paths:
       - 'charts/**'
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   helm-test:
     uses: ./.github/workflows/run-unittests.yaml
