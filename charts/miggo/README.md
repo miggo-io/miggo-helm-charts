@@ -15,7 +15,7 @@ This Helm chart deploys Miggo's components, providing comprehensive monitoring, 
 
 - Kubernetes 1.23+
 - Helm 3.9+
-- Kernel 4.19+ (for eBPF suppor t)
+- Kernel 4.19+ (for eBPF support)
 - Access to Miggo's container registry
 - A valid Miggo platform tenant ID and project ID
 
