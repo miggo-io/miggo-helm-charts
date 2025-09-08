@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'charts/**'
+
+jobs:
+  helm-test:
+    uses: ./.github/workflows/run-unittests.yaml
+
+  generate-helm-docs:
+    needs: helm-test
+    uses: ./.github/workflows/run-helm-docs.yaml
+
+  verify-and-bump:
+    needs: generate-helm-docs
+    uses: ./.github/workflows/bump-version.yaml
