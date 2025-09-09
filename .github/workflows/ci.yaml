@@ -12,10 +12,10 @@ permissions:
 
 jobs:
   verify-and-bump:
-    needs: generate-helm-docs
     uses: ./.github/workflows/bump-version.yaml
     
   helm-test:
+    needs: verify-and-bump
     uses: ./.github/workflows/run-unittests.yaml
 
   generate-helm-docs:
