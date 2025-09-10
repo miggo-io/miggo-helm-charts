@@ -7,10 +7,6 @@ permissions:
   contents: write
   pull-requests: write
 
-concurrency:
-  # Prevent race condition with any other actions that push changes to the branch
-  group: ${{ github.head_ref || github.ref_name }}
-
 jobs:
   generate-helm-docs:
     runs-on: ubuntu-latest
@@ -24,6 +20,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
       - name: Configure Git
         run: |
