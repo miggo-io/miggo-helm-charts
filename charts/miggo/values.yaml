@@ -254,6 +254,9 @@ miggoRuntime:
   nodeSelector:
     kubernetes.io/os: linux
 
+  # -- Tolerations for the miggo-runtime DaemonSet
+  tolerations: []
+
   # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
   # configured resources.limits.memory. If no resources.limits.memory are
   # defined then enabling does nothing. It is HIGHLY recommend to enable this
