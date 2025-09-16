@@ -254,7 +254,8 @@ miggoRuntime:
   nodeSelector:
     kubernetes.io/os: linux
 
-  # -- Tolerations for the miggo-runtime DaemonSet
+  # -- Tolerations for the miggo-runtime DaemonSet.  Global tolerations specified in
+  # .Values.tolerations will be merged with this list.
   tolerations: []
 
   # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
