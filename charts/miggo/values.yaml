@@ -1,4 +1,4 @@
-# -- Docker registry settings
+ # -- Docker registry settings
 image:
   # -- Registry host for all images
   registry: registry.miggo.io
