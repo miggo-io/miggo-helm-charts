@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.105](https://img.shields.io/badge/Version-0.0.105-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.901.1](https://img.shields.io/badge/AppVersion-v25.901.1-informational?style=flat-square)
+![Version: 0.0.108](https://img.shields.io/badge/Version-0.0.108-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.917.1](https://img.shields.io/badge/AppVersion-v25.917.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -115,6 +115,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoCollector.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoCollector.volumes | list | `[]` | Additional volumes |
+| miggoRuntime.affinity | object | `{}` | Affinity settings for the miggo-runtime DaemonSet. Global affinity specified in .Values.affinity will be merged with this configuration. |
 | miggoRuntime.analyzer.enabled | bool | `false` | Install analyzer on each cluster node to provide endpoint URL to functions mapping and other runtime insights. |
 | miggoRuntime.analyzer.healthcheck.port | int | `6667` | Port number for health check endpoints |
 | miggoRuntime.analyzer.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
@@ -164,6 +165,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
 | miggoRuntime.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
+| miggoRuntime.tolerations | list | `[]` | Tolerations for the miggo-runtime DaemonSet.  Global tolerations specified in .Values.tolerations will be merged with this list. |
 | miggoRuntime.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
 | miggoRuntime.volumes | list | `[]` |  |
