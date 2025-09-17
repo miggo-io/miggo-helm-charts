@@ -294,9 +294,14 @@ spec:
       {{- with .Values.miggoRuntime.nodeSelector }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- if or .Values.affinity .Values.miggoRuntime.affinity }}
       affinity:
+        {{- with .Values.affinity }}
         {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.miggoRuntime.affinity }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- end }}
       {{- if or .Values.tolerations .Values.miggoRuntime.tolerations }}
       tolerations:

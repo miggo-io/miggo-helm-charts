@@ -258,6 +258,10 @@ miggoRuntime:
   # .Values.tolerations will be merged with this list.
   tolerations: []
 
+  # -- Affinity settings for the miggo-runtime DaemonSet. Global affinity specified in
+  # .Values.affinity will be merged with this configuration.
+  affinity: {}
+
   # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
   # configured resources.limits.memory. If no resources.limits.memory are
   # defined then enabling does nothing. It is HIGHLY recommend to enable this
