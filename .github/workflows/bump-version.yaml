@@ -59,7 +59,7 @@ jobs:
             done
           }
 
-          BASE_COMMIT_SHA=${{ github.event.pull_request.base.sha }}
+          BASE_COMMIT_SHA=${{ github.event.pull_request_target.base.sha }}
           PR_COMMIT_SHA=$(git rev-parse HEAD)
 
           echo "Base SHA: BASE_COMMIT_SHA"

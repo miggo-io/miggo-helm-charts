@@ -2,7 +2,7 @@ name: CI
 
 on:
   workflow_dispatch:
-  pull_request:
+  pull_request_target:
     branches:
       - main
 
@@ -30,7 +30,7 @@ jobs:
   report-commit-status:
     needs: [verify-and-bump, generate-helm-docs, helm-test]
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request_target'
     steps:
       - name: Checkout final state
         uses: actions/checkout@v5
