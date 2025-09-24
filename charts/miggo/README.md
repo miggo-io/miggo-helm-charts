@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.108](https://img.shields.io/badge/Version-0.0.108-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.917.1](https://img.shields.io/badge/AppVersion-v25.917.1-informational?style=flat-square)
+![Version: 0.0.109](https://img.shields.io/badge/Version-0.0.109-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.917.1](https://img.shields.io/badge/AppVersion-v25.917.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -190,6 +190,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.resources.limits.memory | string | `"4Gi"` |  |
 | miggoScanner.resources.requests.cpu | string | `"1000m"` |  |
 | miggoScanner.resources.requests.memory | string | `"2Gi"` |  |
+| miggoScanner.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | miggoScanner.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoScanner.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoScanner.volumes | list | `[]` | Additional volumes |

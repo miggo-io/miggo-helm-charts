@@ -176,6 +176,10 @@ miggoScanner:
   # -- Additional volume mounts
   volumeMounts: []
 
+  serviceAccount:
+    # -- Annotations to add to the service account
+    annotations: {}
+
   image:
     # -- Image repository
     repository: miggo/miggo-scanner
