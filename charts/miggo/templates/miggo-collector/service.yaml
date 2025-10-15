@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: miggo-collector
+  namespace: {{ .Release.Namespace }}
   {{- with .Values.miggoCollector.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

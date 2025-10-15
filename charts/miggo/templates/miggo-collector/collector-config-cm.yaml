@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: collector-config-cm
+  namespace: {{ .Release.Namespace }}
 data:
   collector-init-script.sh: |
     {{ .Files.Get "files/collector-init-script.sh" | nindent 4 }}
