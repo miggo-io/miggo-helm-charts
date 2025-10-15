@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: miggo-critical-pods
+  namespace: {{ .Release.Namespace }}
   labels:
     addonmanager.kubernetes.io/mode: Reconcile
 spec:
