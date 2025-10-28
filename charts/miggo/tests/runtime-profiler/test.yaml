@@ -69,6 +69,7 @@ tests:
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
             - --enable-web-app-process-detection=true
+            - --include-system-namespaces=false
       - equal:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
           value:
