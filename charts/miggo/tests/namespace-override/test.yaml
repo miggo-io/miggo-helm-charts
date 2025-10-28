@@ -1,0 +1,77 @@
+suite: test namespace override
+templates:
+  - miggo-collector/rolebinding.yaml
+  - miggo-scanner/rolebinding.yaml
+  - miggo-watch/rolebinding.yaml
+  - miggo-scanner/deployment.yaml
+  - miggo-collector/deployment.yaml
+  - miggo-collector/serviceaccount.yaml
+  - miggo-collector/service.yaml
+  - miggo-collector/role.yaml
+tests:
+  - it: should use custom namespace in collector deployment metadata
+    template: miggo-collector/deployment.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in scanner deployment metadata
+    template: miggo-scanner/deployment.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in rolebinding metadata
+    template: miggo-collector/rolebinding.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+      - equal:
+          path: subjects[0].namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in scanner rolebinding
+    template: miggo-scanner/rolebinding.yaml
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+      - equal:
+          path: subjects[0].namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in serviceaccount
+    template: miggo-collector/serviceaccount.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in service
+    template: miggo-collector/service.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in role
+    template: miggo-collector/role.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in service URLs
+    template: miggo-scanner/deployment.yaml
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].args
+          pattern: ".*http://miggo-collector.miggo-custom.svc.cluster.local:4318.*"
+      - matchRegex:
+          path: spec.template.spec.containers[0].args
+          pattern: ".*--cache-cm-namespace=miggo-custom.*"
+

@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ include "miggo.fullname" . }}-runtime
+  namespace: {{ include "miggo.namespace" . }}
   labels:
     {{- include "miggo.labels" . | nindent 4 }}
     {{- with .Values.labels }}

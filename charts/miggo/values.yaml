@@ -1,3 +1,6 @@
+# -- Override the namespace where resources are deployed. If not set, uses Release.Namespace
+namespaceOverride: ""
+
 # -- Docker registry settings
 image:
   # -- Registry host for all images

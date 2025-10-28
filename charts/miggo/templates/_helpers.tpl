@@ -57,6 +57,17 @@ Create the name of the service account to use
 {{- default (include "miggo.fullname" .) .Values.serviceAccount.name }}
 {{- end }}
 
+{{/*
+Namespace to use for all resources
+*/}}
+{{- define "miggo.namespace" -}}
+{{- if .Values.namespaceOverride -}}
+{{- .Values.namespaceOverride -}}
+{{- else -}}
+{{- .Release.Namespace -}}
+{{- end -}}
+{{- end }}
+
 {{- define "accessKeySecret" -}}
 {{- if .Values.config.accessKeySecret -}}
 {{- .Values.config.accessKeySecret -}}
@@ -67,7 +78,7 @@ access-key-secret
 
 {{- define "otlpEndpoint" -}}
 {{- if .Values.miggoCollector.enabled -}}
-http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4318
+http://miggo-collector.{{ include "miggo.namespace" . }}.svc.cluster.local:4318
 {{- else -}}
 {{ .Values.output.otlp.otlpEndpoint }}
 {{- end -}}
@@ -83,7 +94,7 @@ http://miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4318
 
 {{- define "otlpProfilesEndpoint" -}}
 {{- if .Values.miggoCollector.enabled -}}
-miggo-collector.{{ .Release.Namespace }}.svc.cluster.local:4317
+miggo-collector.{{ include "miggo.namespace" . }}.svc.cluster.local:4317
 {{- else -}}
 {{ .Values.output.otlp.otlpEndpoint }}
 {{- end -}}

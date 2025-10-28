@@ -3,6 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: collector-role
+  namespace: {{ include "miggo.namespace" . }}
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]

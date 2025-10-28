@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "miggo.fullname" . }}-scanner
+  namespace: {{ include "miggo.namespace" . }}
   labels:
     {{- include "miggo.labels" . | nindent 4 }}
     {{- with .Values.labels }}
@@ -79,7 +80,7 @@ spec:
             - --cache-size={{ .Values.miggoScanner.config.cache.maxEntries }}
             {{ if .Values.miggoScanner.config.cache.configMap.enabled }}
             - --cache-cm-name={{ include "miggo-scanner.configMapCacheName" . }}
-            - --cache-cm-namespace={{ .Release.Namespace }}
+            - --cache-cm-namespace={{ include "miggo.namespace" . }}
             {{ end }}
             {{- include "namespace.flags" . | nindent 12 }}
           envFrom:
