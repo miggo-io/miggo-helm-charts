@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.112](https://img.shields.io/badge/Version-0.0.112-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.1022.1](https://img.shields.io/badge/AppVersion-v25.1022.1-informational?style=flat-square)
+![Version: 0.0.113](https://img.shields.io/badge/Version-0.0.113-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.1022.1](https://img.shields.io/badge/AppVersion-v25.1022.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -215,6 +215,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoWatch.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoWatch.volumes | list | `[]` | Additional volumes |
+| namespaceOverride | string | `""` | Override the namespace where resources are deployed. If not set, uses Release.Namespace |
 | nodeSelector | object | `{}` | Node selector for all pods |
 | output.api.apiEndpoint | string | `""` | Miggo Api endpoint (defaults to otlp endpoint) |
 | output.api.enabled | bool | `true` | Decide whether to communicate with Miggo Api |
@@ -282,6 +283,21 @@ miggoRuntime:
 
 miggoCollector:
   enabled: true
+```
+
+### Override Namespace
+
+By default, resources are deployed in the namespace specified during Helm installation. You can override this to deploy resources in a different namespace:
+
+```yaml
+# Deploy all resources to a specific namespace regardless of installation namespace
+namespaceOverride: "miggo-custom"
+```
+
+Example usage:
+```bash
+# Install in 'default' namespace but deploy resources to 'miggo-custom'
+helm install miggo miggo-charts/miggo -f values.yaml --set namespaceOverride=miggo-custom
 ```
 
 ## Upgrade
