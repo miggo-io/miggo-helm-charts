@@ -6,7 +6,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: {{ include "miggo.serviceAccountName" . }}-watch
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "miggo.namespace" . }}
 roleRef:
   kind: ClusterRole
   name: miggo-watch-cluster-role

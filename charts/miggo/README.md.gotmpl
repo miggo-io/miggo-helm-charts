@@ -124,6 +124,21 @@ miggoCollector:
   enabled: true
 ```
 
+### Override Namespace
+
+By default, resources are deployed in the namespace specified during Helm installation. You can override this to deploy resources in a different namespace:
+
+```yaml
+# Deploy all resources to a specific namespace regardless of installation namespace
+namespaceOverride: "miggo-custom"
+```
+
+Example usage:
+```bash
+# Install in 'default' namespace but deploy resources to 'miggo-custom'
+helm install miggo miggo-charts/miggo -f values.yaml --set namespaceOverride=miggo-custom
+```
+
 ## Upgrade
 
 To upgrade the chart:

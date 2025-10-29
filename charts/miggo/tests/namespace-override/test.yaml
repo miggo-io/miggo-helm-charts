@@ -1,0 +1,121 @@
+suite: test namespace override
+
+release:
+  name: test-release
+  namespace: default
+
+templates:
+  # Workloads
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-watch/deployment.yaml
+  # RBAC
+  - templates/miggo-collector/rolebinding.yaml
+  - templates/miggo-scanner/rolebinding.yaml
+  - templates/miggo-collector/role.yaml
+  - templates/miggo-collector/serviceaccount.yaml
+  # Network
+  - templates/miggo-collector/service.yaml
+  # Config & Secrets
+  - templates/miggo-collector/collector-config-cm.yaml
+  - templates/access-key-secret.yaml
+  - templates/image-pull-secret.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: should use custom namespace in collector deployment metadata
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in scanner deployment metadata
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in rolebinding metadata
+    template: templates/miggo-collector/rolebinding.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+      - equal:
+          path: subjects[0].namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in scanner rolebinding
+    template: templates/miggo-scanner/rolebinding.yaml
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+      - equal:
+          path: subjects[0].namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in serviceaccount
+    template: templates/miggo-collector/serviceaccount.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in service
+    template: templates/miggo-collector/service.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in role
+    template: templates/miggo-collector/role.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in watch deployment metadata
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in configmap
+    template: templates/miggo-collector/collector-config-cm.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in access-key secret
+    template: templates/access-key-secret.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in image-pull secret
+    template: templates/image-pull-secret.yaml
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: miggo-custom
+
+  - it: should use custom namespace in service URLs
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: --otlp-endpoint=http://miggo-collector.miggo-custom.svc.cluster.local:4318
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: --cache-cm-namespace=miggo-custom
+

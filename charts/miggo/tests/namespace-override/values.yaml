@@ -1,0 +1,20 @@
+namespaceOverride: "miggo-custom"
+
+miggo:
+  clusterName: "namespace-override-test"
+
+config:
+  accessKey: "d6918ba5-b727-4d51-bae5-31c2a8ba59cb98944bab-d97a-4e3a-9b22-dae633070ba9"
+
+miggoWatch:
+  enabled: true
+
+miggoScanner:
+  enabled: true
+
+miggoRuntime:
+  enabled: false
+
+miggoCollector:
+  enabled: true
+
