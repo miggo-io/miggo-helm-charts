@@ -162,6 +162,7 @@ spec:
             - -monitor-interval={{ .Values.miggoRuntime.profiler.monitorInterval }}
             - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
+            - -tracers={{ join "," .Values.miggoRuntime.profiler.enabledTracers }}
           {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
             - "--{{ $key }}={{ $value }}"
           {{- end }}

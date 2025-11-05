@@ -99,6 +99,7 @@ tests:
             - -monitor-interval=5s
             - -probabilistic-threshold=100
             - -probabilistic-interval=1m0s
+            - -tracers=perl,php,python,hotspot,ruby,v8,dotnet,go
       - equal:
           path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
           value:
@@ -154,3 +155,4 @@ tests:
             - -monitor-interval=5s
             - -probabilistic-threshold=1
             - -probabilistic-interval=1m0s
+            - -tracers=perl,php,python,hotspot,ruby,v8,dotnet,go
