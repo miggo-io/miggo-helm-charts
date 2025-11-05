@@ -1,0 +1,3 @@
+{{- if (.Values.miggoRuntime.profiler.extraArgs).tracers }}
+WARN: miggoRuntime.profiler.extraArgs.tracers is deprecated and has been replaced by miggoRuntime.profiler.tracers
+{{ end }}

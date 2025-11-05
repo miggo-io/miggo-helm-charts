@@ -312,6 +312,19 @@ miggoRuntime:
     # setting and set a value for resources.limits.memory.
     useGOMEMLIMIT: true
 
+    # -- Specifies which tracers should be enabled in the profiler.
+    # The following tracers are currently supported:
+    #   * perl
+    #   * php
+    #   * python
+    #   * hotspot
+    #   * ruby
+    #   * v8
+    #   * dotnet
+    #   * go
+    #   * labels
+    enabledTracers: [perl, php, python, hotspot, ruby, v8, dotnet, go]
+
     resources:
       requests:
         cpu: 200m
