@@ -140,6 +140,8 @@ miggoWatch:
   config:
     # -- Interval for scanning Kubernetes resources
     interval: 6h
+    # -- Interval for sending a snapshot of cluster images
+    imageTrackerInterval: 30m
     # -- Disable compression for data transfer
     disableCompression: false
     # -- Exclude those components from the report (comma separated list of persistent-volume-claim daemon-set stateful-set ingress ingress-class http-route network-policy namespace service-account persistent-volume cron-job node deployment job replica-set gateway-class pod service)

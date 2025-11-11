@@ -73,6 +73,7 @@ spec:
             - --metric-interval={{ .Values.config.metrics.interval }}
             - --chart-version={{ .Chart.Version }}
             - --interval={{ .Values.miggoWatch.config.interval }}
+            - --image-tracker-interval={{ .Values.miggoWatch.config.imageTrackerInterval }}
             - --exclude={{ .Values.miggoWatch.config.exclude }}
             {{ if .Values.miggoWatch.config.disableCompression }}
             - --disable-compression
