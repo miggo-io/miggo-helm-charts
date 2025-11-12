@@ -139,7 +139,7 @@ miggoWatch:
 
   config:
     # -- Interval for scanning Kubernetes resources
-    interval: 6h
+    interval: 1h
     # -- Interval for sending a snapshot of cluster images
     imageTrackerInterval: 30m
     # -- Disable compression for data transfer
