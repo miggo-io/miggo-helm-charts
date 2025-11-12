@@ -204,7 +204,5 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.miggoCollector.instancePerNode }}
       priorityClassName: system-node-critical
-      {{- end }}
 {{ end }}
