@@ -204,5 +204,8 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      priorityClassName: system-node-critical
+      {{- $priorityClassName := .Values.miggoCollector.priorityClassName | default .Values.priorityClassName | default "system-node-critical" }}
+      {{- if $priorityClassName }}
+      priorityClassName: {{ $priorityClassName }}
+      {{- end }}
 {{ end }}

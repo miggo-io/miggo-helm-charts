@@ -311,9 +311,12 @@ spec:
         {{- with .Values.tolerations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- with .Values.miggoRuntime.tolerations }}
+      {{- with .Values.miggoRuntime.tolerations }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
       {{- end }}
-      priorityClassName: system-node-critical
+      {{- end }}
+      {{- $priorityClassName := .Values.miggoRuntime.priorityClassName | default .Values.priorityClassName | default "system-node-critical" }}
+      {{- if $priorityClassName }}
+      priorityClassName: {{ $priorityClassName }}
+      {{- end }}
 {{ end }}

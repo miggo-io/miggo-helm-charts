@@ -105,6 +105,8 @@ nodeSelector: {}
 tolerations: []
 # -- Pod affinity settings for all pods
 affinity: {}
+# -- Priority class name for all pods
+priorityClassName: ""
 
 miggoWatch:
   # -- Enable Miggo Watch component
@@ -234,6 +236,8 @@ miggoRuntime:
   enabled: false
   # -- Kubernetes cluster domain
   kubernetesClusterDomain: ""
+  # -- Priority class name (defaults to global priorityClassName or system-node-critical)
+  priorityClassName: ""
   # -- Enable tracing network connections.
   enableNetworkTracing: false
   # -- Enable tracing file access.
@@ -401,6 +405,8 @@ miggoCollector:
   replicas: 1
   # -- Run an instance per node
   instancePerNode: false
+  # -- Priority class name (defaults to global priorityClassName or system-node-critical)
+  priorityClassName: ""
   # -- Component-specific labels
   labels: {}
   # -- Component-specific annotations

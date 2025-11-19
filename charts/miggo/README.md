@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.124](https://img.shields.io/badge/Version-0.0.124-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.1119.1](https://img.shields.io/badge/AppVersion-v25.1119.1-informational?style=flat-square)
+![Version: 0.0.125](https://img.shields.io/badge/Version-0.0.125-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.1119.1](https://img.shields.io/badge/AppVersion-v25.1119.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -106,6 +106,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.labels | object | `{}` | Component-specific labels |
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoCollector.podLabels | object | `{}` | Component-specific pod labels |
+| miggoCollector.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
 | miggoCollector.replicas | int | `1` | Number of replicas to run (relevant only if instancePerNode: false) |
 | miggoCollector.resources | object | `{"limits":{"cpu":"100m","memory":"500Mi"},"requests":{"cpu":"10m","memory":"200Mi"}}` | Resource requirements |
 | miggoCollector.service.annotations | object | `{}` | Service annotations |
@@ -142,6 +143,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoRuntime.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
 | miggoRuntime.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector settings |
+| miggoRuntime.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
 | miggoRuntime.profiler.enabled | bool | `false` | Install profiler on each cluster node to provide function-level reachability analysis and other runtime insights. |
 | miggoRuntime.profiler.enabledTracers | list | `["perl","php","python","hotspot","ruby","v8","dotnet","go"]` | Specifies which tracers should be enabled in the profiler. The following tracers are currently supported:   * perl   * php   * python   * hotspot   * ruby   * v8   * dotnet   * go   * labels |
 | miggoRuntime.profiler.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
@@ -227,6 +229,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | podAnnotations | object | `{}` | Pod annotations to add to all pods |
 | podLabels | object | `{}` | Pod labels to add to all pods |
 | podSecurityContext | object | `{}` | Pod security context for all pods |
+| priorityClassName | string | `""` | Priority class name for all pods |
 | securityContext | object | `{}` | Container security context for all containers |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.automount | bool | `true` | Automatically mount API credentials for the service account |
