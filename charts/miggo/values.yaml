@@ -329,7 +329,7 @@ miggoRuntime:
     #   * dotnet
     #   * go
     #   * labels
-    enabledTracers: [perl, php, python, hotspot, ruby, v8, dotnet, go]
+    enabledTracers: [perl, php, python, hotspot, v8, dotnet, go]
 
     resources:
       requests:
