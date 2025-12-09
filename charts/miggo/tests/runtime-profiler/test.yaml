@@ -80,6 +80,9 @@ tests:
             - name: debugfs
               mountPath: /sys/kernel/debug
               readOnly: true
+            - mountPath: /sys/kernel/tracing
+              name: tracefs
+              readOnly: true
             - name: unix-socket
               mountPath: /tmp/grpc
       - matchRegex:
@@ -99,7 +102,7 @@ tests:
             - -monitor-interval=5s
             - -probabilistic-threshold=100
             - -probabilistic-interval=1m0s
-            - -tracers=perl,php,python,hotspot,ruby,v8,dotnet,go
+            - -tracers=perl,php,python,hotspot,v8,dotnet,go
       - equal:
           path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
           value:
@@ -114,6 +117,9 @@ tests:
             - name: debugfs
               mountPath: /sys/kernel/debug
               readOnly: true
+            - mountPath: /sys/kernel/tracing
+              name: tracefs
+              readOnly: true
             - name: cgroupfs
               mountPath: /cgroup
               readOnly: true
@@ -125,6 +131,9 @@ tests:
             - name: debugfs
               hostPath:
                 path: /sys/kernel/debug
+            - name: tracefs
+              hostPath:
+                path: /sys/kernel/tracing
             - name: unix-socket
               emptyDir: { }
             - name: cgroupfs
@@ -155,4 +164,4 @@ tests:
             - -monitor-interval=5s
             - -probabilistic-threshold=1
             - -probabilistic-interval=1m0s
-            - -tracers=perl,php,python,hotspot,ruby,v8,dotnet,go
+            - -tracers=perl,php,python,hotspot,v8,dotnet,go
