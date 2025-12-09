@@ -19,7 +19,7 @@ jobs:
 
       - name: Install helm unittest plugin
         run: |
-          helm plugin install https://github.com/helm-unittest/helm-unittest.git
+          helm --verify=false plugin install https://github.com/helm-unittest/helm-unittest.git
 
       - name: Run tests for modified charts
         run: |
