@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: profiler-fluent-bit-config
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "miggo.namespace" . }}
 data:
   fluent-bit.yaml: |
     service:
