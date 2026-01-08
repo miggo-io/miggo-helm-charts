@@ -84,6 +84,10 @@ http://miggo-collector.{{ include "miggo.namespace" . }}.svc.cluster.local:4318
 {{- end -}}
 {{- end -}}
 
+{{- define "otlpEndpointHost" -}}
+miggo-collector.{{ include "miggo.namespace" . }}.svc.cluster.local
+{{- end -}}
+
 {{- define "apiEndpoint" -}}
 {{- if .Values.output.api.apiEndpoint -}}
 {{- .Values.output.api.apiEndpoint  -}}

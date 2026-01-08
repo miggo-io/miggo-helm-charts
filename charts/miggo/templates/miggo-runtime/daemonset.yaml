@@ -26,6 +26,7 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/miggo-runtime/fluent-bit-cm.yaml") . | sha256sum }}
       {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
@@ -204,6 +205,40 @@ spec:
             - name: unix-socket
               mountPath: /tmp/grpc
         {{- end }}
+        {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
+        - name: profiler-logs
+          image: fluent/fluent-bit:latest
+          imagePullPolicy: {{ .Values.miggoRuntime.fluentbit.image.pullPolicy | default .Values.image.pullPolicy }}
+          env:
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          command:
+            - /fluent-bit/bin/fluent-bit
+            - -c
+            - /fluent-bit/etc/fluent-bit.yaml
+          volumeMounts:
+            - name: host-var
+              mountPath: /var
+              readOnly: true
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc
+          resources:
+            {{- toYaml .Values.miggoRuntime.fluentbit.resources | nindent 12 }}
+        {{- end }}
         {{- if .Values.miggoRuntime.analyzer.enabled }}
         - name: analyzer
           {{- if .Values.miggoRuntime.analyzer.image.fullPath }}
@@ -280,6 +315,13 @@ spec:
       hostIPC: {{ .Values.miggoRuntime.hostIPC }}
       hostPID: {{ .Values.miggoRuntime.hostPID }}
       volumes:
+      - name: fluent-bit-config
+        configMap:
+          name: profiler-fluent-bit-config
+      - name: host-var
+        hostPath:
+          path: /var
+          type: Directory
       - name: debugfs
         hostPath:
           path: /sys/kernel/debug

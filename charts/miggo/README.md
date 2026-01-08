@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.132](https://img.shields.io/badge/Version-0.0.132-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.1228.1](https://img.shields.io/badge/AppVersion-v25.1228.1-informational?style=flat-square)
+![Version: 0.0.133](https://img.shields.io/badge/Version-0.0.133-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v25.1228.1](https://img.shields.io/badge/AppVersion-v25.1228.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -135,6 +135,12 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.enabled | bool | `false` | Install eBPF agent on each cluster node to provide package-level reachability analysis and other runtime insights. |
 | miggoRuntime.extraEnvs | list | `[]` | Additional environment variables |
 | miggoRuntime.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
+| miggoRuntime.fluentbit.enabled | bool | `true` | Install fluent-bit on each cluster node to forward the profiler logs to the Collector |
+| miggoRuntime.fluentbit.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
+| miggoRuntime.fluentbit.resources.limits.cpu | string | `"100m"` |  |
+| miggoRuntime.fluentbit.resources.limits.memory | string | `"100Mi"` |  |
+| miggoRuntime.fluentbit.resources.requests.cpu | string | `"50m"` |  |
+| miggoRuntime.fluentbit.resources.requests.memory | string | `"50Mi"` |  |
 | miggoRuntime.hostIPC | bool | `true` | Use the host's ipc namespace. |
 | miggoRuntime.hostPID | bool | `true` | Use the host's pid namespace. |
 | miggoRuntime.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
