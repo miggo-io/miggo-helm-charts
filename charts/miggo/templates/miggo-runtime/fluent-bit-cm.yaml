@@ -46,6 +46,16 @@ data:
               - name: content_modifier
                 context: attributes
                 action: upsert
+                key: node_name
+                value: ${NODE_NAME}
+              - name: content_modifier
+                context: attributes
+                action: upsert
+                key: pod_hostname
+                value: ${POD_NAME}
+              - name: content_modifier
+                context: attributes
+                action: upsert
                 key: cluster
                 value: {{ .Values.miggo.clusterName }}
               - name: content_modifier
