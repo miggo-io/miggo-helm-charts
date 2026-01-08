@@ -128,6 +128,13 @@ tests:
       - equal:
           path: spec.template.spec.volumes
           value:
+            - configMap:
+                name: profiler-fluent-bit-config
+              name: fluent-bit-config
+            - hostPath:
+                path: /var
+                type: Directory
+              name: host-var
             - name: debugfs
               hostPath:
                 path: /sys/kernel/debug
