@@ -362,6 +362,22 @@ miggoRuntime:
     # -- Time interval for which probabilistic profiling will be enabled or disabled.
     probabilisticInterval: 1m0s
 
+  fluentbit:
+    # -- Install fluent-bit on each cluster node to forward the profiler logs to the Collector
+    enabled: true
+    
+    image:
+      # -- Image pull policy. Specifies when Kubernetes should pull the container image
+      pullPolicy:
+
+    resources:
+      requests:
+        memory: "50Mi"
+        cpu: "50m"
+      limits:
+        memory: "100Mi"
+        cpu: "100m"
+
   analyzer:
     # -- Install analyzer on each cluster node to provide endpoint URL to
     # functions mapping and other runtime insights.

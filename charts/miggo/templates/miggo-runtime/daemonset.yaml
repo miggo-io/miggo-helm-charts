@@ -204,8 +204,11 @@ spec:
               readOnly: true
             - name: unix-socket
               mountPath: /tmp/grpc
+        {{- end }}
+        {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
         - name: profiler-logs
           image: fluent/fluent-bit:latest
+          imagePullPolicy: {{ .Values.miggoRuntime.fluentbit.image.pullPolicy | default .Values.image.pullPolicy }}
           env:
             - name: POD_UID
               valueFrom:
@@ -230,12 +233,7 @@ spec:
             - name: fluent-bit-config
               mountPath: /fluent-bit/etc
           resources:
-            requests:
-              memory: "50Mi"
-              cpu: "50m"
-            limits:
-              memory: "100Mi"
-              cpu: "100m"
+            {{- toYaml .Values.miggoRuntime.fluentbit.resources | nindent 12 }}
         {{- end }}
         {{- if .Values.miggoRuntime.analyzer.enabled }}
         - name: analyzer
