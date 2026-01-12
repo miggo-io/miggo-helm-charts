@@ -78,7 +78,11 @@ spec:
             - --enable-web-app-process-detection={{ .Values.miggoRuntime.enableWebAppProcessDetection }}
             {{- include "namespace.flags" . | nindent 12 }}
           {{- range $key, $value := .Values.miggoRuntime.extraArgs }}
-            - "--{{ $key }}={{ $value }}"
+            {{- if $value }}
+            - --{{ $key }}={{ $value }}
+            {{- else }}
+            - --{{ $key }}
+            {{- end }}
           {{- end }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
@@ -168,7 +172,11 @@ spec:
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
             - -tracers={{ join "," .Values.miggoRuntime.profiler.enabledTracers }}
           {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
-            - "--{{ $key }}={{ $value }}"
+            {{- if $value }}
+            - --{{ $key }}={{ $value }}
+            {{- else }}
+            - --{{ $key }}
+            {{- end }}
           {{- end }}
           env:
           {{- if and .Values.miggoRuntime.profiler.useGOMEMLIMIT .Values.miggoRuntime.profiler.resources.limits.memory  }}
@@ -262,7 +270,11 @@ spec:
             - --api-url={{ (include "apiEndpoint" . )}}
             {{ end }}
           {{- range $key, $value := .Values.miggoRuntime.analyzer.extraArgs }}
-            - "--{{ $key }}={{ $value }}"
+            {{- if $value }}
+            - --{{ $key }}={{ $value }}
+            {{- else }}
+            - --{{ $key }}
+            {{- end }}
           {{- end }}
           env:
           {{- if and .Values.miggoRuntime.analyzer.useGOMEMLIMIT .Values.miggoRuntime.analyzer.resources.limits.memory }}
