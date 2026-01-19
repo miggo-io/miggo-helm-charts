@@ -18,7 +18,7 @@ log() {
 
 log_error() { log "ERROR" "$@"; }
 log_info() {
-    [[ "${LOG_LEVEL}" == "INFO" || "${LOG_LEVEL}" == "DEBUG" ]] && log "INFO" "$@" || true
+    [[ "${LOG_LEVEL}" == "INFO" || "${LOG_LEVEL}" == "DEBUG" ]] && log "INFO " "$@" || true
 }
 log_debug() { 
     [[ "${LOG_LEVEL}" == "DEBUG" ]] && log "DEBUG" "$@" || true
@@ -271,6 +271,126 @@ generate_config() {
     return 1
 }
 
+oauth2_get_token() {
+    local client_id="$1"
+    local client_secret="$2"
+    local token_url="$3"
+    local attempt=1
+    
+    while true; do
+        log_info "Requesting authentication token attempt $attempt"
+        
+        local response
+        local http_code
+        
+        if response=$(curl -s -w "\n%{http_code}" \
+            --max-time "$TIMEOUT" \
+            --retry 0 \
+            -X POST "$token_url" \
+            -u "${client_id}:${client_secret}" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=client_credentials" 2>/dev/null); then
+            
+            http_code=$(echo "$response" | tail -n1)
+            response=$(echo "$response" | head -n -1)
+            
+            log_debug "HTTP response code: $http_code"
+            log_debug "Response body: $response"
+            
+            if [[ "$http_code" -eq 200 ]]; then
+                if echo "$response" | jq empty 2>/dev/null; then
+                    local access_token
+                    access_token=$(echo "$response" | jq -r '.access_token // empty')
+                    
+                    if [[ -n "$access_token" && "$access_token" != "null" ]]; then
+                        log_info "Authentication token obtained successfully"
+                        echo "$access_token"
+                        return 0
+                    else
+                        log_error "Authentication response missing access token"
+                    fi
+                else
+                    log_error "Invalid authentication response received"
+                fi
+            else
+                log_error "Authentication failed with HTTP code: $http_code"
+            fi
+        else
+            log_error "Authentication request failed (network/timeout error)"
+        fi
+        
+        log_info "Retrying in ${RETRY_DELAY} seconds..."
+        sleep "$RETRY_DELAY"
+        
+        ((attempt++))
+    done
+}
+
+check_backend_health() {
+    local api_url="$1"
+    local access_token="$2"
+    local attempt=1
+    
+    while true; do
+        log_info "Verifying backend connectivity attempt $attempt - $api_url"
+        
+        local http_code
+        
+        if http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time "$TIMEOUT" \
+            --retry 0 \
+            -X GET "$api_url" \
+            -H "Authorization: Bearer ${access_token}" 2>/dev/null); then
+            
+            log_debug "Backend response code: $http_code"
+            
+            if [[ "$http_code" -ge 200 && "$http_code" -lt 500 ]]; then
+                log_info "Backend connectivity verified successfully (HTTP $http_code)"
+                return 0
+            else
+                log_error "Backend connectivity check failed with HTTP code: $http_code"
+            fi
+        else
+            log_error "Backend connectivity check failed (network/timeout error)"
+        fi
+        
+        log_info "Retrying in ${RETRY_DELAY} seconds..."
+        sleep "$RETRY_DELAY"
+        
+        ((attempt++))
+    done
+}
+
+check_connectivity() {
+    
+    local token_url="${OAUTH2_TOKEN_URL:-https://auth.miggo.io/oauth2/v1/token}"
+    local api_url="${API_HEALTH_URL:-https://api.miggo.io/health/status}"
+    
+    log_info "Starting backend connectivity verification"
+    log_info "Token URL: $token_url"
+    log_info "Backend URL: $api_url"
+    
+    local client_secret
+    client_secret=$(read_access_key) || {
+        log_error "Failed to read client credentials"
+        return 1
+    }
+    
+    local access_token
+    access_token=$(oauth2_get_token "$CLIENT_ID" "$client_secret" "$token_url") || {
+        log_error "Failed to authenticate with backend"
+        return 1
+    }
+    
+    check_backend_health "$api_url" "$access_token" || {
+        log_error "Backend connectivity verification failed"
+        return 1
+    }
+    
+    log_info "Backend connectivity verification completed successfully"
+    return 0
+}
+
 main() {
     log_info "Starting collector initialization"
     
@@ -327,6 +447,12 @@ main() {
         return 1
     }
     
+    # Verify Backend health
+    check_connectivity || {
+        log_error "Backend unreachable"
+        return 1
+    }
+
     log_info "Collector initialization completed successfully"
     return 0
 }
