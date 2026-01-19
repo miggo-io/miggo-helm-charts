@@ -277,8 +277,8 @@ oauth2_get_token() {
     local token_url="$3"
     local attempt=1
     
-    while true; do
-        log_info "Requesting authentication token attempt $attempt"
+    while [[ $attempt -le $MAX_RETRIES ]]; do
+        log_info "Requesting authentication token attempt $attempt of $MAX_RETRIES"
         
         local response
         local http_code
@@ -324,6 +324,9 @@ oauth2_get_token() {
         
         ((attempt++))
     done
+    
+    log_error "Authentication failed after $MAX_RETRIES attempts"
+    return 1
 }
 
 check_backend_health() {
