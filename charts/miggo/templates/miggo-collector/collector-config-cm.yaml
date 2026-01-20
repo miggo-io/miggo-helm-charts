@@ -17,6 +17,10 @@ data:
         client_secret_file: {{ .Values.miggoCollector.accessKeyMountLocation }}
         token_url: https://auth.miggo.io/oauth2/v1/token
         timeout: 1m
+      
+      {{- with .Values.miggoCollector.extraExtensions }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
 
     receivers:
       otlp:
@@ -108,6 +112,10 @@ data:
 
       batch/traces:
         timeout: 10s
+      
+      {{- with .Values.miggoCollector.extraProcessors }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
 
     exporters:
       debug:
@@ -128,6 +136,10 @@ data:
         auth:
           authenticator: oauth2client
       {{- end }}
+      
+      {{- with .Values.miggoCollector.extraExporters }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
 
     service:
       telemetry:
@@ -139,27 +151,88 @@ data:
                 prometheus:
                   host: "0.0.0.0"
                   port: 8888
-      extensions: [health_check, oauth2client]
+      extensions: 
+        - health_check
+        - oauth2client
+        {{- range .Values.miggoCollector.extraExtensionNames }}
+        - {{ . }}
+        {{- end }}
       pipelines:
         {{- if .Values.miggoRuntime.profiler.enabled }}
         profiles:
-          receivers: [otlp]
-          exporters: [otlphttp/profiles]
+          receivers: 
+            - otlp
+          exporters: 
+            - otlphttp/profiles
+            {{- range .Values.miggoCollector.extraExporterNames }}
+            - {{ . }}
+            {{- end }}
         {{- end }}
         metrics/sensors:
-          receivers: [otlp]
-          processors: [batch/metrics, resource/metrics, attributes/metrics]
-          exporters: [debug, prometheus, otlphttp]
+          receivers: 
+            - otlp
+          processors: 
+            - batch/metrics
+            - resource/metrics
+            - attributes/metrics
+            {{- range .Values.miggoCollector.extraProcessorNames }}
+            - {{ . }}
+            {{- end }}
+          exporters: 
+            - debug
+            - prometheus
+            - otlphttp
+            {{- range .Values.miggoCollector.extraExporterNames }}
+            - {{ . }}
+            {{- end }}
         metrics/collector:
-          receivers: [prometheus]
-          processors: [batch/metrics, metricstransform, resource/metrics, attributes/metrics]
-          exporters: [debug, prometheus, otlphttp]
+          receivers: 
+            - prometheus
+          processors: 
+            - batch/metrics
+            - metricstransform
+            - resource/metrics
+            - attributes/metrics
+            {{- range .Values.miggoCollector.extraProcessorNames }}
+            - {{ . }}
+            {{- end }}
+          exporters:
+            - debug
+            - prometheus
+            - otlphttp
+            {{- range .Values.miggoCollector.extraExporterNames }}
+            - {{ . }}
+            {{- end }}
         traces:
-          receivers: [otlp]
-          processors: [batch/traces, resource, attributes]
-          exporters: [debug, otlphttp]
+          receivers: 
+            - otlp
+          processors:
+            - batch/traces
+            - resource
+            - attributes
+            {{- range .Values.miggoCollector.extraProcessorNames }}
+            - {{ . }}
+            {{- end }}
+          exporters: 
+            - debug
+            - otlphttp
+            {{- range .Values.miggoCollector.extraExporterNames }}
+            - {{ . }}
+            {{- end }}
         logs:
-          receivers: [otlp]
-          processors: [batch/logs, resource, attributes]
-          exporters: [debug, otlphttp]
+          receivers:
+            - otlp
+          processors:
+            - batch/logs
+            - resource
+            - attributes
+            {{- range .Values.miggoCollector.extraProcessorNames }}
+            - {{ . }}
+            {{- end }}
+          exporters:
+            - debug
+            - otlphttp
+            {{- range .Values.miggoCollector.extraExporterNames }}
+            - {{ . }}
+            {{- end }}
 {{ end }}
