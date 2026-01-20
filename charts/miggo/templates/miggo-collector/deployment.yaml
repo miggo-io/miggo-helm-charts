@@ -85,6 +85,10 @@ spec:
               value: {{ .Values.config.clientId }}
             - name: ACCESS_KEY_MOUNT_LOCATION
               value: {{ .Values.miggoCollector.accessKeyMountLocation }}
+            - name: API_HEALTH_URL
+              value: {{ .Values.output.otlp.otlpEndpoint }}/health/status
+            - name: OAUTH2_TOKEN_URL
+              value: https://auth.miggo.io/oauth2/v1/token
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
