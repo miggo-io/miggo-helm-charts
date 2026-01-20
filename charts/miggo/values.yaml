@@ -441,6 +441,20 @@ miggoCollector:
   volumeMounts: []
   # -- InitContainers to initialize the pod
   initContainers: []
+  
+  # -- Additional processor configurations
+  extraProcessors: {}
+  # -- Additional processor names to add to pipelines
+  extraProcessorNames: []
+  # -- Additional exporter configurations
+  extraExporters: {}
+  # -- Additional exporter names to add to pipelines
+  extraExporterNames: []
+  # -- Additional extension configurations
+  extraExtensions: {}
+  # -- Additional extension names to add to service
+  extraExtensionNames: []
+  
   # -- An internal locaiton to mount the access key file within the container
   accessKeyMountLocation: /etc/miggo-access-key
 
