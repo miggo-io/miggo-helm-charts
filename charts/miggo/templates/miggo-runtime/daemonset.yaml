@@ -78,10 +78,10 @@ spec:
             - --enable-web-app-process-detection={{ .Values.miggoRuntime.enableWebAppProcessDetection }}
             {{- include "namespace.flags" . | nindent 12 }}
           {{- range $key, $value := .Values.miggoRuntime.extraArgs }}
-            {{- if $value }}
-            - --{{ $key }}={{ $value }}
-            {{- else }}
+            {{- if kindIs "invalid" $value }}
             - --{{ $key }}
+            {{- else }}
+            - --{{ $key }}={{ $value }}
             {{- end }}
           {{- end }}
           envFrom:
@@ -172,10 +172,10 @@ spec:
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
             - -tracers={{ join "," .Values.miggoRuntime.profiler.enabledTracers }}
           {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
-            {{- if $value }}
-            - --{{ $key }}={{ $value }}
-            {{- else }}
+            {{- if kindIs "invalid" $value }}
             - --{{ $key }}
+            {{- else }}
+            - --{{ $key }}={{ $value }}
             {{- end }}
           {{- end }}
           env:
@@ -270,10 +270,10 @@ spec:
             - --api-url={{ (include "apiEndpoint" . )}}
             {{ end }}
           {{- range $key, $value := .Values.miggoRuntime.analyzer.extraArgs }}
-            {{- if $value }}
-            - --{{ $key }}={{ $value }}
-            {{- else }}
+            {{- if kindIs "invalid" $value }}
             - --{{ $key }}
+            {{- else }}
+            - --{{ $key }}={{ $value }}
             {{- end }}
           {{- end }}
           env:
