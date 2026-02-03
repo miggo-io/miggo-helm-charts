@@ -78,6 +78,9 @@ spec:
             - --enable-network-tracing={{ .Values.miggoRuntime.enableNetworkTracing }}
             - --enable-file-access-tracing={{ .Values.miggoRuntime.enableFileAccessTracing }}
             - --enable-web-app-process-detection={{ .Values.miggoRuntime.enableWebAppProcessDetection }}
+            - --cgroup-registry-sync-interval={{ .Values.miggoRuntime.cgroupRegistrySyncInterval }}
+            - --cgroup-registry-clean-interval={{ .Values.miggoRuntime.cgroupRegistryCleanInterval }}
+            - --cgroup-root-dir=/cgroup
             {{- include "namespace.flags" . | nindent 12 }}
           {{- range $key, $value := .Values.miggoRuntime.extraArgs }}
             {{- if kindIs "invalid" $value }}
@@ -143,6 +146,9 @@ spec:
             readOnly: true
           - name: tracefs
             mountPath: /sys/kernel/tracing
+            readOnly: true
+          - name: cgroupfs
+            mountPath: /cgroup
             readOnly: true
           {{- if .Values.miggoRuntime.profiler.enabled }}
           - name: unix-socket

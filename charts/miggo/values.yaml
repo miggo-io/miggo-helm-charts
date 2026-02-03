@@ -244,6 +244,10 @@ miggoRuntime:
   enableFileAccessTracing: false
   # -- Enable web app process detection.
   enableWebAppProcessDetection: true
+  # -- Interval between full cgroup state syncs from the Runtime to the Profiler
+  cgroupRegistrySyncInterval: 1m
+  # -- Interval between sweeps to remove cgroups whose paths no longer exist on the filesystem
+  cgroupRegistryCleanInterval: 1h
   # -- Additional environment variables
   extraEnvs: []
   # -- Additional environment variables from sources
