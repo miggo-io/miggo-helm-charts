@@ -26,7 +26,9 @@ spec:
   template:
     metadata:
       annotations:
+        {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
         checksum/config: {{ include (print $.Template.BasePath "/miggo-runtime/fluent-bit-cm.yaml") . | sha256sum }}
+        {{- end }}
       {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
@@ -327,6 +329,7 @@ spec:
       hostIPC: {{ .Values.miggoRuntime.hostIPC }}
       hostPID: {{ .Values.miggoRuntime.hostPID }}
       volumes:
+      {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
       - name: fluent-bit-config
         configMap:
           name: profiler-fluent-bit-config
@@ -334,6 +337,7 @@ spec:
         hostPath:
           path: /var
           type: Directory
+      {{- end }}
       - name: debugfs
         hostPath:
           path: /sys/kernel/debug

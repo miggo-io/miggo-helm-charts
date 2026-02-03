@@ -1,3 +1,4 @@
+{{- if and .Values.miggoRuntime.enabled .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -77,3 +78,4 @@ data:
     [PARSER]
         Name   json
         Format json
+{{- end }}
