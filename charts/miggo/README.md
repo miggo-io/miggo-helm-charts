@@ -158,7 +158,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
 | miggoRuntime.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector settings |
 | miggoRuntime.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
-| miggoRuntime.profiler.enabled | bool | `false` | Install profiler on each cluster node to provide function-level reachability analysis and other runtime insights. |
+| miggoRuntime.profiler.disableCgroupFilter | bool | `false` | Disable cgroup-based filtering |
+| miggoRuntime.profiler.enabled | bool | `true` | Install profiler on each cluster node to provide function-level reachability analysis and other runtime insights. |
 | miggoRuntime.profiler.enabledTracers | list | `["perl","php","python","hotspot","v8","dotnet","go"]` | Specifies which tracers should be enabled in the profiler. The following tracers are currently supported:   * perl   * php   * python   * hotspot   * ruby   * v8   * dotnet   * go   * labels |
 | miggoRuntime.profiler.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
 | miggoRuntime.profiler.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
