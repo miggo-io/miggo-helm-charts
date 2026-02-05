@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.146](https://img.shields.io/badge/Version-0.0.146-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.203.1](https://img.shields.io/badge/AppVersion-v26.203.1-informational?style=flat-square)
+![Version: 0.0.148](https://img.shields.io/badge/Version-0.0.148-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.203.1](https://img.shields.io/badge/AppVersion-v26.203.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -135,6 +135,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.analyzer.resources.requests.memory | string | `"256Mi"` |  |
 | miggoRuntime.analyzer.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.analyzer.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
+| miggoRuntime.cgroupRegistryCleanInterval | string | `"1h"` | Interval between sweeps to remove cgroups whose paths no longer exist on the filesystem |
+| miggoRuntime.cgroupRegistrySyncInterval | string | `"1m"` | Interval between full cgroup state syncs from the Runtime to the Profiler |
 | miggoRuntime.enableFileAccessTracing | bool | `false` | Enable tracing file access. |
 | miggoRuntime.enableNetworkTracing | bool | `false` | Enable tracing network connections. |
 | miggoRuntime.enableWebAppProcessDetection | bool | `true` | Enable web app process detection. |
