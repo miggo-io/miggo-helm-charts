@@ -304,7 +304,7 @@ miggoRuntime:
   profiler:
     # -- Install profiler on each cluster node to provide function-level
     # reachability analysis and other runtime insights.
-    enabled: false
+    enabled: true
     image:
       # -- Image repository
       repository: miggo/miggo-profiler
