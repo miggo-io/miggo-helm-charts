@@ -365,6 +365,8 @@ miggoRuntime:
     probabilisticThreshold: 100
     # -- Time interval for which probabilistic profiling will be enabled or disabled.
     probabilisticInterval: 1m0s
+    # -- Disable cgroup-based filtering
+    disableCgroupFilter: false
 
   fluentbit:
     # -- Install fluent-bit on each cluster node to forward the profiler logs to the Collector
