@@ -3,4 +3,4 @@ name: miggo
 description: A Helm chart for Miggo
 type: application
 version: 0.0.148
-appVersion: "v26.204.1"
+appVersion: "v26.210.1"
