@@ -161,7 +161,7 @@ miggoWatch:
       memory: 256Mi
     requests:
       cpu: 10m
-      memory: 128Mi
+      memory: 256Mi
 
 miggoScanner:
   # -- Enable Miggo Scanner component
