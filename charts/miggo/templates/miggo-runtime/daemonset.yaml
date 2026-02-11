@@ -78,6 +78,9 @@ spec:
             - --enable-network-tracing={{ .Values.miggoRuntime.enableNetworkTracing }}
             - --enable-file-access-tracing={{ .Values.miggoRuntime.enableFileAccessTracing }}
             - --enable-web-app-process-detection={{ .Values.miggoRuntime.enableWebAppProcessDetection }}
+            - --cgroup-registry-sync-interval={{ .Values.miggoRuntime.cgroupRegistrySyncInterval }}
+            - --cgroup-registry-clean-interval={{ .Values.miggoRuntime.cgroupRegistryCleanInterval }}
+            - --cgroup-root-dir=/cgroup
             {{- include "namespace.flags" . | nindent 12 }}
           {{- range $key, $value := .Values.miggoRuntime.extraArgs }}
             {{- if kindIs "invalid" $value }}
@@ -144,6 +147,9 @@ spec:
           - name: tracefs
             mountPath: /sys/kernel/tracing
             readOnly: true
+          - name: cgroupfs
+            mountPath: /cgroup
+            readOnly: true
           {{- if .Values.miggoRuntime.profiler.enabled }}
           - name: unix-socket
             mountPath: /tmp/grpc
@@ -173,6 +179,7 @@ spec:
             - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
             - -tracers={{ join "," .Values.miggoRuntime.profiler.enabledTracers }}
+            - -enable-cgroup-filter={{ .Values.miggoRuntime.profiler.enableCgroupFilter }}
           {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
             {{- if kindIs "invalid" $value }}
             - --{{ $key }}

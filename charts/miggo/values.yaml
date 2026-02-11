@@ -244,6 +244,10 @@ miggoRuntime:
   enableFileAccessTracing: false
   # -- Enable web app process detection.
   enableWebAppProcessDetection: true
+  # -- Interval between full cgroup state syncs from the Runtime to the Profiler
+  cgroupRegistrySyncInterval: 1m
+  # -- Interval between sweeps to remove cgroups whose paths no longer exist on the filesystem
+  cgroupRegistryCleanInterval: 1h
   # -- Additional environment variables
   extraEnvs: []
   # -- Additional environment variables from sources
@@ -300,7 +304,7 @@ miggoRuntime:
   profiler:
     # -- Install profiler on each cluster node to provide function-level
     # reachability analysis and other runtime insights.
-    enabled: false
+    enabled: true
     image:
       # -- Image repository
       repository: miggo/miggo-profiler
@@ -361,6 +365,8 @@ miggoRuntime:
     probabilisticThreshold: 100
     # -- Time interval for which probabilistic profiling will be enabled or disabled.
     probabilisticInterval: 1m0s
+    # -- Enable cgroup-based filtering
+    enableCgroupFilter: true
 
   fluentbit:
     # -- Install fluent-bit on each cluster node to forward the profiler logs to the Collector
