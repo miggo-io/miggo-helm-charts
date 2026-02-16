@@ -351,13 +351,11 @@ spec:
       - name: tracefs
         hostPath:
           path: /sys/kernel/tracing
-      {{- if .Values.miggoRuntime.profiler.enabled }}
       - name: unix-socket
         emptyDir: { }
       - name: cgroupfs
         hostPath:
           path: /sys/fs/cgroup
-      {{- end }}
       {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
