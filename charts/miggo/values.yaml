@@ -365,8 +365,11 @@ miggoRuntime:
     probabilisticThreshold: 100
     # -- Time interval for which probabilistic profiling will be enabled or disabled.
     probabilisticInterval: 1m0s
-    # -- Enable cgroup-based filtering
-    enableCgroupFilter: false
+    # -- Enables namespace-based filtering for the profiler. When enabled, the profiler
+    # applies allowedNamespaces and deniedNamespaces configuration to selectively
+    # collect profiles based on Kubernetes namespace membership.
+    # Note: This feature only works on cgroupv2 systems.
+    enableNamespaceFiltering: true
 
   fluentbit:
     # -- Install fluent-bit on each cluster node to forward the profiler logs to the Collector

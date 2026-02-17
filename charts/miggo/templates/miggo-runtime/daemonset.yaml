@@ -179,7 +179,7 @@ spec:
             - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
             - -tracers={{ join "," .Values.miggoRuntime.profiler.enabledTracers }}
-            - -enable-cgroup-filter={{ .Values.miggoRuntime.profiler.enableCgroupFilter }}
+            - -enable-cgroup-filter={{ .Values.miggoRuntime.profiler.enableNamespaceFiltering }}
           {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
             {{- if kindIs "invalid" $value }}
             - --{{ $key }}
