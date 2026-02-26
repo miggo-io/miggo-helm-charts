@@ -179,7 +179,6 @@ spec:
             - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
             - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
             - -tracers={{ join "," .Values.miggoRuntime.profiler.enabledTracers }}
-            - -enable-cgroup-filter={{ .Values.miggoRuntime.profiler.enableNamespaceFiltering }}
           {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
             {{- if kindIs "invalid" $value }}
             - --{{ $key }}
@@ -192,6 +191,8 @@ spec:
             - name: GOMEMLIMIT
               value: {{ include "gomemlimit" .Values.miggoRuntime.profiler.resources.limits.memory | quote }}
           {{- end }}
+            - name: MIGGO_RUNTIME_ENABLE_CGROUP_FILTER
+              value: {{ .Values.miggoRuntime.profiler.enableNamespaceFiltering }}
             - name: MIGGO_RUNTIME_CLUSTER_NAME
               value: {{ .Values.miggo.clusterName }}
             - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
