@@ -192,7 +192,7 @@ spec:
               value: {{ include "gomemlimit" .Values.miggoRuntime.profiler.resources.limits.memory | quote }}
           {{- end }}
             - name: MIGGO_RUNTIME_ENABLE_CGROUP_FILTER
-              value: {{ .Values.miggoRuntime.profiler.enableNamespaceFiltering }}
+              value: {{ .Values.miggoRuntime.profiler.enableNamespaceFiltering | quote }}
             - name: MIGGO_RUNTIME_CLUSTER_NAME
               value: {{ .Values.miggo.clusterName }}
             - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
