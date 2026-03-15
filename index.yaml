@@ -2234,6 +2234,16 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-sensor-0.1.19/miggo-sensor-0.1.19.tgz
     version: 0.1.19
+  miggo-test:
+  - apiVersion: v2
+    created: "2026-03-15T15:33:16.225225291Z"
+    description: A Helm chart for Miggo
+    digest: b1aaee073c6dd0fa0afafc05eb2fc0ad6542f8c7a23913b88772ed885f9d7abf
+    name: miggo-test
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-test-0.0.165-aeab622/miggo-test-0.0.165-aeab622.tgz
+    version: 0.0.165-aeab622
   static-sbom:
   - apiVersion: v2
     appVersion: 0.0.1
@@ -2439,4 +2449,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.1/static-sbom-0.0.1.tgz
     version: 0.0.1
-generated: "2026-03-09T14:31:10.376972245Z"
+generated: "2026-03-15T15:33:16.226132281Z"
