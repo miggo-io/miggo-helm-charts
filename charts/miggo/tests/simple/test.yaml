@@ -11,6 +11,8 @@ templates:
   - templates/miggo-collector/deployment.yaml
   - templates/miggo-collector/collector-config-cm.yaml
   - templates/image-pull-secret.yaml
+  - templates/miggo-runtime/fluent-bit-cm.yaml
+  - templates/miggo-runtime/fluent-bit-cm.yaml
 
 values:
   - values.yaml
