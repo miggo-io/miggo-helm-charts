@@ -1,13 +1,17 @@
 name: Update k8s integration app version
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       appVersion:
         description: 'Unified App Version name'
         type: string
         required: true
-  workflow_call:
+    outputs:
+      chart_version:
+        description: 'Released chart version'
+        value: ${{ jobs.update.outputs.chart_version }}
+  workflow_dispatch:
     inputs:
       appVersion:
         description: 'Unified App Version name'
@@ -18,8 +22,12 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  update:
     runs-on: ubuntu-latest
+    
+    outputs:
+      chart_version: ${{ steps.version_check.outputs.chart_version }}
+
     steps:
       - name: Generate a token
         id: generate-token
@@ -74,9 +82,11 @@ jobs:
           CURRENT_CHART_VERSION=$(yq eval '.version' "$CHART_YAML")
           NEW_CHART_VERSION=$(bump_version "$CURRENT_CHART_VERSION")
           yq eval ".version = \"$NEW_CHART_VERSION\"" -i "$CHART_YAML"
+          echo "chart_version=${NEW_CHART_VERSION}" >> "$GITHUB_OUTPUT"
           
           NEW_APP_VERSION=${{ inputs.appVersion }}
           yq eval ".appVersion = \"$NEW_APP_VERSION\"" -i "$CHART_YAML"
+          
 
       - name: Generate Helm Docs
         id: generate_docs
