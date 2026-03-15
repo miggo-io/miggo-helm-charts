@@ -8,6 +8,7 @@ templates:
   - templates/miggo-collector/deployment.yaml
   - templates/miggo-collector/collector-config-cm.yaml
   - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-runtime/fluent-bit-cm.yaml
 
 values:
   - values.yaml
@@ -40,9 +41,7 @@ tests:
       - matchRegex:
           path: data["config-template.yaml"]
           pattern: |
-            .*profiles:
-              +receivers: \[otlp\]
-              +exporters: \[otlphttp/profiles\].*
+            (?s).*pipelines:.*profiles:\s+receivers:\s+-\s+otlp\s+exporters:\s+-\s+otlphttp/profiles.*
 
   - it: should add both miggo-runtime and profiler containers to the DaemonSet spec
     template: templates/miggo-runtime/daemonset.yaml
@@ -69,6 +68,9 @@ tests:
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
             - --enable-web-app-process-detection=true
+            - --cgroup-registry-sync-interval=1m
+            - --cgroup-registry-clean-interval=1h
+            - --cgroup-root-dir=/cgroup
             - --include-system-namespaces=false
       - equal:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
@@ -82,6 +84,9 @@ tests:
               readOnly: true
             - mountPath: /sys/kernel/tracing
               name: tracefs
+              readOnly: true
+            - mountPath: /cgroup
+              name: cgroupfs
               readOnly: true
             - name: unix-socket
               mountPath: /tmp/grpc
