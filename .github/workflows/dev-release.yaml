@@ -1,0 +1,77 @@
+name: Release Charts (Dev)
+
+on:
+  workflow_call:
+    inputs:
+      app_version:
+        description: 'App version (appVersion in Chart.yaml)'
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      app_version:
+        description: 'App version (appVersion in Chart.yaml)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate a token
+        id: generate-token
+        if: vars.GH_MIGGO_APP_ID != ''
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.GH_MIGGO_APP_ID }}
+          private-key: ${{ secrets.GH_MIGGO_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "miggo-helm-charts"
+          
+      - name: Set token for checkout
+        id: set-token
+        run: |
+          if [ -n "${{ steps.generate-token.outputs.token }}" ]; then
+            echo "checkout_token=${{ steps.generate-token.outputs.token }}" >> $GITHUB_OUTPUT
+          else
+            echo "checkout_token=${{ github.token }}" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          repository: miggo-io/miggo-helm-charts
+          show-progress: false
+          fetch-depth: 0
+          token: "${{ steps.set-token.outputs.checkout_token }}"
+          ref: feat/test-release # for testing
+          # ref: 'main'
+      
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3.5
+        with:
+          version: v3.9.0
+
+      - name: Patch chart name and version for dev release
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          ORIGINAL_VERSION=$(grep '^version:' charts/miggo/Chart.yaml | awk '{print $2}')
+          sed -i "s/^version:.*/version: ${ORIGINAL_VERSION}-${SHA}/" charts/miggo/Chart.yaml
+          sed -i "s/^appVersion:.*/appVersion: \"${{ inputs.app_version }}\"/" charts/miggo/Chart.yaml
+
+      - name: Run chart-releaser
+        uses: ./.github/actions/helm-releaser
+        with:
+          charts_dir: charts
+          repository: miggo-io/miggo-helm-charts
+        env:
+          CR_TOKEN: "${{ steps.set-token.outputs.checkout_token }}"
+          CR_GENERATE_RELEASE_NOTES: true
