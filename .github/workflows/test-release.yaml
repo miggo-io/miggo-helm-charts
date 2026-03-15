@@ -1,0 +1,47 @@
+name: Release Charts (Test)
+
+on:
+  push: # for testing
+  workflow_dispatch:
+    inputs:
+      app_version:
+        description: 'App version (appVersion in Chart.yaml)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3.5
+        with:
+          version: v3.9.0
+
+      - name: Patch chart name and version for test release
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          ORIGINAL_VERSION=$(grep '^version:' charts/miggo/Chart.yaml | awk '{print $2}')
+          sed -i "s/^name:.*/name: miggo-test/" charts/miggo/Chart.yaml
+          sed -i "s/^version:.*/version: ${ORIGINAL_VERSION}-${SHA}/" charts/miggo/Chart.yaml
+          sed -i "s/^appVersion:.*/appVersion: \"${{ inputs.app_version }}\"/" charts/miggo/Chart.yaml
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.5.0
+        with:
+          charts_dir: charts
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_GENERATE_RELEASE_NOTES: false
