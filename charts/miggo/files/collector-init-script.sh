@@ -44,6 +44,7 @@ validate_environment() {
         "ACCESS_KEY_MOUNT_LOCATION"
         "CONFIG_TEMPLATE_PATH"
         "CONFIG_OUTPUT_PATH"
+        "AUTH_BASE_URL"
     )
     
     for var in "${required_vars[@]}"; do
@@ -105,7 +106,7 @@ make_api_request() {
         if response=$(curl -s -w "\n%{http_code}" \
             --max-time "$TIMEOUT" \
             --retry 0 \
-            -X POST "https://auth.miggo.io/v1/auth/accesskey/exchange" \
+            -X POST "${AUTH_BASE_URL}/v1/auth/accesskey/exchange" \
             -H "Authorization: Bearer ${client_id}:${access_key}" \
             -H "Content-Type: application/json" 2>/dev/null); then
             
