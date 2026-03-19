@@ -55,8 +55,7 @@ jobs:
           show-progress: false
           fetch-depth: 0
           token: "${{ steps.set-token.outputs.checkout_token }}"
-          ref: feat/test-release # for testing
-          # ref: 'main'
+          ref: 'main'
       
       - name: Configure Git
         run: |
