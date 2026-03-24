@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.170](https://img.shields.io/badge/Version-0.0.170-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.318.1](https://img.shields.io/badge/AppVersion-v26.318.1-informational?style=flat-square)
+![Version: 0.0.171](https://img.shields.io/badge/Version-0.0.171-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.318.1](https://img.shields.io/badge/AppVersion-v26.318.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -110,6 +110,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.initContainers | list | `[]` | InitContainers to initialize the pod |
 | miggoCollector.instancePerNode | bool | `false` | Run an instance per node |
 | miggoCollector.labels | object | `{}` | Component-specific labels |
+| miggoCollector.nodeSelector | object | `{}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoCollector.podLabels | object | `{}` | Component-specific pod labels |
 | miggoCollector.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
@@ -202,6 +203,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.image.repository | string | `"miggo/miggo-scanner"` | Image repository |
 | miggoScanner.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoScanner.labels | object | `{}` | Component-specific labels |
+| miggoScanner.nodeSelector | object | `{}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoScanner.podLabels | object | `{}` | Component-specific pod labels |
 | miggoScanner.resources.limits.cpu | string | `"3000m"` |  |
@@ -225,6 +227,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.image.repository | string | `"miggo/miggo-watch"` | Image repository |
 | miggoWatch.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoWatch.labels | object | `{}` | Component-specific labels |
+| miggoWatch.nodeSelector | object | `{}` | Node selector for miggo-watch pods. Merged with global nodeSelector. |
 | miggoWatch.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoWatch.podLabels | object | `{}` | Component-specific pod labels |
 | miggoWatch.resources.limits.cpu | string | `"100m"` |  |

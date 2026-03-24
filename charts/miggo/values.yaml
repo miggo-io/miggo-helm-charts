@@ -127,6 +127,8 @@ miggoWatch:
   volumes: []
   # -- Additional volume mounts
   volumeMounts: []
+  # -- Node selector for miggo-watch pods. Merged with global nodeSelector.
+  nodeSelector: {}
 
   image:
     # -- Image repository
@@ -182,6 +184,8 @@ miggoScanner:
   volumes: []
   # -- Additional volume mounts
   volumeMounts: []
+  # -- Node selector for miggo-scanner pods. Merged with global nodeSelector.
+  nodeSelector: {}
 
   serviceAccount:
     # -- Annotations to add to the service account
@@ -448,9 +452,11 @@ miggoCollector:
   volumes: []
   # -- Additional volume mounts
   volumeMounts: []
+  # -- Node selector for miggo-collector pods. Merged with global nodeSelector.
+  nodeSelector: {}
   # -- InitContainers to initialize the pod
   initContainers: []
-  
+
   # -- Additional processor configurations
   extraProcessors: {}
   # -- Additional processor names to add to pipelines

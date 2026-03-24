@@ -1,0 +1,117 @@
+suite: nodeSelector tests
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+  - templates/miggo-runtime/fluent-bit-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: should set component-specific nodeSelector on miggo-watch
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      miggoWatch.nodeSelector:
+        Name: system
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            Name: system
+
+  - it: should set component-specific nodeSelector on miggo-scanner
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      miggoScanner.nodeSelector:
+        Name: system
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            Name: system
+
+  - it: should set component-specific nodeSelector on miggo-collector
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      miggoCollector.nodeSelector:
+        disktype: ssd
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            disktype: ssd
+
+  - it: should merge global and component-specific nodeSelector on miggo-watch
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      nodeSelector:
+        zone: us-east-1
+      miggoWatch.nodeSelector:
+        Name: system
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            zone: us-east-1
+            Name: system
+
+  - it: should merge global and component-specific nodeSelector on miggo-scanner
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      nodeSelector:
+        zone: us-east-1
+      miggoScanner.nodeSelector:
+        Name: system
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            zone: us-east-1
+            Name: system
+
+  - it: should only have global nodeSelector when component-specific is not set
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      nodeSelector:
+        zone: us-east-1
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            zone: us-east-1
+
+  - it: should not render nodeSelector when neither global nor component-specific is set
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - isNull:
+          path: spec.template.spec.nodeSelector
+
+  - it: should not affect miggo-runtime when only miggo-watch nodeSelector is set
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoWatch.nodeSelector:
+        Name: system
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/os: linux
+
+  - it: should set nodeSelector only on watch and scanner but not on collector
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      miggoWatch.nodeSelector:
+        Name: system
+      miggoScanner.nodeSelector:
+        Name: system
+    asserts:
+      - isNull:
+          path: spec.template.spec.nodeSelector
