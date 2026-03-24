@@ -147,9 +147,14 @@ spec:
       {{- with .Values.miggoWatch.volumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- if or .Values.nodeSelector .Values.miggoWatch.nodeSelector }}
       nodeSelector:
+      {{- with .Values.nodeSelector }}
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.miggoWatch.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- end }}
       {{- with .Values.affinity }}
       affinity:
