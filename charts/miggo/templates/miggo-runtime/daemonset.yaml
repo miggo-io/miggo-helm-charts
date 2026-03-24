@@ -197,6 +197,8 @@ spec:
               value: {{ .Values.miggo.clusterName }}
             - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
               value: {{ (include "otlpEndpoint" .) }}
+            - name: MIGGO_RUNTIME_EXPORT_LOGS_ENDPOINT
+              value: {{ (include "otlpEndpoint" .) }}
             - name: MIGGO_RUNTIME_EXPORT_METRICS_INTERVAL
               value: {{ .Values.config.metrics.interval }}
             - name: MIGGO_RUNTIME_NODE_NAME
