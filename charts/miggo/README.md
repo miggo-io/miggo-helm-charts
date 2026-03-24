@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.170](https://img.shields.io/badge/Version-0.0.170-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.318.1](https://img.shields.io/badge/AppVersion-v26.318.1-informational?style=flat-square)
+![Version: 0.0.171](https://img.shields.io/badge/Version-0.0.171-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.318.1](https://img.shields.io/badge/AppVersion-v26.318.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -108,9 +108,9 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.image.repository | string | `"miggo/miggo-collector"` | Image repository |
 | miggoCollector.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoCollector.initContainers | list | `[]` | InitContainers to initialize the pod |
-| miggoCollector.nodeSelector | object | `{}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
 | miggoCollector.instancePerNode | bool | `false` | Run an instance per node |
 | miggoCollector.labels | object | `{}` | Component-specific labels |
+| miggoCollector.nodeSelector | object | `{}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoCollector.podLabels | object | `{}` | Component-specific pod labels |
 | miggoCollector.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
@@ -203,6 +203,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.image.repository | string | `"miggo/miggo-scanner"` | Image repository |
 | miggoScanner.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoScanner.labels | object | `{}` | Component-specific labels |
+| miggoScanner.nodeSelector | object | `{}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoScanner.podLabels | object | `{}` | Component-specific pod labels |
 | miggoScanner.resources.limits.cpu | string | `"3000m"` |  |
@@ -211,7 +212,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.resources.requests.memory | string | `"2Gi"` |  |
 | miggoScanner.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | miggoScanner.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
-| miggoScanner.nodeSelector | object | `{}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoScanner.volumes | list | `[]` | Additional volumes |
 | miggoWatch.annotations | object | `{}` | Component-specific annotations |
@@ -227,6 +227,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.image.repository | string | `"miggo/miggo-watch"` | Image repository |
 | miggoWatch.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoWatch.labels | object | `{}` | Component-specific labels |
+| miggoWatch.nodeSelector | object | `{}` | Node selector for miggo-watch pods. Merged with global nodeSelector. |
 | miggoWatch.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoWatch.podLabels | object | `{}` | Component-specific pod labels |
 | miggoWatch.resources.limits.cpu | string | `"100m"` |  |
@@ -234,7 +235,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.resources.requests.cpu | string | `"10m"` |  |
 | miggoWatch.resources.requests.memory | string | `"256Mi"` |  |
 | miggoWatch.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
-| miggoWatch.nodeSelector | object | `{}` | Node selector for miggo-watch pods. Merged with global nodeSelector. |
 | miggoWatch.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoWatch.volumes | list | `[]` | Additional volumes |
 | namespaceOverride | string | `""` | Override the namespace where resources are deployed. If not set, uses Release.Namespace |
