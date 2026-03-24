@@ -206,7 +206,7 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
           {{- with .Values.miggoRuntime.profiler.extraEnvs }}
-          {{- toYaml . | nindent 10 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:
             {{- toYaml .Values.miggoRuntime.profiler.resources | nindent 12 }}
