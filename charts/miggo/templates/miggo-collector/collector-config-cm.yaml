@@ -17,6 +17,10 @@ data:
         client_secret_file: {{ .Values.miggoCollector.accessKeyMountLocation }}
         token_url: {{ .Values.config.authUrl }}/oauth2/v1/token
         timeout: 1m
+      k8s_leader_elector:
+        auth_type: serviceAccount
+        lease_name: {{ include "miggo.fullname" . }}-collector
+        lease_namespace: {{ include "miggo.namespace" . }}
       
       {{- with .Values.miggoCollector.extraExtensions }}
       {{- toYaml . | nindent 6 }}
@@ -52,6 +56,21 @@ data:
                   replacement: "${env:NODE_NAME}"
                 - target_label: "deployment-type"
                   replacement: "{{ if .Values.miggoCollector.instancePerNode }}daemonset{{ else }}deployment{{ end }}"
+
+      k8s_cluster:
+        k8s_leader_elector: k8s_leader_elector
+        collection_interval: {{ .Values.config.metrics.interval }}
+        auth_type: serviceAccount          # or kubeConfig for local dev
+        allocatable_types_to_report:
+          - cpu
+          - memory
+        metrics:
+          k8s.pod.status_reason:
+            enabled: true
+          k8s.container.status.reason:
+            enabled: true
+        namespaces: 
+          - {{ include "miggo.namespace" . }}
 
     processors:
       resource:
@@ -113,6 +132,16 @@ data:
       batch/traces:
         timeout: 10s
       
+      transform/k8s_metric:
+        metric_statements:
+        - context: metric
+          statements:
+            - set(name, Concat(["miggocol", name], "."))
+        - context: datapoint
+          statements:
+            - merge_maps(attributes, resource.attributes, "insert")
+            - set(attributes["miggo-name"], "{{ .Values.miggo.clusterName }}")
+
       {{- with .Values.miggoCollector.extraProcessors }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
@@ -154,6 +183,7 @@ data:
       extensions: 
         - health_check
         - oauth2client
+        - k8s_leader_elector
         {{- range .Values.miggoCollector.extraExtensionNames }}
         - {{ . }}
         {{- end }}
@@ -203,6 +233,25 @@ data:
             {{- range .Values.miggoCollector.extraExporterNames }}
             - {{ . }}
             {{- end }}
+        
+        metrics/k8s:
+          receivers:
+            - k8s_cluster
+          processors:
+            - batch/metrics
+            - resource/metrics
+            - attributes/metrics
+            - transform/k8s_metric
+            {{- range .Values.miggoCollector.extraProcessorNames }}
+            - {{ . }}
+            {{- end }}
+          exporters:
+            - prometheus
+            - otlphttp
+            {{- range .Values.miggoCollector.extraExporterNames }}
+            - {{ . }}
+            {{- end }}
+            
         traces:
           receivers: 
             - otlp
