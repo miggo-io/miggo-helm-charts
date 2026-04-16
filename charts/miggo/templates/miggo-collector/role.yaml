@@ -8,4 +8,13 @@ rules:
 - apiGroups: [""]
   resources: ["configmaps"]
   verbs: ["create", "get", "delete", "update"]
+
+- apiGroups: [coordination.k8s.io]
+  resources: [leases]
+  verbs: [get, list, watch, create, update, patch, delete]
+  
+- apiGroups: ["", "apps", "batch", "autoscaling", "coordination.k8s.io"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+
 {{ end }}
