@@ -35,7 +35,7 @@ tests:
           path: data["config-template.yaml"]
           pattern: |
             .*otlphttp/profiles:
-              +endpoint: https://api.miggo.io
+              +endpoint: https://collector.miggo.io
               +auth:
                 +authenticator: oauth2client.*
       - matchRegex:

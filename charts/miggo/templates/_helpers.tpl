@@ -76,11 +76,19 @@ access-key-secret
 {{- end -}}
 {{- end -}}
 
+{{- define "collectorUrl" -}}
+{{- .Values.config.collectorUrl | default .Values.output.otlp.otlpEndpoint -}}
+{{- end -}}
+
+{{- define "apiUrl" -}}
+{{- .Values.config.apiUrl | default .Values.output.api.apiEndpoint | default .Values.output.otlp.otlpEndpoint -}}
+{{- end -}}
+
 {{- define "otlpEndpoint" -}}
 {{- if .Values.miggoCollector.enabled -}}
 http://miggo-collector.{{ include "miggo.namespace" . }}.svc.cluster.local:4318
 {{- else -}}
-{{ .Values.output.otlp.otlpEndpoint }}
+{{ include "collectorUrl" . }}
 {{- end -}}
 {{- end -}}
 
@@ -89,18 +97,14 @@ miggo-collector.{{ include "miggo.namespace" . }}.svc.cluster.local
 {{- end -}}
 
 {{- define "apiEndpoint" -}}
-{{- if .Values.output.api.apiEndpoint -}}
-{{- .Values.output.api.apiEndpoint  -}}
-{{- else -}}
-{{ .Values.output.otlp.otlpEndpoint }}
-{{- end -}}
+{{ include "apiUrl" . }}
 {{- end -}}
 
 {{- define "otlpProfilesEndpoint" -}}
 {{- if .Values.miggoCollector.enabled -}}
 miggo-collector.{{ include "miggo.namespace" . }}.svc.cluster.local:4317
 {{- else -}}
-{{ .Values.output.otlp.otlpEndpoint }}
+{{ include "collectorUrl" . }}
 {{- end -}}
 {{- end -}}
 

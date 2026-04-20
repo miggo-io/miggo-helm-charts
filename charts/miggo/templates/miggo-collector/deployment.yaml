@@ -86,7 +86,7 @@ spec:
             - name: ACCESS_KEY_MOUNT_LOCATION
               value: {{ .Values.miggoCollector.accessKeyMountLocation }}
             - name: API_HEALTH_URL
-              value: {{ .Values.output.otlp.otlpEndpoint }}/health/status
+              value: {{ include "apiUrl" . }}/health/status
             - name: OAUTH2_TOKEN_URL
               value: {{ .Values.config.authUrl }}/oauth2/v1/token
             - name: AUTH_BASE_URL
