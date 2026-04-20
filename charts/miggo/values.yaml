@@ -36,6 +36,16 @@ config:
   # -- Base URL for the authentication service (Descope)
   authUrl: "https://auth.miggo.io"
 
+  # -- Upstream URL where the in-cluster miggo-collector forwards OTel data.
+  # Takes precedence over the deprecated output.otlp.otlpEndpoint.
+  collectorUrl: "https://collector.miggo.io"
+
+  # -- Miggo API base URL used by sensor components for health checks and
+  # other API calls. Decoupled from collectorUrl so OTLP and API traffic can
+  # terminate at different hosts. Takes precedence over the deprecated
+  # output.api.apiEndpoint.
+  apiUrl: "https://api.miggo.io"
+
   # -- Access key for authentication (ignored when accessKeySecret is specified)
   accessKey: ""
 
@@ -63,15 +73,17 @@ output:
   stdout: false
 
   otlp:
-    # -- OTLP endpoint URL
-    otlpEndpoint: "https://api.miggo.io"
+    # -- Deprecated. Use config.collectorUrl instead. Consulted only as a
+    # fallback when config.collectorUrl is unset, for backward compatibility.
+    otlpEndpoint: ""
     # -- Skip TLS verification
     tlsSkipVerify: false
 
   api:
     # -- Decide whether to communicate with Miggo Api
     enabled: true
-    # -- Miggo Api endpoint (defaults to otlp endpoint)
+    # -- Deprecated. Use config.apiUrl instead. Consulted only as a fallback
+    # when config.apiUrl is unset, for backward compatibility.
     apiEndpoint: ""
 
 serviceAccount:

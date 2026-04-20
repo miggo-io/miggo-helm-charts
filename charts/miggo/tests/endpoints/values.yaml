@@ -1,0 +1,21 @@
+miggo:
+  clusterName: "endpoints-test"
+
+config:
+  accessKey: "test-access-key"
+
+miggoWatch:
+  enabled: true
+
+miggoScanner:
+  enabled: true
+
+miggoRuntime:
+  enabled: true
+  analyzer:
+    enabled: true
+  profiler:
+    enabled: true
+
+miggoCollector:
+  enabled: true
