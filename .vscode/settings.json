@@ -1,0 +1,53 @@
+{
+  "files.associations": {
+    "**/charts/*/templates/**/*.yaml": "helm",
+    "**/charts/*/templates/**/*.tpl": "helm",
+    "**/charts/*/templates/NOTES.txt": "helm",
+    "**/charts/*/templates/_helpers.tpl": "helm",
+    "**/charts/*/files/**/*.yaml": "helm",
+    "**/charts/*/conf/**/*.yaml": "helm",
+    "**/charts/*/README.md.gotmpl": "helm"
+  },
+
+  "yaml.schemas": {
+    "https://json.schemastore.org/chart.json": [
+      "**/charts/*/Chart.yaml"
+    ],
+    "./charts/miggo-operator/values.schema.json": [
+      "charts/miggo-operator/values.yaml",
+      "charts/miggo-operator/examples/*/values.yaml"
+    ],
+    "kubernetes": [
+      "charts/miggo-operator/examples/*/rendered/**/*.yaml"
+    ]
+  },
+
+  "yaml.schemaStore.enable": true,
+  "yaml.validate": true,
+  "yaml.format.enable": true,
+  "yaml.completion": true,
+  "yaml.hover": true,
+
+  "[helm]": {
+    "editor.formatOnSave": false,
+    "editor.quickSuggestions": {
+      "strings": true,
+      "other": true,
+      "comments": false
+    }
+  },
+
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.autoIndent": "keep"
+  },
+
+  "redhat.telemetry.enabled": false,
+
+  "files.exclude": {
+    "**/charts/*/charts": true,
+    "**/*.tgz": true
+  }
+}
