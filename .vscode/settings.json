@@ -44,6 +44,13 @@
     "editor.autoIndent": "keep"
   },
 
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false,
+    "editor.autoIndent": "keep"
+  },
+
   "redhat.telemetry.enabled": false,
 
   "files.exclude": {
