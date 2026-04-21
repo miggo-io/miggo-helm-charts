@@ -393,7 +393,7 @@ miggoRuntime:
   fluentbit:
     # -- Install fluent-bit on each cluster node to forward the profiler logs to the Collector
     enabled: true
-    
+
     image:
       # -- Image pull policy. Specifies when Kubernetes should pull the container image
       pullPolicy:
@@ -484,7 +484,7 @@ miggoCollector:
   extraExtensions: {}
   # -- Additional extension names to add to service
   extraExtensionNames: []
-  
+
   # -- An internal locaiton to mount the access key file within the container
   accessKeyMountLocation: /etc/miggo-access-key
 
