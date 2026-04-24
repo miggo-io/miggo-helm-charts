@@ -60,7 +60,7 @@ config:
   accessKey: "your-access-key"
 ```
 
-2. Install the chart:
+1. Install the chart:
 
 ```bash
 helm install miggo miggo-charts/miggo -f values.yaml --namespace miggo-space --create-namespace
@@ -96,7 +96,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggo.clusterName | string | `"kubernetes-cluster"` | Name of the Kubernetes cluster |
 | miggoCollector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | miggoCollector.annotations | object | `{}` | Component-specific annotations |
-| miggoCollector.config.logVerbosity | string | `"basic"` | Log verbosity level (detailed|normal|basic) |
+| miggoCollector.config.logVerbosity | string | `"basic"` | Log verbosity level (`detailed`, `normal`, or `basic`) |
 | miggoCollector.enabled | bool | `true` | Enable Collector component |
 | miggoCollector.extraEnvs | list | `[]` | Additional environment variables |
 | miggoCollector.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
@@ -164,7 +164,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
 | miggoRuntime.profiler.enableNamespaceFiltering | bool | `true` | Enables namespace-based filtering for the profiler. When enabled, the profiler applies allowedNamespaces and deniedNamespaces configuration to selectively collect profiles based on Kubernetes namespace membership. Note: This feature only works on cgroupv2 systems. |
 | miggoRuntime.profiler.enabled | bool | `true` | Install profiler on each cluster node to provide function-level reachability analysis and other runtime insights. |
-| miggoRuntime.profiler.enabledTracers | list | `["perl","php","python","hotspot","v8","dotnet","go"]` | Specifies which tracers should be enabled in the profiler. The following tracers are currently supported:   * perl   * php   * python   * hotspot   * ruby   * v8   * dotnet   * go   * labels |
+| miggoRuntime.profiler.enabledTracers | list | `["perl","php","python","hotspot","v8","dotnet","go"]` | Specifies which tracers should be enabled in the profiler. The following tracers are currently supported: `perl`, `php`, `python`, `hotspot`, `ruby`, `v8`, `dotnet`, `go`, `labels` |
 | miggoRuntime.profiler.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
 | miggoRuntime.profiler.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | miggoRuntime.profiler.image.repository | string | `"miggo/miggo-profiler"` | Image repository |
@@ -321,6 +321,7 @@ namespaceOverride: "miggo-custom"
 ```
 
 Example usage:
+
 ```bash
 # Install in 'default' namespace but deploy resources to 'miggo-custom'
 helm install miggo miggo-charts/miggo -f values.yaml --set namespaceOverride=miggo-custom
@@ -352,6 +353,7 @@ helm uninstall miggo --namespace miggo-space
 
 2. **Component Startup Issues**
    - Check component logs using:
+
      ```bash
      kubectl -n miggo-space logs -l component=miggo-watch
      kubectl -n miggo-space logs -l component=miggo-scanner

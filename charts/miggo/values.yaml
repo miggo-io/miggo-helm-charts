@@ -343,15 +343,7 @@ miggoRuntime:
 
     # -- Specifies which tracers should be enabled in the profiler.
     # The following tracers are currently supported:
-    #   * perl
-    #   * php
-    #   * python
-    #   * hotspot
-    #   * ruby
-    #   * v8
-    #   * dotnet
-    #   * go
-    #   * labels
+    # `perl`, `php`, `python`, `hotspot`, `ruby`, `v8`, `dotnet`, `go`, `labels`
     enabledTracers: [perl, php, python, hotspot, v8, dotnet, go]
 
     resources:
@@ -500,7 +492,7 @@ miggoCollector:
     pullPolicy:
 
   config:
-    # -- Log verbosity level (detailed|normal|basic)
+    # -- Log verbosity level (`detailed`, `normal`, or `basic`)
     logVerbosity: basic
 
   # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
