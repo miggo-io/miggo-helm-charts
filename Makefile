@@ -1,5 +1,5 @@
 TMP_DIRECTORY = ./tmp
-CHARTS ?= opentelemetry-collector opentelemetry-operator opentelemetry-demo
+CHARTS ?= miggo
 
 .PHONY: generate-examples
 generate-examples:
@@ -53,23 +53,3 @@ check-examples:
 		done; \
 	done
 
-.PHONY: update-operator-crds
-update-operator-crds:
-	APP_VERSION=$$(cat ./charts/opentelemetry-operator/Chart.yaml | sed -nr 's/appVersion: ([0-9]+\.[0-9]+\.[0-9]+)/\1/p') ; \
-	curl -s -o ./charts/opentelemetry-operator/crds/crd-opentelemetrycollector.yaml https://raw.githubusercontent.com/open-telemetry/opentelemetry-operator/v$${APP_VERSION}/config/crd/bases/opentelemetry.io_opentelemetrycollectors.yaml ; \
-	curl -s -o ./charts/opentelemetry-operator/crds/crd-opentelemetryinstrumentation.yaml https://raw.githubusercontent.com/open-telemetry/opentelemetry-operator/v$${APP_VERSION}/config/crd/bases/opentelemetry.io_instrumentations.yaml
-
-.PHONY: check-operator-crds
-check-operator-crds:
-	APP_VERSION=$$(cat ./charts/opentelemetry-operator/Chart.yaml | sed -nr 's/appVersion: ([0-9]+\.[0-9]+\.[0-9]+)/\1/p'); \
-	mkdir -p ${TMP_DIRECTORY}/crds; \
-	curl -s -o "${TMP_DIRECTORY}/crds/crd-opentelemetrycollector.yaml" https://raw.githubusercontent.com/open-telemetry/opentelemetry-operator/v$${APP_VERSION}/config/crd/bases/opentelemetry.io_opentelemetrycollectors.yaml; \
-	curl -s -o "${TMP_DIRECTORY}/crds/crd-opentelemetryinstrumentation.yaml" https://raw.githubusercontent.com/open-telemetry/opentelemetry-operator/v$${APP_VERSION}/config/crd/bases/opentelemetry.io_instrumentations.yaml; \
-	if diff ${TMP_DIRECTORY}/crds ./charts/opentelemetry-operator/crds > /dev/null; then \
-		echo "Passed"; \
-		rm -rf ${TMP_DIRECTORY}; \
-	else \
-		echo "Failed. run 'make update-operator-crds' to update the crds"; \
-		rm -rf ${TMP_DIRECTORY}; \
-		exit 1; \
-	fi; \
