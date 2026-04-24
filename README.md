@@ -15,6 +15,7 @@ The [`miggo`](./charts/miggo) chart deploys the following components:
 | `miggo-runtime` | DaemonSet | eBPF agent running on every node |
 | `miggo-profiler` | Sidecar in runtime Pod | Collects continuous profiling data per node |
 | `miggo-collector` | Deployment or DaemonSet | In-cluster OTel collector that forwards data to the Miggo backend |
+| `fluent-bit` | Sidecar in runtime Pod | Reads profiler logs and exports them via OTLP |
 
 All telemetry is exported via OTLP. When `miggoCollector.enabled=true` (the default), components
 send data to the in-cluster collector, which forwards it to `config.collectorUrl`. When disabled,

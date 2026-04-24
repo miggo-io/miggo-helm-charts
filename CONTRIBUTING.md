@@ -6,50 +6,80 @@ We'd love your help!
 
 1. Fork this repository
 1. Work in a branch of your local copy
-1. Develop and test your changes
+1. Develop and test your changes locally (see [Running Tests Locally](#running-tests-locally))
 1. Submit a pull request against `main`
 
-## Technical Requirements
+CI will run automatically on your PR. See [What CI Checks](#what-ci-checks) for the full list.
 
-- Must follow [Helm chart best practices](https://helm.sh/docs/topics/chart_best_practices/)
-- Must pass CI jobs for linting and unit testing (see [Running Tests Locally](#running-tests-locally))
-- Any change to the chart requires a version bump — this is handled automatically by CI on merge,
-  but you can bump `charts/miggo/Chart.yaml` manually if needed
+## Local Tool Prerequisites
 
-Once changes are merged, the release job automatically packages and publishes the updated chart.
+Install these tools before working on the chart:
+
+- [Helm](https://helm.sh) v3+
+- [chart-testing (`ct`)](https://github.com/helm/chart-testing) — used by `ct lint`
+- [helm-unittest plugin](https://github.com/helm-unittest/helm-unittest) — used by `run-tests.sh`
+- [helm-docs](https://github.com/norwoodj/helm-docs) — used to regenerate `charts/miggo/README.md`
+- [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli) — used to lint Markdown files
+
+Install the helm-unittest plugin once:
+
+```bash
+helm plugin install https://github.com/helm-unittest/helm-unittest.git
+```
+
+Install helm-docs (requires Go):
+
+```bash
+go install github.com/norwoodj/helm-docs/cmd/helm-docs@latest
+```
 
 ## Running Tests Locally
 
-Run the unit tests:
+**Unit tests** — render chart templates and assert the YAML output matches expectations:
 
 ```bash
 cd charts/miggo
 ./run-tests.sh
 ```
 
-Lint the chart:
+**Helm lint** — validate chart structure and template syntax:
 
 ```bash
 ct lint --target-branch main
 ```
 
-Lint Markdown files:
+**Markdown lint** — check all Markdown files against the project rules:
 
 ```bash
-markdownlint "**/*.md"
+markdownlint --config .markdownlint.yaml "**/*.md"
 ```
 
-If you changed any example `values.yaml` under `charts/miggo/examples/`, regenerate the rendered snapshots:
+**Example snapshots** — if you changed any template or `charts/miggo/examples/*/values.yaml`,
+regenerate the rendered snapshots and verify they match:
 
 ```bash
-make generate-examples
+make generate-examples   # re-render
+make check-examples      # diff against committed snapshots (this is what CI runs)
 ```
 
-Then verify they match:
+**Chart README** — if you changed `charts/miggo/values.yaml` comments or `charts/miggo/README.md.gotmpl`,
+regenerate the chart README (never edit `charts/miggo/README.md` directly):
 
 ```bash
-make check-examples
+helm-docs --chart-search-root charts/miggo
 ```
+
+## What CI Checks
+
+Every PR triggers the following workflows:
+
+| Workflow | What it does |
+|---|---|
+| **Helm Lint** | Runs `ct lint` + `make check-examples` |
+| **Markdown Lint** | Runs `markdownlint` on all `*.md` files |
+| **Unit Tests** | Runs `helm unittest` via `run-tests.sh` |
+
+All three must pass before merging.
 
 ## Versioning
 
@@ -68,6 +98,6 @@ produces a new version.
 
 ## Examples
 
-All charts maintain examples under `charts/chart-name/examples/`. Each example is an independent folder
-containing a `values.yaml` and a `rendered/` snapshot. After changing templates or values, regenerate
-with `make generate-examples` and commit both files.
+Examples live under `charts/miggo/examples/`. Each example is a folder with a `values.yaml` input
+and a `rendered/` directory of committed snapshot manifests. After changing templates or values,
+always regenerate with `make generate-examples` and commit both the input and the snapshots.
