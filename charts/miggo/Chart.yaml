@@ -4,3 +4,6 @@ description: A Helm chart for Miggo
 type: application
 version: 0.0.180
 appVersion: "v26.424.1"
+maintainers:
+  - name: miggo-io
+    url: https://github.com/miggo-io
