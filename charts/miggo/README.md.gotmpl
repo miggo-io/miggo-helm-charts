@@ -60,7 +60,7 @@ config:
   accessKey: "your-access-key"
 ```
 
-2. Install the chart:
+1. Install the chart:
 
 ```bash
 helm install miggo miggo-charts/miggo -f values.yaml --namespace miggo-space --create-namespace
@@ -134,6 +134,7 @@ namespaceOverride: "miggo-custom"
 ```
 
 Example usage:
+
 ```bash
 # Install in 'default' namespace but deploy resources to 'miggo-custom'
 helm install miggo miggo-charts/miggo -f values.yaml --set namespaceOverride=miggo-custom
@@ -165,6 +166,7 @@ helm uninstall miggo --namespace miggo-space
 
 2. **Component Startup Issues**
    - Check component logs using:
+
      ```bash
      kubectl -n miggo-space logs -l component=miggo-watch
      kubectl -n miggo-space logs -l component=miggo-scanner
