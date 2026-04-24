@@ -1,0 +1,96 @@
+---
+# Source: miggo/templates/miggo-scanner/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-scanner
+  namespace: default
+  labels:
+    helm.sh/chart: miggo-0.0.180
+    app.kubernetes.io/name: miggo
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "v26.424.1"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: miggo-scanner
+      app.kubernetes.io/instance: example
+  template:
+    metadata:
+      annotations:
+      labels:
+        component: miggo-scanner
+        helm.sh/chart: miggo-0.0.180
+        app.kubernetes.io/name: miggo-scanner
+        app.kubernetes.io/instance: example
+        app.kubernetes.io/version: "v26.424.1"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      imagePullSecrets:
+        
+        - name: miggo-regcred
+      serviceAccountName: example-scanner
+      securityContext:
+        {}
+      containers:
+        - name: miggo-scanner
+          securityContext:
+            {}
+          image: "registry.miggo.io/miggo/miggo-scanner:v26.424.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - --cluster-name=my-cluster
+            - --otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
+            - --collector-healthcheck-port=6666
+            - --tls-skip-verify=false
+            - --stdout=false
+            - --port=6666
+            - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
+            - --metric-tls-skip-verify=false
+            - --metric-interval=60s
+            - --chart-version=0.0.180
+            - --queue-size=10000
+            
+            - --cache-flush-interval=168h
+            - --cache-size=10000
+            
+            - --cache-cm-name=example-cache
+            - --cache-cm-namespace=default
+            
+            - --include-system-namespaces=false
+          envFrom:
+          env:
+            - name: MIGGO_SCANNER_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MIGGO_SCANNER_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: GOMEMLIMIT
+              value: "3276MiB"
+          ports:
+          - containerPort: 6666
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 6666
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 6666
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 3000m
+              memory: 4Gi
+            requests:
+              cpu: 1000m
+              memory: 2Gi
+          volumeMounts:
+      volumes:

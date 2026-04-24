@@ -1,0 +1,14 @@
+---
+# Source: miggo/templates/miggo-watch/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: miggo-watch-cluster-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: example-watch
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: miggo-watch-cluster-role
+  apiGroup: rbac.authorization.k8s.io

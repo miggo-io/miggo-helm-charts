@@ -1,0 +1,25 @@
+---
+# Source: miggo/templates/miggo-collector/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: miggo-collector
+  namespace: default
+spec:
+  type: ClusterIP
+  
+  selector:
+    miggo.io/app: example-collector
+  ports:
+    - protocol: TCP
+      port: 6666
+      targetPort: 6666
+      name: healthcheck
+    - name: http
+      port: 4318
+      protocol: TCP
+      targetPort: 4318
+    - name: grpc
+      port: 4317
+      protocol: TCP
+      targetPort: 4317

@@ -1,0 +1,19 @@
+miggo:
+  clusterName: my-cluster
+
+config:
+  accessKey: "replace-with-your-access-key"
+
+miggoWatch:
+  enabled: true
+
+miggoScanner:
+  enabled: true
+
+miggoRuntime:
+  enabled: true
+  profiler:
+    enabled: true
+
+miggoCollector:
+  enabled: true
