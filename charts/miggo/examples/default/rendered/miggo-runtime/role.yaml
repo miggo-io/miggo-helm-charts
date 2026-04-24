@@ -1,0 +1,21 @@
+---
+# Source: miggo/templates/miggo-runtime/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: example-pod-watcher-cr
+  labels:
+    helm.sh/chart: miggo-0.0.180
+    app.kubernetes.io/name: miggo
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "v26.424.1"
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - watch
+  - list

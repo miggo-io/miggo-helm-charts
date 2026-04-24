@@ -1,0 +1,105 @@
+---
+# Source: miggo/templates/miggo-watch/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-watch
+  namespace: default
+  labels:
+    helm.sh/chart: miggo-0.0.180
+    app.kubernetes.io/name: miggo
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "v26.424.1"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: miggo-watch
+      app.kubernetes.io/instance: example
+  template:
+    metadata:
+      annotations:
+      labels:
+        component: miggo-watch
+        helm.sh/chart: miggo-0.0.180
+        app.kubernetes.io/name: miggo-watch
+        app.kubernetes.io/instance: example
+        app.kubernetes.io/version: "v26.424.1"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      imagePullSecrets:
+        
+        - name: miggo-regcred
+      serviceAccountName: example-watch
+      securityContext:
+        {}
+      containers:
+        - name: miggo-watch
+          securityContext:
+            {}
+          image: "registry.miggo.io/miggo/miggo-watch:v26.424.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - --cluster-name=my-cluster
+            - --otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
+            - --collector-healthcheck-port=6666
+            - --tls-skip-verify=false
+            - --stdout=false
+            - --port=6666
+            - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
+            - --metric-tls-skip-verify=false
+            - --metric-interval=60s
+            - --chart-version=0.0.180
+            - --interval=1h
+            - --image-tracker-interval=1h
+            - --exclude=pod,replica-set
+            
+            - --include-system-namespaces=false
+            
+            - --api-url=https://api.miggo.io
+            
+          envFrom:
+          env:
+            - name: MIGGO_WATCH_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MIGGO_WATCH_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          
+            - name: MIGGO_WATCH_CLIENT_ID
+              value: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
+            
+            - name: MIGGO_WATCH_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: access-key-secret
+                  key: ACCESS_KEY
+          
+            - name: GOMEMLIMIT
+              value: "204MiB"
+          ports:
+          - containerPort: 6666
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 6666
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 6666
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 100m
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 256Mi
+          volumeMounts:
+      volumes:

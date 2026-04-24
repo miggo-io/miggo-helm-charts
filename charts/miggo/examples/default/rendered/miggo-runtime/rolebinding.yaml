@@ -1,0 +1,20 @@
+---
+# Source: miggo/templates/miggo-runtime/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: example-pod-watcher-crb
+  labels:
+    helm.sh/chart: miggo-0.0.180
+    app.kubernetes.io/name: miggo
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "v26.424.1"
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: example-pod-watcher-cr
+subjects:
+- kind: ServiceAccount
+  name: example-runtime
+  namespace: 'default'

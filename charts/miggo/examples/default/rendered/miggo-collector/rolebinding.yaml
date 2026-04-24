@@ -1,0 +1,15 @@
+---
+# Source: miggo/templates/miggo-collector/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: collector-role-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: example-collector
+  namespace: default
+roleRef:
+  kind: Role
+  name: collector-role
+  apiGroup: rbac.authorization.k8s.io

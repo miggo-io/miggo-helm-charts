@@ -1,0 +1,232 @@
+---
+# Source: miggo/templates/miggo-runtime/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: example-runtime
+  namespace: default
+  labels:
+    helm.sh/chart: miggo-0.0.180
+    app.kubernetes.io/name: miggo
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "v26.424.1"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: miggo-runtime
+      app.kubernetes.io/instance: example
+  template:
+    metadata:
+      annotations:
+        checksum/config: 6ed877707581906ad34573544b36de695bd4e68848d208fc2a19372f691cdd49
+      labels:
+        component: miggo-runtime
+        helm.sh/chart: miggo-0.0.180
+        app.kubernetes.io/name: miggo-runtime
+        app.kubernetes.io/instance: example
+        app.kubernetes.io/version: "v26.424.1"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      imagePullSecrets:
+        
+        - name: miggo-regcred
+      serviceAccountName: example-runtime
+      securityContext:
+        {}
+      containers:
+        - name: miggo-runtime
+          securityContext:
+            privileged: true
+          image: "registry.miggo.io/miggo/miggo-runtime:v26.424.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - --cluster-name=my-cluster
+            - --otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
+            - --collector-healthcheck-port=6666
+            - --tls-skip-verify=false
+            - --stdout=false
+            - --port=6666
+            - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
+            - --metric-tls-skip-verify=false
+            - --metric-interval=60s
+            - --chart-version=0.0.180
+            - --disable-profiler=false
+            - --enable-network-tracing=false
+            - --enable-file-access-tracing=false
+            - --enable-web-app-process-detection=true
+            - --cgroup-registry-sync-interval=1m
+            - --cgroup-registry-clean-interval=1h
+            - --cgroup-root-dir=/cgroup
+            - --include-system-namespaces=false
+          envFrom:
+          env:
+          - name: GOMEMLIMIT
+            value: "409MiB"
+          - name: MIGGO_RUNTIME_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: MIGGO_RUNTIME_INSTANCE_ID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MIGGO_RUNTIME_CLIENT_ID
+            value: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
+          
+          - name: MIGGO_RUNTIME_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: access-key-secret
+                key: ACCESS_KEY
+          - name: KUBERNETES_CLUSTER_DOMAIN
+            value: 
+          ports:
+          - containerPort: 6666
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 6666
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 6666
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+          - name: debugfs
+            mountPath: /sys/kernel/debug
+            readOnly: true
+          - name: tracefs
+            mountPath: /sys/kernel/tracing
+            readOnly: true
+          - name: cgroupfs
+            mountPath: /cgroup
+            readOnly: true
+          - name: unix-socket
+            mountPath: /tmp/grpc
+        - name: profiler
+          image: "registry.miggo.io/miggo/miggo-profiler:v26.424.1"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /root/ebpf-profiler
+          args:
+            - -collection-agent=miggo-collector.default.svc.cluster.local:4317
+            - -disable-tls=true
+            - -reporter-interval=5s
+            - -samples-per-second=20
+            - -monitor-interval=5s
+            - -probabilistic-threshold=100
+            - -probabilistic-interval=1m0s
+            - -tracers=perl,php,python,hotspot,v8,dotnet,go
+          env:
+            - name: GOMEMLIMIT
+              value: "409MiB"
+            - name: MIGGO_RUNTIME_ENABLE_CGROUP_FILTER
+              value: "true"
+            - name: MIGGO_RUNTIME_CLUSTER_NAME
+              value: my-cluster
+            - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
+              value: http://miggo-collector.default.svc.cluster.local:4318
+            - name: MIGGO_RUNTIME_EXPORT_LOGS_ENDPOINT
+              value: http://miggo-collector.default.svc.cluster.local:4318
+            - name: MIGGO_RUNTIME_EXPORT_METRICS_INTERVAL
+              value: 60s
+            - name: MIGGO_RUNTIME_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+              - SYS_ADMIN
+            privileged: true
+          volumeMounts:
+            - name: debugfs
+              mountPath: /sys/kernel/debug
+              readOnly: true
+            - name: tracefs
+              mountPath: /sys/kernel/tracing
+              readOnly: true
+            - name: cgroupfs
+              mountPath: /cgroup
+              readOnly: true
+            - name: unix-socket
+              mountPath: /tmp/grpc
+        - name: profiler-logs
+          image: fluent/fluent-bit:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          command:
+            - /fluent-bit/bin/fluent-bit
+            - -c
+            - /fluent-bit/etc/fluent-bit.yaml
+          volumeMounts:
+            - name: host-var
+              mountPath: /var
+              readOnly: true
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi
+      hostIPC: true
+      hostPID: true
+      volumes:
+      - name: fluent-bit-config
+        configMap:
+          name: profiler-fluent-bit-config
+      - name: host-var
+        hostPath:
+          path: /var
+          type: Directory
+      - name: debugfs
+        hostPath:
+          path: /sys/kernel/debug
+      - name: tracefs
+        hostPath:
+          path: /sys/kernel/tracing
+      - name: unix-socket
+        emptyDir: { }
+      - name: cgroupfs
+        hostPath:
+          path: /sys/fs/cgroup
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-node-critical
