@@ -18,7 +18,7 @@ permissions:
 jobs:
   verify-and-bump:
     uses: ./.github/workflows/bump-version.yaml
-    
+
   generate-helm-docs:
     needs: verify-and-bump
     uses: ./.github/workflows/run-helm-docs.yaml
@@ -26,7 +26,7 @@ jobs:
   helm-lint:
     needs: verify-and-bump
     uses: ./.github/workflows/helm-lint.yaml
-    
+
   helm-test:
     needs: generate-helm-docs
     uses: ./.github/workflows/run-unittests.yaml
@@ -51,7 +51,7 @@ jobs:
               repo: context.repo.repo,
               ref: 'heads/${{ github.head_ref }}'
             });
-            
+
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -61,5 +61,5 @@ jobs:
               description: 'CI completed successfully',
               target_url: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
             });
-            
+
             console.log('Status check created for final commit:', finalSha.data.object.sha);
