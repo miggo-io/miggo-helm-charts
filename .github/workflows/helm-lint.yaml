@@ -1,9 +1,7 @@
 name: Helm Lint
 
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_call:
 
 jobs:
   lint-test:
@@ -13,6 +11,10 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Fetch target branch
+        run: git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -23,7 +25,7 @@ jobs:
         # If subchart dependencies are added to charts/miggo in the future,
         # re-add the relevant --chart-repos flags here so ct lint can resolve them.
         # e.g. --chart-repos prometheus=https://prometheus-community.github.io/helm-charts
-        run: ct lint --target-branch main
+        run: ct lint --target-branch ${{ github.base_ref }} --check-version-increment=false
 
       - name: Run make check-examples
         run: make check-examples
