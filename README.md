@@ -1,49 +1,79 @@
 # Miggo Helm Charts
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-This repository contains [Helm](https://helm.sh/) charts for installing Miggo Helm charts, based on OpenTelemetry project.
+This repository contains the Helm chart for deploying Miggo's Kubernetes monitoring components into a cluster.
+
+## What gets installed
+
+The [`miggo`](./charts/miggo) chart deploys the following components:
+
+| Component | Kind | Description |
+|-----------|------|-------------|
+| `miggo-watch` | Deployment | Observes Kubernetes objects and sends telemetry |
+| `miggo-scanner` | Deployment | Analyses container images (SBOM/insights) |
+| `miggo-runtime` | DaemonSet | eBPF agent running on every node |
+| `miggo-profiler` | Sidecar in runtime Pod | Collects continuous profiling data per node |
+| `miggo-collector` | Deployment or DaemonSet | In-cluster OTel collector that forwards data to the Miggo backend |
+
+All telemetry is exported via OTLP. When `miggoCollector.enabled=true` (the default), components
+send data to the in-cluster collector, which forwards it to `config.collectorUrl`. When disabled,
+components send directly to `config.collectorUrl`.
+
+## Prerequisites
+
+- [Helm](https://helm.sh) v3+
+- A running Kubernetes cluster
+- A Miggo access key (`config.accessKey`)
 
 ## Usage
 
-[Helm](https://helm.sh) must be installed to use the charts.
-Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
-
-Once Helm is set up properly, add the repo as follows:
+Add the Helm repository:
 
 ```console
-$ helm repo add miggo-charts https://miggo-io.github.io/miggo-helm-charts
-$ helm repo update
+helm repo add miggo-charts https://miggo-io.github.io/miggo-helm-charts
+helm repo update
 ```
 
-## Helm Charts
+Create a `values.yaml`:
 
+```yaml
+miggo:
+  clusterName: my-cluster
 
-Helm charts of Miggo products: 
-- [Datadog Agents](charts/datadog/README.md) Datadog Agents (datadog/datadog)
-- Datadog Operator (datadog/datadog-operator)
-- Extended DaemonSet (datadog/extendeddaemonset)
-- Observability Pipelines Worker (datadog/observability-pipelines-worker)
-- Synthetics Private Location (datadog/synthetics-private-location)
+config:
+  accessKey: "your-access-key"
 
-You can then run `helm search repo miggo-charts` to see the charts.
+miggoWatch:
+  enabled: true
 
+miggoScanner:
+  enabled: true
 
+miggoRuntime:
+  enabled: true
+  profiler:
+    enabled: true
 
-### Miggo Operator
+miggoCollector:
+  enabled: true
+```
 
-The chart can be used to install [Miggo Operator](https://miggo-io.github.io/miggo-helm-charts/charts/miggo-operator/)
-in a Kubernetes cluster. More detailed documentation can be found in
-[Miggo Operator chart directory](./charts/miggo-operator).
+Install the chart:
+
+```console
+helm install miggo miggo-charts/miggo -f values.yaml --namespace miggo-space --create-namespace
+```
+
+For full configuration options see the [chart documentation](./charts/miggo/README.md).
 
 ## Acknowledgements
 
-This project is built upon or includes modifications of opentelemetry-operator, an open-source project available under the Apache 2.0. We are thankful to the contributors of opentelemetry-operator for their work, which has significantly aided the development of our project.
-The original project can be found at: [OpenTelemtry Helm Charts Github Repository](https://github.com/open-telemetry/opentelemetry-operator)
+The `miggo-collector` component is built upon the [OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector) and the [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator), both open-source projects available under the Apache 2.0 license. We are thankful to their contributors for their work.
 
 ## Contribution
 
-See Original contribution doc of OpenTelemtry [CONTRIBUTING.md](./CONTRIBUTING.md).
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## License
 
