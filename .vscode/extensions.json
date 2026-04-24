@@ -4,6 +4,9 @@
     "redhat.vscode-yaml",
     "tim-koehler.helm-intellisense",
     "foxundermoon.shell-format",
-    "mads-hartmann.bash-ide-vscode"
+    "mads-hartmann.bash-ide-vscode",
+    "shardul.tailwindcss-trailing-spaces",
+    "usernamehw.errorlens",
+    "davidanson.vscode-markdownlint"
   ]
 }
