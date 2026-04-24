@@ -22,13 +22,17 @@ jobs:
   generate-helm-docs:
     needs: verify-and-bump
     uses: ./.github/workflows/run-helm-docs.yaml
+
+  helm-lint:
+    needs: verify-and-bump
+    uses: ./.github/workflows/helm-lint.yaml
     
   helm-test:
     needs: generate-helm-docs
     uses: ./.github/workflows/run-unittests.yaml
 
   report-commit-status:
-    needs: [verify-and-bump, generate-helm-docs, helm-test]
+    needs: [verify-and-bump, generate-helm-docs, helm-lint, helm-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:

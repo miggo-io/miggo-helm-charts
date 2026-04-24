@@ -2,4 +2,9 @@
 remote: origin
 chart-dirs:
   - charts
+# Version bumping is handled automatically by CI on merge; skip the check here.
+check-version-increment: false
+excluded-charts:
+  - miggo-operator
+  - k8s-integration
 helm-extra-args: --timeout 600s
