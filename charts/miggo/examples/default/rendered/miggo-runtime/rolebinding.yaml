@@ -5,10 +5,10 @@ kind: ClusterRoleBinding
 metadata:
   name: example-pod-watcher-crb
   labels:
-    helm.sh/chart: miggo-0.0.180
+    helm.sh/chart: miggo-0.0.181
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.424.1"
+    app.kubernetes.io/version: "v26.428.1"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io

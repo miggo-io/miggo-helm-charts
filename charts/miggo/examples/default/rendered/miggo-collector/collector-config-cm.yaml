@@ -625,7 +625,7 @@ data:
                 new_value: Miggo Collector
               - action: add_label
                 new_label: chart_version
-                new_value: 0.0.180
+                new_value: 0.0.181
 
       batch/metrics:
         timeout: 10s
