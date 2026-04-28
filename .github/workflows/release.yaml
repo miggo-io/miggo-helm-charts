@@ -49,9 +49,6 @@ jobs:
         with:
           version: v3.9.0
 
-      - name: Add dependent repositories
-        run: helm repo update
-
       - name: Run chart-releaser
         uses: ./.github/actions/helm-releaser
         with:
