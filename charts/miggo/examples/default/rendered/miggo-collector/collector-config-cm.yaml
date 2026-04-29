@@ -625,7 +625,7 @@ data:
                 new_value: Miggo Collector
               - action: add_label
                 new_label: chart_version
-                new_value: 0.0.181
+                new_value: 0.0.182
 
       batch/metrics:
         timeout: 10s
@@ -645,6 +645,10 @@ data:
           statements:
             - merge_maps(attributes, resource.attributes, "insert")
             - set(attributes["miggo-name"], "my-cluster")
+            - set(attributes["pod.hostname"], attributes["k8s.pod.name"])
+            - delete_key(attributes, "k8s.pod.name")
+            - set(attributes["node.name"], attributes["k8s.node.name"])
+            - delete_key(attributes, "k8s.node.name")
 
     exporters:
       debug:

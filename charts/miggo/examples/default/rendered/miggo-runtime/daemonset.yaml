@@ -6,7 +6,7 @@ metadata:
   name: example-runtime
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.181
+    helm.sh/chart: miggo-0.0.182
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
     app.kubernetes.io/version: "v26.428.1"
@@ -23,7 +23,7 @@ spec:
         checksum/config: 6ed877707581906ad34573544b36de695bd4e68848d208fc2a19372f691cdd49
       labels:
         component: miggo-runtime
-        helm.sh/chart: miggo-0.0.181
+        helm.sh/chart: miggo-0.0.182
         app.kubernetes.io/name: miggo-runtime
         app.kubernetes.io/instance: example
         app.kubernetes.io/version: "v26.428.1"
@@ -51,7 +51,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.181
+            - --chart-version=0.0.182
             - --disable-profiler=false
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false

@@ -6,7 +6,7 @@ metadata:
   name: example-scanner
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.181
+    helm.sh/chart: miggo-0.0.182
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
     app.kubernetes.io/version: "v26.428.1"
@@ -23,7 +23,7 @@ spec:
       annotations:
       labels:
         component: miggo-scanner
-        helm.sh/chart: miggo-0.0.181
+        helm.sh/chart: miggo-0.0.182
         app.kubernetes.io/name: miggo-scanner
         app.kubernetes.io/instance: example
         app.kubernetes.io/version: "v26.428.1"
@@ -51,7 +51,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.181
+            - --chart-version=0.0.182
             - --queue-size=10000
             
             - --cache-flush-interval=168h
