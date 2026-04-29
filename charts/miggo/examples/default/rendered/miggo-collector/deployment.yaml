@@ -6,7 +6,7 @@ metadata:
   name: example-collector
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.182
+    helm.sh/chart: miggo-0.0.183
     app.kubernetes.io/name: miggo-collector
     app.kubernetes.io/instance: example
     app.kubernetes.io/version: "v26.428.1"
@@ -23,11 +23,11 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 943bd1c98b5c5fa84e0ccd10f42033242ecd9f4e03e00ac6b9ea6abfd424b6e9
+        checksum/config: ca656eda06791183d18843c96c1f5ca59accf8ffc8771afea898d034ffba6f48
       labels:
         component: collector
         miggo.io/app: example-collector
-        helm.sh/chart: miggo-0.0.182
+        helm.sh/chart: miggo-0.0.183
         app.kubernetes.io/name: miggo-collector
         app.kubernetes.io/instance: example
         app.kubernetes.io/version: "v26.428.1"
