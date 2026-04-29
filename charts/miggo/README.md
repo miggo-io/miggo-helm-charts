@@ -96,6 +96,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggo.clusterName | string | `"kubernetes-cluster"` | Name of the Kubernetes cluster |
 | miggoCollector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | miggoCollector.annotations | object | `{}` | Component-specific annotations |
+| miggoCollector.config.internalLogVerbosity | string | `"INFO"` | Telemetry log verbosity level (`INFO`, `DEBUG`, `WARN` or `ERROR`) |
 | miggoCollector.config.logVerbosity | string | `"basic"` | Log verbosity level (`detailed`, `normal`, or `basic`) |
 | miggoCollector.enabled | bool | `true` | Enable Collector component |
 | miggoCollector.extraEnvs | list | `[]` | Additional environment variables |

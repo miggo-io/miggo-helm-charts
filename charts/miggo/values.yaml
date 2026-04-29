@@ -494,6 +494,8 @@ miggoCollector:
   config:
     # -- Log verbosity level (`detailed`, `normal`, or `basic`)
     logVerbosity: basic
+    # -- Telemetry log verbosity level (`INFO`, `DEBUG`, `WARN` or `ERROR`)
+    internalLogVerbosity: INFO
 
   # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
   # configured resources.limits.memory. If no resources.limits.memory are
