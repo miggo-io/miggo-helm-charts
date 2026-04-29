@@ -142,13 +142,33 @@ data:
             - merge_maps(attributes, resource.attributes, "insert")
             - set(attributes["miggo-name"], "{{ .Values.miggo.clusterName }}")
 
+      filter/self-logs:
+        logs:
+          include:
+            match_type: strict
+            resource_attributes:
+              - key: origin
+                value: "selflogs"
+      
+      transform/collector-self-logs:
+        log_statements:
+          - context: resource
+            statements:
+              - delete_key(attributes, "service.name")
+              - set(attributes["service.name"], "client-collector")
+          - context: log
+            statements:
+              - set(attributes["service.name"], "client-collector")
+              - set(attributes["type"], "applog")
+              - set(attributes["miggo-name"], "{{ .Values.miggo.clusterName }}")
+
       {{- with .Values.miggoCollector.extraProcessors }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
 
     exporters:
       debug:
-        verbosity: {{ .Values.config.logVerbosity }}
+        verbosity: "{{ .Values.miggoCollector.config.logVerbosity }}"
 
       prometheus:
         endpoint: 0.0.0.0:8889
@@ -172,6 +192,18 @@ data:
 
     service:
       telemetry:
+        resource:
+          origin: "selflogs"
+        logs:
+          encoding: json
+          level: "{{ .Values.miggoCollector.config.internalLogVerbosity }}"
+          processors:
+            - batch:
+                exporter:
+                  otlp:
+                    protocol: http/protobuf
+                    endpoint: localhost:4318
+                    insecure: true
         metrics:
           level: detailed
           readers:
@@ -280,6 +312,23 @@ data:
             {{- end }}
           exporters:
             - debug
+            - otlphttp
+            {{- range .Values.miggoCollector.extraExporterNames }}
+            - {{ . }}
+            {{- end }}
+        logs/self:
+          receivers:
+            - otlp
+          processors:
+            - filter/self-logs
+            - transform/collector-self-logs
+            - batch/logs
+            - resource
+            - attributes
+            {{- range .Values.miggoCollector.extraProcessorNames }}
+            - {{ . }}
+            {{- end }}
+          exporters:
             - otlphttp
             {{- range .Values.miggoCollector.extraExporterNames }}
             - {{ . }}
