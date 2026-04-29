@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.182](https://img.shields.io/badge/Version-0.0.182-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.428.1](https://img.shields.io/badge/AppVersion-v26.428.1-informational?style=flat-square)
+![Version: 0.0.183](https://img.shields.io/badge/Version-0.0.183-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.428.1](https://img.shields.io/badge/AppVersion-v26.428.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -96,6 +96,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggo.clusterName | string | `"kubernetes-cluster"` | Name of the Kubernetes cluster |
 | miggoCollector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | miggoCollector.annotations | object | `{}` | Component-specific annotations |
+| miggoCollector.config.internalLogVerbosity | string | `"INFO"` | Telemetry log verbosity level (`INFO`, `DEBUG`, `WARN` or `ERROR`) |
 | miggoCollector.config.logVerbosity | string | `"basic"` | Log verbosity level (`detailed`, `normal`, or `basic`) |
 | miggoCollector.enabled | bool | `true` | Enable Collector component |
 | miggoCollector.extraEnvs | list | `[]` | Additional environment variables |
