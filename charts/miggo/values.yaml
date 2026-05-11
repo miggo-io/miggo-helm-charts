@@ -344,7 +344,7 @@ miggoRuntime:
     # -- Specifies which tracers should be enabled in the profiler.
     # The following tracers are currently supported:
     # `perl`, `php`, `python`, `hotspot`, `ruby`, `v8`, `dotnet`, `go`, `labels`
-    enabledTracers: [perl, php, python, hotspot, v8, dotnet, go]
+    enabledTracers: [perl, php, python, hotspot, v8, go]
 
     resources:
       requests:
