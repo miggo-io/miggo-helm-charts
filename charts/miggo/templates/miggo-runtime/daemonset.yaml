@@ -227,7 +227,11 @@ spec:
         {{- end }}
         {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
         - name: profiler-logs
-          image: fluent/fluent-bit:latest
+          {{- if .Values.miggoRuntime.fluentbit.image.fullPath }}
+          image: "{{ .Values.miggoRuntime.fluentbit.image.fullPath }}"
+          {{- else }}
+          image: "{{ .Values.miggoRuntime.fluentbit.image.repository }}:{{ .Values.miggoRuntime.fluentbit.image.tag }}"
+          {{- end }}
           imagePullPolicy: {{ .Values.miggoRuntime.fluentbit.image.pullPolicy | default .Values.image.pullPolicy }}
           env:
             - name: POD_UID
