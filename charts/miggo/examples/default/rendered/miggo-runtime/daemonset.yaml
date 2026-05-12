@@ -6,10 +6,10 @@ metadata:
   name: example-runtime
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.183
+    helm.sh/chart: miggo-0.0.188
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.428.1"
+    app.kubernetes.io/version: "v26.512.3"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,10 +23,10 @@ spec:
         checksum/config: 6ed877707581906ad34573544b36de695bd4e68848d208fc2a19372f691cdd49
       labels:
         component: miggo-runtime
-        helm.sh/chart: miggo-0.0.183
+        helm.sh/chart: miggo-0.0.188
         app.kubernetes.io/name: miggo-runtime
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.428.1"
+        app.kubernetes.io/version: "v26.512.3"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -39,7 +39,7 @@ spec:
         - name: miggo-runtime
           securityContext:
             privileged: true
-          image: "registry.miggo.io/miggo/miggo-runtime:v26.428.1"
+          image: "registry.miggo.io/miggo/miggo-runtime:v26.512.3"
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
@@ -51,7 +51,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.183
+            - --chart-version=0.0.188
             - --disable-profiler=false
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
@@ -114,7 +114,7 @@ spec:
           - name: unix-socket
             mountPath: /tmp/grpc
         - name: profiler
-          image: "registry.miggo.io/miggo/miggo-profiler:v26.428.1"
+          image: "registry.miggo.io/miggo/miggo-profiler:v26.512.3"
           imagePullPolicy: IfNotPresent
           command:
             - /root/ebpf-profiler
@@ -126,7 +126,7 @@ spec:
             - -monitor-interval=5s
             - -probabilistic-threshold=100
             - -probabilistic-interval=1m0s
-            - -tracers=perl,php,python,hotspot,v8,dotnet,go
+            - -tracers=perl,php,python,hotspot,v8,go
           env:
             - name: GOMEMLIMIT
               value: "409MiB"
@@ -170,7 +170,7 @@ spec:
             - name: unix-socket
               mountPath: /tmp/grpc
         - name: profiler-logs
-          image: fluent/fluent-bit:latest
+          image: "fluent/fluent-bit:5.0"
           imagePullPolicy: IfNotPresent
           env:
             - name: POD_UID

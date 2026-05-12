@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.188](https://img.shields.io/badge/Version-0.0.188-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.512.3](https://img.shields.io/badge/AppVersion-v26.512.3-informational?style=flat-square)
+![Version: 0.0.189](https://img.shields.io/badge/Version-0.0.189-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.512.3](https://img.shields.io/badge/AppVersion-v26.512.3-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -149,7 +149,10 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.extraEnvs | list | `[]` | Additional environment variables |
 | miggoRuntime.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
 | miggoRuntime.fluentbit.enabled | bool | `true` | Install fluent-bit on each cluster node to forward the profiler logs to the Collector |
+| miggoRuntime.fluentbit.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over repository/tag. |
 | miggoRuntime.fluentbit.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
+| miggoRuntime.fluentbit.image.repository | string | `"fluent/fluent-bit"` | Image repository for fluent-bit. Public Docker Hub image; NOT prefixed with the global image.registry. |
+| miggoRuntime.fluentbit.image.tag | string | `"5.0"` | Image tag for fluent-bit. Pinned to 5.0 (floating patch within 5.0.x) for stability; bump deliberately. |
 | miggoRuntime.fluentbit.resources.limits.cpu | string | `"100m"` |  |
 | miggoRuntime.fluentbit.resources.limits.memory | string | `"100Mi"` |  |
 | miggoRuntime.fluentbit.resources.requests.cpu | string | `"50m"` |  |

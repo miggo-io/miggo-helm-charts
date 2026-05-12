@@ -177,3 +177,42 @@ tests:
             - -probabilistic-threshold=1
             - -probabilistic-interval=1m0s
             - -tracers=perl,php,python,hotspot,v8,go
+
+  - it: should use pinned fluent-bit image by default
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "profiler-logs")].image
+          value: fluent/fluent-bit:5.0
+
+  - it: should honour fluent-bit image repository and tag overrides
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime:
+        fluentbit:
+          image:
+            repository: my-registry.io/fluent-bit
+            tag: "6.0.0"
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "profiler-logs")].image
+          value: my-registry.io/fluent-bit:6.0.0
+
+  - it: should let fluent-bit image fullPath win over repository and tag
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime:
+        fluentbit:
+          image:
+            fullPath: custom/img:special
+            tag: ignored
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "profiler-logs")].image
+          value: custom/img:special

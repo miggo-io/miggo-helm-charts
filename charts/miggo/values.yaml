@@ -387,6 +387,12 @@ miggoRuntime:
     enabled: true
 
     image:
+      # -- Image repository for fluent-bit. Public Docker Hub image; NOT prefixed with the global image.registry.
+      repository: fluent/fluent-bit
+      # -- Image tag for fluent-bit. Pinned to 5.0 (floating patch within 5.0.x) for stability; bump deliberately.
+      tag: "5.0"
+      # -- Optional full image path override. If set, takes precedence over repository/tag.
+      fullPath:
       # -- Image pull policy. Specifies when Kubernetes should pull the container image
       pullPolicy:
 
