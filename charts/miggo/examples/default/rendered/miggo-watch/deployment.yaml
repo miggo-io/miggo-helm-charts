@@ -6,7 +6,7 @@ metadata:
   name: example-watch
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.188
+    helm.sh/chart: miggo-0.0.189
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
     app.kubernetes.io/version: "v26.512.3"
@@ -23,7 +23,7 @@ spec:
       annotations:
       labels:
         component: miggo-watch
-        helm.sh/chart: miggo-0.0.188
+        helm.sh/chart: miggo-0.0.189
         app.kubernetes.io/name: miggo-watch
         app.kubernetes.io/instance: example
         app.kubernetes.io/version: "v26.512.3"
@@ -51,7 +51,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.188
+            - --chart-version=0.0.189
             - --interval=1h
             - --image-tracker-interval=1h
             - --exclude=pod,replica-set
