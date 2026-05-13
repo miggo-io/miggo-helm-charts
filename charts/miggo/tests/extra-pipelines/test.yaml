@@ -1,0 +1,134 @@
+suite: miggoCollector.extraPipelines — generic escape hatch for independent pipelines
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-collector/collector-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  # ---------- Happy path: extraPipelines content lands verbatim under service.pipelines ----------
+
+  - it: should render every extraPipelines key under service.pipelines
+    set:
+      miggoCollector:
+        extraPipelines:
+          traces/prod:
+            receivers: [otlp]
+            processors: [batch/traces]
+            exporters: [otlphttp]
+          logs/prod:
+            receivers: [otlp]
+            processors: [batch/logs]
+            exporters: [otlphttp]
+    asserts:
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)service:.*pipelines:.*traces/prod:"
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)service:.*pipelines:.*logs/prod:"
+
+  - it: should wire prod processors and exporter into traces/prod
+    set:
+      miggoCollector:
+        extraProcessors:
+          resource/prod:
+            attributes:
+              - key: tenant
+                value: "07125897-d3ed-489b-889b-66a466183f01"
+                action: upsert
+          attributes/prod:
+            actions:
+              - key: tenant
+                value: "07125897-d3ed-489b-889b-66a466183f01"
+                action: upsert
+        extraExporters:
+          otlphttp/prod:
+            traces_endpoint: https://collector.miggo.io/v1/traces
+        extraPipelines:
+          traces/prod:
+            receivers: [otlp]
+            processors: [batch/traces, resource/prod, attributes/prod]
+            exporters: [otlphttp/prod]
+    asserts:
+      # traces/prod block contains each expected processor and the prod exporter.
+      # Non-greedy `.*?` keeps each match scoped near the traces/prod key so it
+      # can't accidentally satisfy on the primary pipeline's tokens.
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)traces/prod:.*?- otlphttp/prod"
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)traces/prod:.*?- batch/traces"
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)traces/prod:.*?- resource/prod"
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)traces/prod:.*?- attributes/prod"
+
+  - it: should add oauth2client/prod to service.extensions when listed in extraExtensionNames
+    set:
+      miggoCollector:
+        extraExtensionNames:
+          - oauth2client/prod
+        extraExtensions:
+          oauth2client/prod:
+            client_id: TEST_CLIENT_ID
+            client_secret_file: /etc/miggo-prod-access-key
+            token_url: https://auth.miggo.io/oauth2/v1/token
+            timeout: 1m
+    asserts:
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)extensions:.*- oauth2client/prod"
+
+  # ---------- Regression guard: with no extras set at all, primary pipelines and config are unchanged ----------
+
+  - it: primary traces pipeline must remain unchanged when no extras are set
+    # baseline values.yaml sets NO extras, so this test inherits a clean state.
+    asserts:
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)traces:.*?- batch/traces"
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)traces:.*?- otlphttp"
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)traces:.*?- debug"
+
+  - it: must not emit any /prod pipeline keys when no extras are set
+    asserts:
+      - notMatchRegex:
+          path: data["config-template.yaml"]
+          pattern: "traces/prod:"
+      - notMatchRegex:
+          path: data["config-template.yaml"]
+          pattern: "logs/prod:"
+      - notMatchRegex:
+          path: data["config-template.yaml"]
+          pattern: "otlphttp/prod"
+
+  # ---------- Composability: legacy extra*Names still appends to primary pipelines ----------
+
+  - it: legacy extraExporterNames still appends the named exporter to the primary traces pipeline
+    set:
+      miggoCollector:
+        extraExporters:
+          custom-debug:
+            verbosity: detailed
+        extraExporterNames:
+          - custom-debug
+    asserts:
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)traces:.*?- custom-debug"
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)logs:.*?- custom-debug"
