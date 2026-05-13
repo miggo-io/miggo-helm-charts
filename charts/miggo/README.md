@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.189](https://img.shields.io/badge/Version-0.0.189-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.512.3](https://img.shields.io/badge/AppVersion-v26.512.3-informational?style=flat-square)
+![Version: 0.0.190](https://img.shields.io/badge/Version-0.0.190-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.512.3](https://img.shields.io/badge/AppVersion-v26.512.3-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -166,6 +166,10 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
 | miggoRuntime.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector settings |
 | miggoRuntime.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
+| miggoRuntime.profiler.dotnet.peCacheSize | string | `nil` | Max entries in the PE info LRU cache (MIGGO_DOTNET_PE_CACHE_SIZE). Leave empty to use the profiler default. |
+| miggoRuntime.profiler.dotnet.peCacheTTL | string | `nil` | TTL for entries in the PE info LRU cache (MIGGO_DOTNET_PE_CACHE_TTL), e.g. "5m". Leave empty to use the profiler default. |
+| miggoRuntime.profiler.dotnet.stringsCacheSize | string | `nil` | Max entries in the PE strings LRU cache (MIGGO_DOTNET_STRINGS_CACHE_SIZE). Leave empty to use the profiler default. |
+| miggoRuntime.profiler.dotnet.stringsCacheTTL | string | `nil` | TTL for entries in the PE strings LRU cache (MIGGO_DOTNET_STRINGS_CACHE_TTL), e.g. "10m". Leave empty to use the profiler default. |
 | miggoRuntime.profiler.enableNamespaceFiltering | bool | `true` | Enables namespace-based filtering for the profiler. When enabled, the profiler applies allowedNamespaces and deniedNamespaces configuration to selectively collect profiles based on Kubernetes namespace membership. Note: This feature only works on cgroupv2 systems. |
 | miggoRuntime.profiler.enabled | bool | `true` | Install profiler on each cluster node to provide function-level reachability analysis and other runtime insights. |
 | miggoRuntime.profiler.enabledTracers | list | `["perl","php","python","hotspot","v8","go"]` | Specifies which tracers should be enabled in the profiler. The following tracers are currently supported: `perl`, `php`, `python`, `hotspot`, `ruby`, `v8`, `dotnet`, `go`, `labels` |
