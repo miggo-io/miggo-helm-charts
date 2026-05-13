@@ -382,6 +382,16 @@ miggoRuntime:
     # Note: This feature only works on cgroupv2 systems.
     enableNamespaceFiltering: true
 
+    dotnet:
+      # -- Max entries in the PE info LRU cache (MIGGO_DOTNET_PE_CACHE_SIZE). Leave empty to use the profiler default.
+      peCacheSize:
+      # -- TTL for entries in the PE info LRU cache (MIGGO_DOTNET_PE_CACHE_TTL), e.g. "5m". Leave empty to use the profiler default.
+      peCacheTTL:
+      # -- Max entries in the PE strings LRU cache (MIGGO_DOTNET_STRINGS_CACHE_SIZE). Leave empty to use the profiler default.
+      stringsCacheSize:
+      # -- TTL for entries in the PE strings LRU cache (MIGGO_DOTNET_STRINGS_CACHE_TTL), e.g. "10m". Leave empty to use the profiler default.
+      stringsCacheTTL:
+
   fluentbit:
     # -- Install fluent-bit on each cluster node to forward the profiler logs to the Collector
     enabled: true

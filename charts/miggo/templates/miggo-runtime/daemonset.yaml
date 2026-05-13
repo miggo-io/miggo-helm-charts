@@ -205,6 +205,22 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+          {{- with .Values.miggoRuntime.profiler.dotnet.peCacheSize }}
+            - name: MIGGO_DOTNET_PE_CACHE_SIZE
+              value: {{ . | quote }}
+          {{- end }}
+          {{- with .Values.miggoRuntime.profiler.dotnet.peCacheTTL }}
+            - name: MIGGO_DOTNET_PE_CACHE_TTL
+              value: {{ . | quote }}
+          {{- end }}
+          {{- with .Values.miggoRuntime.profiler.dotnet.stringsCacheSize }}
+            - name: MIGGO_DOTNET_STRINGS_CACHE_SIZE
+              value: {{ . | quote }}
+          {{- end }}
+          {{- with .Values.miggoRuntime.profiler.dotnet.stringsCacheTTL }}
+            - name: MIGGO_DOTNET_STRINGS_CACHE_TTL
+              value: {{ . | quote }}
+          {{- end }}
           {{- with .Values.miggoRuntime.profiler.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
