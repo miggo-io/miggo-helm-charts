@@ -493,6 +493,22 @@ miggoCollector:
   # -- Additional extension names to add to service
   extraExtensionNames: []
 
+  # -- Additional OTel collector pipelines, rendered verbatim under
+  # service.pipelines. Use this when you need a pipeline that is INDEPENDENT
+  # of the chart's primary pipelines (e.g. mirroring telemetry to a second
+  # tenant via a separate processor chain + exporter). The extras you wire
+  # in here (extensions / processors / exporters) should be declared via the
+  # corresponding extra* maps above; do NOT add them to the *Names lists
+  # unless you want them appended to the primary pipelines as well. Empty
+  # by default — the rendered config is byte-identical to the single-tenant
+  # baseline when unset.
+  extraPipelines: {}
+  # extraPipelines:
+  #   traces/prod:
+  #     receivers: [otlp]
+  #     processors: [batch/traces, resource/prod, attributes/prod]
+  #     exporters: [otlphttp/prod]
+
   # -- An internal locaiton to mount the access key file within the container
   accessKeyMountLocation: /etc/miggo-access-key
 
