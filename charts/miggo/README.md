@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.191](https://img.shields.io/badge/Version-0.0.191-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.512.3](https://img.shields.io/badge/AppVersion-v26.512.3-informational?style=flat-square)
+![Version: 0.0.192](https://img.shields.io/badge/Version-0.0.192-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.517.1](https://img.shields.io/badge/AppVersion-v26.517.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
