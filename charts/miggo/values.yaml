@@ -183,15 +183,7 @@ miggoWatch:
 miggoScanner:
   # -- Enable Miggo Scanner component
   enabled: true
-  # -- Enable resolution of imagePullSecrets for scanning images from
-  # -- private container registries. When enabled, the scanner's
-  # -- ClusterRole grants get/list/watch on Kubernetes Secrets so it can
-  # -- authenticate to private registries that workloads reference via
-  # -- imagePullSecrets on pods or service accounts. Disable on clusters
-  # -- that don't use imagePullSecrets or that prefer not to grant the
-  # -- sensor cluster-wide secrets-read; the scanner falls back to
-  # -- anonymous + creds-helpers auth and emits a warning per affected
-  # -- pod in its logs.
+  # -- Resolve imagePullSecrets for private-registry image scans. Disabling drops the scanner's `secrets` RBAC permission.
   imagePullSecretScanning:
     enabled: true
   # -- Component-specific labels

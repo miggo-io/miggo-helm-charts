@@ -214,7 +214,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | miggoScanner.image.repository | string | `"miggo/miggo-scanner"` | Image repository |
 | miggoScanner.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
-| miggoScanner.imagePullSecretScanning | object | `{"enabled":true}` | pod in its logs. |
+| miggoScanner.imagePullSecretScanning | object | `{"enabled":true}` | Resolve imagePullSecrets for private-registry image scans. Disabling drops the scanner's `secrets` RBAC permission. |
 | miggoScanner.labels | object | `{}` | Component-specific labels |
 | miggoScanner.nodeSelector | object | `{}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.podAnnotations | object | `{}` | Component-specific pod annotations |
