@@ -3,7 +3,7 @@ name: miggo
 description: A Helm chart for Miggo
 type: application
 version: 0.0.195
-appVersion: "v26.518.1"
+appVersion: "v26.519.1"
 maintainers:
   - name: miggo-io
     url: https://github.com/miggo-io

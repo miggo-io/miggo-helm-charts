@@ -9,7 +9,7 @@ metadata:
     helm.sh/chart: miggo-0.0.195
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.518.1"
+    app.kubernetes.io/version: "v26.519.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -26,7 +26,7 @@ spec:
         helm.sh/chart: miggo-0.0.195
         app.kubernetes.io/name: miggo-scanner
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.518.1"
+        app.kubernetes.io/version: "v26.519.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -39,7 +39,7 @@ spec:
         - name: miggo-scanner
           securityContext:
             {}
-          image: "registry.miggo.io/miggo/miggo-scanner:v26.518.1"
+          image: "registry.miggo.io/miggo/miggo-scanner:v26.519.1"
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
