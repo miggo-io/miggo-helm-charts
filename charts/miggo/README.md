@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.194](https://img.shields.io/badge/Version-0.0.194-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.518.1](https://img.shields.io/badge/AppVersion-v26.518.1-informational?style=flat-square)
+![Version: 0.0.195](https://img.shields.io/badge/Version-0.0.195-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.518.1](https://img.shields.io/badge/AppVersion-v26.518.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -214,6 +214,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | miggoScanner.image.repository | string | `"miggo/miggo-scanner"` | Image repository |
 | miggoScanner.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
+| miggoScanner.imagePullSecretScanning | object | `{"enabled":true}` | pod in its logs. |
 | miggoScanner.labels | object | `{}` | Component-specific labels |
 | miggoScanner.nodeSelector | object | `{}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.podAnnotations | object | `{}` | Component-specific pod annotations |
