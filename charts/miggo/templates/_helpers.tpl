@@ -131,16 +131,19 @@ miggo-collector.{{ include "miggo.namespace" . }}.svc.cluster.local:4317
 {{- end -}}
 
 {{/*
-Namespace configuration flags
+Namespace configuration flags.
+
+The sensor's own install namespace is always prepended to --denied-namespaces
+so the sensor never scans the components it ships with. User-supplied
+config.deniedNamespaces values are appended after it.
 */}}
 {{- define "namespace.flags" -}}
 - --include-system-namespaces={{ .Values.config.includeSystemNamespaces }}
 {{- if .Values.config.allowedNamespaces }}
 - --allowed-namespaces={{ join "," .Values.config.allowedNamespaces }}
 {{- end }}
-{{- if .Values.config.deniedNamespaces }}
-- --denied-namespaces={{ join "," .Values.config.deniedNamespaces }}
-{{- end }}
+{{- $denied := prepend (default (list) .Values.config.deniedNamespaces) (include "miggo.namespace" .) }}
+- --denied-namespaces={{ join "," $denied }}
 {{- end -}}
 
 {{/*

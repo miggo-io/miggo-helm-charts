@@ -73,3 +73,36 @@ tests:
           path: spec.template.spec.containers[?(@.name == "profiler")].env[?(@.name == "GOMEMLIMIT")]
       - exists:
           path: spec.template.spec.containers[?(@.name == "analyzer")].env[?(@.name == "GOMEMLIMIT")]
+
+  - it: miggo-watch denies its own install namespace by default
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
+          content: --denied-namespaces=miggo-space
+
+  - it: miggo-scanner denies its own install namespace by default
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --denied-namespaces=miggo-space
+
+  - it: miggo-runtime denies its own install namespace by default
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --denied-namespaces=miggo-space
+
+  - it: user-supplied deniedNamespaces are appended after the install namespace
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      config:
+        deniedNamespaces:
+          - test
+          - deprecated
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
+          content: --denied-namespaces=miggo-space,test,deprecated
