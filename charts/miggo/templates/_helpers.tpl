@@ -138,9 +138,8 @@ Namespace configuration flags
 {{- if .Values.config.allowedNamespaces }}
 - --allowed-namespaces={{ join "," .Values.config.allowedNamespaces }}
 {{- end }}
-{{- if .Values.config.deniedNamespaces }}
-- --denied-namespaces={{ join "," .Values.config.deniedNamespaces }}
-{{- end }}
+{{- $denied := prepend (default (list) .Values.config.deniedNamespaces) (include "miggo.namespace" .) }}
+- --denied-namespaces={{ join "," $denied }}
 {{- end -}}
 
 {{/*

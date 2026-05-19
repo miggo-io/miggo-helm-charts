@@ -120,3 +120,17 @@ tests:
           path: spec.template.spec.containers[0].args
           content: --cache-cm-namespace=miggo-custom
 
+  - it: should deny the overridden namespace in scanner --denied-namespaces
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: --denied-namespaces=miggo-custom
+
+  - it: should deny the overridden namespace in watch --denied-namespaces
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: --denied-namespaces=miggo-custom
+

@@ -5,10 +5,10 @@ kind: ClusterRole
 metadata:
   name: example-pod-watcher-cr
   labels:
-    helm.sh/chart: miggo-0.0.195
+    helm.sh/chart: miggo-0.0.198
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.519.1"
+    app.kubernetes.io/version: "v26.519.2"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
