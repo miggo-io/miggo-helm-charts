@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.197](https://img.shields.io/badge/Version-0.0.197-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.519.2](https://img.shields.io/badge/AppVersion-v26.519.2-informational?style=flat-square)
+![Version: 0.0.198](https://img.shields.io/badge/Version-0.0.198-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.519.2](https://img.shields.io/badge/AppVersion-v26.519.2-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -81,7 +81,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | config.authUrl | string | `"https://auth.miggo.io"` | Base URL for the authentication service (Descope) |
 | config.clientId | string | `"P2UjsJwOFdIeUAtW0pGTJ5SeJAlq"` | Client ID for authentication |
 | config.collectorUrl | string | `"https://collector.miggo.io"` | Upstream URL where the in-cluster miggo-collector forwards OTel data. Takes precedence over the deprecated output.otlp.otlpEndpoint. |
-| config.deniedNamespaces | string | `nil` | List of namespaces that should be excluded from processing Takes precedence over allowedNamespaces - if a namespace is both allowed and denied, it will be denied Example: ["test", "deprecated"] |
+| config.deniedNamespaces | string | `nil` | List of namespaces that should be excluded from processing. The sensor's own install namespace (Release.Namespace, honoring namespaceOverride) is always automatically denied so the sensor does not scan its own components; values configured here are appended on top. Takes precedence over allowedNamespaces - if a namespace is both allowed and denied, it will be denied Example: ["test", "deprecated"] |
 | config.includeSystemNamespaces | bool | `false` | When set to true, includes system namespaces like kube-system etc. When false (default), automatically adds system namespaces to deniedNamespaces It's recommended to keep this false unless you specifically need to operate on system namespaces |
 | config.metrics.interval | string | `"60s"` | Interval for metrics collection |
 | config.platform | string | `""` | The Kubernetes platform acronym. Allowed values are: - gke: Google Kubernetes Engine - openshift: Red Hat OpenShift/OCP |
