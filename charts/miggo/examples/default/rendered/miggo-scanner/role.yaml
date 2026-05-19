@@ -10,7 +10,10 @@ rules:
   verbs: ["get", "list", "watch"]
 
 - apiGroups: [""]
-  resources: ["secrets", "serviceaccounts", "namespaces"]
+  resources:
+  - secrets
+  - serviceaccounts
+  - namespaces
   verbs: ["get", "list", "watch"]
 
 - apiGroups: ["apps"]

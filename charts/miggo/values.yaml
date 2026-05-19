@@ -183,6 +183,17 @@ miggoWatch:
 miggoScanner:
   # -- Enable Miggo Scanner component
   enabled: true
+  # -- Enable resolution of imagePullSecrets for scanning images from
+  # -- private container registries. When enabled, the scanner's
+  # -- ClusterRole grants get/list/watch on Kubernetes Secrets so it can
+  # -- authenticate to private registries that workloads reference via
+  # -- imagePullSecrets on pods or service accounts. Disable on clusters
+  # -- that don't use imagePullSecrets or that prefer not to grant the
+  # -- sensor cluster-wide secrets-read; the scanner falls back to
+  # -- anonymous + creds-helpers auth and emits a warning per affected
+  # -- pod in its logs.
+  imagePullSecretScanning:
+    enabled: true
   # -- Component-specific labels
   labels: {}
   # -- Component-specific annotations
@@ -498,7 +509,7 @@ miggoCollector:
   # of the chart's primary pipelines (e.g. mirroring telemetry to a second
   # tenant via a separate processor chain + exporter). The extras you wire
   # in here (extensions / processors / exporters) should be declared via the
-  # corresponding extra* maps above; do NOT add them to the *Names lists
+  # corresponding `extra*` maps above; do NOT add them to the `*Names` lists
   # unless you want them appended to the primary pipelines as well. Empty
   # by default — the rendered config is byte-identical to the single-tenant
   # baseline when unset.

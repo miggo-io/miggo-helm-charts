@@ -9,7 +9,12 @@ rules:
   verbs: ["get", "list", "watch"]
 
 - apiGroups: [""]
-  resources: ["secrets", "serviceaccounts", "namespaces"]
+  resources:
+  {{- if .Values.miggoScanner.imagePullSecretScanning.enabled }}
+  - secrets
+  {{- end }}
+  - serviceaccounts
+  - namespaces
   verbs: ["get", "list", "watch"]
 
 - apiGroups: ["apps"]

@@ -1,0 +1,52 @@
+suite: scanner RBAC toggle for imagePullSecret scanning
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-scanner/role.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: ClusterRole includes secrets resource by default
+    template: templates/miggo-scanner/role.yaml
+    documentIndex: 0
+    asserts:
+      - isKind:
+          of: ClusterRole
+      - equal:
+          path: metadata.name
+          value: miggo-scanner-cluster-role
+      - contains:
+          path: rules[1].resources
+          content: secrets
+      - contains:
+          path: rules[1].resources
+          content: serviceaccounts
+      - contains:
+          path: rules[1].resources
+          content: namespaces
+
+  - it: ClusterRole omits secrets when imagePullSecretScanning is disabled
+    template: templates/miggo-scanner/role.yaml
+    documentIndex: 0
+    set:
+      miggoScanner.imagePullSecretScanning.enabled: false
+    asserts:
+      - isKind:
+          of: ClusterRole
+      - equal:
+          path: metadata.name
+          value: miggo-scanner-cluster-role
+      - notContains:
+          path: rules[1].resources
+          content: secrets
+      - contains:
+          path: rules[1].resources
+          content: serviceaccounts
+      - contains:
+          path: rules[1].resources
+          content: namespaces

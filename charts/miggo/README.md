@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.195](https://img.shields.io/badge/Version-0.0.195-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.519.1](https://img.shields.io/badge/AppVersion-v26.519.1-informational?style=flat-square)
+![Version: 0.0.196](https://img.shields.io/badge/Version-0.0.196-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.519.1](https://img.shields.io/badge/AppVersion-v26.519.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -105,7 +105,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.extraExporters | object | `{}` | Additional exporter configurations |
 | miggoCollector.extraExtensionNames | list | `[]` | Additional extension names to add to service |
 | miggoCollector.extraExtensions | object | `{}` | Additional extension configurations |
-| miggoCollector.extraPipelines | object | `{}` | Additional OTel collector pipelines, rendered verbatim under service.pipelines. Use this when you need a pipeline that is INDEPENDENT of the chart's primary pipelines (e.g. mirroring telemetry to a second tenant via a separate processor chain + exporter). The extras you wire in here (extensions / processors / exporters) should be declared via the corresponding extra* maps above; do NOT add them to the *Names lists unless you want them appended to the primary pipelines as well. Empty by default — the rendered config is byte-identical to the single-tenant baseline when unset. |
+| miggoCollector.extraPipelines | object | `{}` | Additional OTel collector pipelines, rendered verbatim under service.pipelines. Use this when you need a pipeline that is INDEPENDENT of the chart's primary pipelines (e.g. mirroring telemetry to a second tenant via a separate processor chain + exporter). The extras you wire in here (extensions / processors / exporters) should be declared via the corresponding `extra*` maps above; do NOT add them to the `*Names` lists unless you want them appended to the primary pipelines as well. Empty by default — the rendered config is byte-identical to the single-tenant baseline when unset. |
 | miggoCollector.extraProcessorNames | list | `[]` | Additional processor names to add to pipelines |
 | miggoCollector.extraProcessors | object | `{}` | Additional processor configurations |
 | miggoCollector.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
@@ -214,6 +214,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | miggoScanner.image.repository | string | `"miggo/miggo-scanner"` | Image repository |
 | miggoScanner.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
+| miggoScanner.imagePullSecretScanning | object | `{"enabled":true}` | pod in its logs. |
 | miggoScanner.labels | object | `{}` | Component-specific labels |
 | miggoScanner.nodeSelector | object | `{}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.podAnnotations | object | `{}` | Component-specific pod annotations |
