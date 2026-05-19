@@ -501,7 +501,7 @@ miggoCollector:
   # of the chart's primary pipelines (e.g. mirroring telemetry to a second
   # tenant via a separate processor chain + exporter). The extras you wire
   # in here (extensions / processors / exporters) should be declared via the
-  # corresponding extra* maps above; do NOT add them to the *Names lists
+  # corresponding `extra*` maps above; do NOT add them to the `*Names` lists
   # unless you want them appended to the primary pipelines as well. Empty
   # by default — the rendered config is byte-identical to the single-tenant
   # baseline when unset.
