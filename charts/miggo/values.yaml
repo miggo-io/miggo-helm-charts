@@ -57,10 +57,7 @@ config:
   # Example: ["development", "staging", "production"]
   allowedNamespaces:
 
-  # -- List of namespaces that should be excluded from processing.
-  # The sensor's own install namespace (Release.Namespace, honoring
-  # namespaceOverride) is always automatically denied so the sensor does
-  # not scan its own components; values configured here are appended on top.
+  # -- List of namespaces that should be excluded from processing
   # Takes precedence over allowedNamespaces - if a namespace is both allowed and denied,
   # it will be denied
   # Example: ["test", "deprecated"]
