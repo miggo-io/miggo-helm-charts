@@ -258,10 +258,18 @@ extract_tenant_info() {
         return 1
     fi
 
+    # Extract JWT identity claims for lifecycle logging (MIG-11558).
+    # sub = Descope access key ID (joins to tenant_access_key.refId).
+    local key_id iat exp
+    key_id=$(echo "$jwt_payload" | jq -r '.sub // empty')
+    iat=$(echo "$jwt_payload" | jq -r '.iat // empty')
+    exp=$(echo "$jwt_payload" | jq -r '.exp // empty')
+
     log_info "Tenant information extracted successfully"
     log_info "Project ID: $project_id"
     log_info "Tenant ID: $tenant_id"
     log_info "Tenant count: $tenant_count"
+    log_info "key_id=$key_id iat=$iat exp=$exp"
 
     # Export environment variables
     export MIGGO_PROJECT_ID="$project_id"
