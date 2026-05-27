@@ -159,11 +159,15 @@ spec:
               path: /health
               port: {{ .Values.healthcheck.port }}
             periodSeconds: 10
+            timeoutSeconds: {{ coalesce .Values.miggoCollector.probes.timeoutSeconds .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ coalesce .Values.miggoCollector.probes.failureThreshold .Values.probes.failureThreshold }}
           readinessProbe:
             httpGet:
               path: /health
               port: {{ .Values.healthcheck.port }}
             periodSeconds: 10
+            timeoutSeconds: {{ coalesce .Values.miggoCollector.probes.timeoutSeconds .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ coalesce .Values.miggoCollector.probes.failureThreshold .Values.probes.failureThreshold }}
           volumeMounts:
           - name: collector-config
             mountPath: /etc/collector

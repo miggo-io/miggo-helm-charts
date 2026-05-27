@@ -116,11 +116,15 @@ spec:
               path: /health
               port: {{ .Values.healthcheck.port }}
             periodSeconds: 10
+            timeoutSeconds: {{ coalesce .Values.miggoScanner.probes.timeoutSeconds .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ coalesce .Values.miggoScanner.probes.failureThreshold .Values.probes.failureThreshold }}
           readinessProbe:
             httpGet:
               path: /health
               port: {{ .Values.healthcheck.port }}
             periodSeconds: 10
+            timeoutSeconds: {{ coalesce .Values.miggoScanner.probes.timeoutSeconds .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ coalesce .Values.miggoScanner.probes.failureThreshold .Values.probes.failureThreshold }}
           resources:
             {{- toYaml .Values.miggoScanner.resources | nindent 12 }}
           volumeMounts:
