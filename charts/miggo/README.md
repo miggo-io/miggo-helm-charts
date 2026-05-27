@@ -271,8 +271,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | podLabels | object | `{}` | Pod labels to add to all pods |
 | podSecurityContext | object | `{}` | Pod security context for all pods |
 | priorityClassName | string | `""` | Priority class name for all pods |
-| probes.failureThreshold | int | `3` | Failure threshold for liveness and readiness probes across all components |
-| probes.timeoutSeconds | int | `5` | Timeout seconds for liveness and readiness probes across all components |
+| probes.failureThreshold | int | `5` | Failure threshold for liveness and readiness probes across all components |
+| probes.timeoutSeconds | int | `10` | Timeout seconds for liveness and readiness probes across all components |
 | securityContext | object | `{}` | Container security context for all containers |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.automount | bool | `true` | Automatically mount API credentials for the service account |
