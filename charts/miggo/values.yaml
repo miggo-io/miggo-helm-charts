@@ -21,6 +21,12 @@ healthcheck:
   # -- Port number for health check endpoints
   port: 6666
 
+probes:
+  # -- Timeout seconds for liveness and readiness probes across all components
+  timeoutSeconds: 10
+  # -- Failure threshold for liveness and readiness probes across all components
+  failureThreshold: 5
+
 config:
   # -- The Kubernetes platform acronym. Allowed values are:
   # - gke: Google Kubernetes Engine
@@ -180,6 +186,12 @@ miggoWatch:
       cpu: 10m
       memory: 256Mi
 
+  probes:
+    # -- Override global probes.timeoutSeconds for miggo-watch
+    timeoutSeconds: ""
+    # -- Override global probes.failureThreshold for miggo-watch
+    failureThreshold: ""
+
 miggoScanner:
   # -- Enable Miggo Scanner component
   enabled: true
@@ -260,6 +272,12 @@ miggoScanner:
       cpu: 1000m
       memory: 2Gi
 
+  probes:
+    # -- Override global probes.timeoutSeconds for miggo-scanner
+    timeoutSeconds: ""
+    # -- Override global probes.failureThreshold for miggo-scanner
+    failureThreshold: ""
+
 miggoRuntime:
   # -- Install eBPF agent on each cluster node to provide package-level
   # reachability analysis and other runtime insights.
@@ -322,6 +340,12 @@ miggoRuntime:
     limits:
       cpu: 500m
       memory: 512Mi
+
+  probes:
+    # -- Override global probes.timeoutSeconds for miggo-runtime
+    timeoutSeconds: ""
+    # -- Override global probes.failureThreshold for miggo-runtime
+    failureThreshold: ""
 
   securityContext:
     privileged: true
@@ -461,6 +485,12 @@ miggoRuntime:
       # -- Port number for health check endpoints
       port: 6667
 
+    probes:
+      # -- Override global probes.timeoutSeconds for miggo-runtime analyzer
+      timeoutSeconds: ""
+      # -- Override global probes.failureThreshold for miggo-runtime analyzer
+      failureThreshold: ""
+
 miggoCollector:
   # -- Enable Collector component
   enabled: true
@@ -554,6 +584,12 @@ miggoCollector:
     requests:
       cpu: 10m
       memory: 200Mi
+
+  probes:
+    # -- Override global probes.timeoutSeconds for miggo-collector
+    timeoutSeconds: ""
+    # -- Override global probes.failureThreshold for miggo-collector
+    failureThreshold: ""
 
   service:
     # -- Service type
