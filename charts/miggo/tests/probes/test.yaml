@@ -1,0 +1,265 @@
+suite: probe timeoutSeconds and failureThreshold tests
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-runtime/fluent-bit-cm.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  # --- global defaults applied to all components ---
+
+  - it: should apply global probes defaults to miggo-watch
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].livenessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].livenessProbe.failureThreshold
+          value: 3
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].readinessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].readinessProbe.failureThreshold
+          value: 3
+
+  - it: should apply global probes defaults to miggo-scanner
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].livenessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].livenessProbe.failureThreshold
+          value: 3
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].readinessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].readinessProbe.failureThreshold
+          value: 3
+
+  - it: should apply global probes defaults to miggo-runtime
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].livenessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].livenessProbe.failureThreshold
+          value: 3
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].readinessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].readinessProbe.failureThreshold
+          value: 3
+
+  - it: should apply global probes defaults to miggo-runtime analyzer
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "analyzer")].livenessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "analyzer")].livenessProbe.failureThreshold
+          value: 3
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "analyzer")].readinessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "analyzer")].readinessProbe.failureThreshold
+          value: 3
+
+  - it: should apply global probes defaults to miggo-collector
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].livenessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].livenessProbe.failureThreshold
+          value: 3
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].readinessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].readinessProbe.failureThreshold
+          value: 3
+
+  # --- global override takes effect across all components ---
+
+  - it: should apply custom global probes to miggo-watch
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      probes.timeoutSeconds: 10
+      probes.failureThreshold: 6
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].livenessProbe.timeoutSeconds
+          value: 10
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].livenessProbe.failureThreshold
+          value: 6
+
+  - it: should apply custom global probes to miggo-scanner
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      probes.timeoutSeconds: 10
+      probes.failureThreshold: 6
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].livenessProbe.timeoutSeconds
+          value: 10
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].livenessProbe.failureThreshold
+          value: 6
+
+  - it: should apply custom global probes to miggo-runtime
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      probes.timeoutSeconds: 10
+      probes.failureThreshold: 6
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].livenessProbe.timeoutSeconds
+          value: 10
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].livenessProbe.failureThreshold
+          value: 6
+
+  - it: should apply custom global probes to miggo-collector
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      probes.timeoutSeconds: 10
+      probes.failureThreshold: 6
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].livenessProbe.timeoutSeconds
+          value: 10
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].livenessProbe.failureThreshold
+          value: 6
+
+  # --- per-component overrides ---
+
+  - it: should override probes for miggo-watch only
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      miggoWatch.probes.timeoutSeconds: 15
+      miggoWatch.probes.failureThreshold: 8
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].livenessProbe.timeoutSeconds
+          value: 15
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].livenessProbe.failureThreshold
+          value: 8
+
+  - it: should override probes for miggo-scanner only
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      miggoScanner.probes.timeoutSeconds: 15
+      miggoScanner.probes.failureThreshold: 8
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].livenessProbe.timeoutSeconds
+          value: 15
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].livenessProbe.failureThreshold
+          value: 8
+
+  - it: should override probes for miggo-runtime only
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime.probes.timeoutSeconds: 15
+      miggoRuntime.probes.failureThreshold: 8
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].livenessProbe.timeoutSeconds
+          value: 15
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].livenessProbe.failureThreshold
+          value: 8
+
+  - it: should override probes for miggo-runtime analyzer only
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime.analyzer.probes.timeoutSeconds: 15
+      miggoRuntime.analyzer.probes.failureThreshold: 8
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "analyzer")].livenessProbe.timeoutSeconds
+          value: 15
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "analyzer")].livenessProbe.failureThreshold
+          value: 8
+
+  - it: should override probes for miggo-collector only
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      miggoCollector.probes.timeoutSeconds: 15
+      miggoCollector.probes.failureThreshold: 8
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].livenessProbe.timeoutSeconds
+          value: 15
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].livenessProbe.failureThreshold
+          value: 8
+
+  # --- per-component override does not bleed into other components ---
+
+  - it: should not affect miggo-scanner when only miggo-watch probes are overridden
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      miggoWatch.probes.timeoutSeconds: 99
+      miggoWatch.probes.failureThreshold: 99
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].livenessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].livenessProbe.failureThreshold
+          value: 3
+
+  - it: should not affect miggo-runtime when only miggo-collector probes are overridden
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoCollector.probes.timeoutSeconds: 99
+      miggoCollector.probes.failureThreshold: 99
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].livenessProbe.timeoutSeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].livenessProbe.failureThreshold
+          value: 3
+
+  # --- component override takes precedence over global ---
+
+  - it: component-level probes should take precedence over global
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      probes.timeoutSeconds: 5
+      probes.failureThreshold: 3
+      miggoWatch.probes.timeoutSeconds: 20
+      miggoWatch.probes.failureThreshold: 10
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].livenessProbe.timeoutSeconds
+          value: 20
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].livenessProbe.failureThreshold
+          value: 10

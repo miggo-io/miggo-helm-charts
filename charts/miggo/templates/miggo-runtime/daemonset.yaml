@@ -133,11 +133,15 @@ spec:
               path: /health
               port: {{ .Values.healthcheck.port }}
             periodSeconds: 10
+            timeoutSeconds: {{ coalesce .Values.miggoRuntime.probes.timeoutSeconds .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ coalesce .Values.miggoRuntime.probes.failureThreshold .Values.probes.failureThreshold }}
           readinessProbe:
             httpGet:
               path: /health
               port: {{ .Values.healthcheck.port }}
             periodSeconds: 10
+            timeoutSeconds: {{ coalesce .Values.miggoRuntime.probes.timeoutSeconds .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ coalesce .Values.miggoRuntime.probes.failureThreshold .Values.probes.failureThreshold }}
           resources:
             {{- toYaml .Values.miggoRuntime.resources | nindent 12 }}
           volumeMounts:
@@ -346,11 +350,15 @@ spec:
               path: /health
               port: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
             periodSeconds: 10
+            timeoutSeconds: {{ coalesce .Values.miggoRuntime.analyzer.probes.timeoutSeconds .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ coalesce .Values.miggoRuntime.analyzer.probes.failureThreshold .Values.probes.failureThreshold }}
           readinessProbe:
             httpGet:
               path: /health
               port: {{ .Values.miggoRuntime.analyzer.healthcheck.port }}
             periodSeconds: 10
+            timeoutSeconds: {{ coalesce .Values.miggoRuntime.analyzer.probes.timeoutSeconds .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ coalesce .Values.miggoRuntime.analyzer.probes.failureThreshold .Values.probes.failureThreshold }}
           resources:
             {{- toYaml .Values.miggoRuntime.analyzer.resources | nindent 12 }}
           securityContext:
