@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.199](https://img.shields.io/badge/Version-0.0.199-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.522.1](https://img.shields.io/badge/AppVersion-v26.522.1-informational?style=flat-square)
+![Version: 0.0.200](https://img.shields.io/badge/Version-0.0.200-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.522.1](https://img.shields.io/badge/AppVersion-v26.522.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -119,6 +119,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoCollector.podLabels | object | `{}` | Component-specific pod labels |
 | miggoCollector.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
+| miggoCollector.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-collector |
+| miggoCollector.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-collector |
 | miggoCollector.replicas | int | `1` | Number of replicas to run (relevant only if instancePerNode: false) |
 | miggoCollector.resources | object | `{"limits":{"cpu":"100m","memory":"500Mi"},"requests":{"cpu":"10m","memory":"200Mi"}}` | Resource requirements |
 | miggoCollector.service.annotations | object | `{}` | Service annotations |
@@ -135,6 +137,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.analyzer.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
 | miggoRuntime.analyzer.image.repository | string | `"miggo/miggo-analyzer"` | Image repository |
 | miggoRuntime.analyzer.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
+| miggoRuntime.analyzer.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-runtime analyzer |
+| miggoRuntime.analyzer.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-runtime analyzer |
 | miggoRuntime.analyzer.resources.limits.cpu | string | `"500m"` |  |
 | miggoRuntime.analyzer.resources.limits.memory | string | `"256Mi"` |  |
 | miggoRuntime.analyzer.resources.requests.cpu | string | `"100m"` |  |
@@ -167,6 +171,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
 | miggoRuntime.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector settings |
 | miggoRuntime.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
+| miggoRuntime.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-runtime |
+| miggoRuntime.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-runtime |
 | miggoRuntime.profiler.dotnet.peCacheSize | string | `nil` | Max entries in the PE info LRU cache (MIGGO_DOTNET_PE_CACHE_SIZE). Leave empty to use the profiler default. |
 | miggoRuntime.profiler.dotnet.peCacheTTL | string | `nil` | TTL for entries in the PE info LRU cache (MIGGO_DOTNET_PE_CACHE_TTL), e.g. "5m". Leave empty to use the profiler default. |
 | miggoRuntime.profiler.dotnet.stringsCacheSize | string | `nil` | Max entries in the PE strings LRU cache (MIGGO_DOTNET_STRINGS_CACHE_SIZE). Leave empty to use the profiler default. |
@@ -219,6 +225,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.nodeSelector | object | `{}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoScanner.podLabels | object | `{}` | Component-specific pod labels |
+| miggoScanner.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-scanner |
+| miggoScanner.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-scanner |
 | miggoScanner.resources.limits.cpu | string | `"3000m"` |  |
 | miggoScanner.resources.limits.memory | string | `"4Gi"` |  |
 | miggoScanner.resources.requests.cpu | string | `"1000m"` |  |
@@ -243,6 +251,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.nodeSelector | object | `{}` | Node selector for miggo-watch pods. Merged with global nodeSelector. |
 | miggoWatch.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoWatch.podLabels | object | `{}` | Component-specific pod labels |
+| miggoWatch.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-watch |
+| miggoWatch.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-watch |
 | miggoWatch.resources.limits.cpu | string | `"100m"` |  |
 | miggoWatch.resources.limits.memory | string | `"256Mi"` |  |
 | miggoWatch.resources.requests.cpu | string | `"10m"` |  |
@@ -261,6 +271,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | podLabels | object | `{}` | Pod labels to add to all pods |
 | podSecurityContext | object | `{}` | Pod security context for all pods |
 | priorityClassName | string | `""` | Priority class name for all pods |
+| probes.failureThreshold | int | `3` | Failure threshold for liveness and readiness probes across all components |
+| probes.timeoutSeconds | int | `5` | Timeout seconds for liveness and readiness probes across all components |
 | securityContext | object | `{}` | Container security context for all containers |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.automount | bool | `true` | Automatically mount API credentials for the service account |
