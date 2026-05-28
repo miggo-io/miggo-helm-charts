@@ -116,9 +116,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.initContainers | list | `[]` | InitContainers to initialize the pod |
 | miggoCollector.instancePerNode | bool | `false` | Run an instance per node |
 | miggoCollector.labels | object | `{}` | Component-specific labels |
-| miggoCollector.leaderElection.leaseDuration | string | `"75s"` | Duration that non-leader pods wait before considering the lease expired and trying to acquire it. Higher values reduce kube-apiserver polling rate but lengthen the worst-case k8s_cluster metric blindspot during leader failover. |
-| miggoCollector.leaderElection.renewDeadline | string | `"50s"` | Time the current leader has to renew the lease before losing leadership. Must be less than leaseDuration. |
-| miggoCollector.leaderElection.retryPeriod | string | `"10s"` | How often non-leader pods poll the apiserver to try to acquire the lease. Higher values reduce fleet-wide apiserver RPS, scaling especially well with daemonset deployments. |
 | miggoCollector.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoCollector.podLabels | object | `{}` | Component-specific pod labels |

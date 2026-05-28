@@ -11,7 +11,7 @@ values:
   - values.yaml
 
 tests:
-  - it: should render default leaderElection timings into the k8s_leader_elector extension
+  - it: should render hardcoded k8s_leader_elector timings into the collector config
     template: templates/miggo-collector/collector-config-cm.yaml
     asserts:
       - isKind:
@@ -26,21 +26,3 @@ tests:
               +lease_duration: 75s
               +renew_deadline: 50s
               +retry_period: 10s.*
-
-  - it: should propagate miggoCollector.leaderElection overrides into the k8s_leader_elector extension
-    template: templates/miggo-collector/collector-config-cm.yaml
-    set:
-      miggoCollector.leaderElection.leaseDuration: 30s
-      miggoCollector.leaderElection.renewDeadline: 20s
-      miggoCollector.leaderElection.retryPeriod: 5s
-    asserts:
-      - matchRegex:
-          path: data["config-template.yaml"]
-          pattern: |
-            .*k8s_leader_elector:
-              +auth_type: serviceAccount
-              +lease_name: miggo-collector
-              +lease_namespace: miggo-space
-              +lease_duration: 30s
-              +renew_deadline: 20s
-              +retry_period: 5s.*
