@@ -6,10 +6,10 @@ metadata:
   name: example-scanner
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.199
+    helm.sh/chart: miggo-0.0.202
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.522.1"
+    app.kubernetes.io/version: "v26.527.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,23 +23,23 @@ spec:
       annotations:
       labels:
         component: miggo-scanner
-        helm.sh/chart: miggo-0.0.199
+        helm.sh/chart: miggo-0.0.202
         app.kubernetes.io/name: miggo-scanner
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.522.1"
+        app.kubernetes.io/version: "v26.527.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
         
         - name: miggo-regcred
       serviceAccountName: example-scanner
-      securityContext:
-        {}
       containers:
         - name: miggo-scanner
           securityContext:
-            {}
-          image: "registry.miggo.io/miggo/miggo-scanner:v26.522.1"
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+          image: "registry.miggo.io/miggo/miggo-scanner:v26.527.1"
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
@@ -51,7 +51,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.199
+            - --chart-version=0.0.202
             - --queue-size=10000
             
             - --cache-flush-interval=168h
@@ -81,15 +81,15 @@ spec:
               path: /health
               port: 6666
             periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 6666
             periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 5
           resources:
             limits:
               cpu: 3000m
@@ -99,3 +99,5 @@ spec:
               memory: 2Gi
           volumeMounts:
       volumes:
+      nodeSelector:
+        kubernetes.io/os: linux

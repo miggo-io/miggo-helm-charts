@@ -201,6 +201,11 @@ curl http://localhost:6666/health
    - Configure appropriate network policies
    - Use TLS for OTLP communication
 
+4. **Pod Security Context** (`manageSecurityContext`, default `true`)
+   - The non-privileged components (collector, watch, scanner) run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff; the privileged runtime DaemonSet is pinned to an explicit `0:0` (it still requires `privileged`/`SYS_ADMIN`/`hostPID` for eBPF).
+   - Set `manageSecurityContext: false` to render no security context at all (full revert to implicit root).
+   - `podSecurityContext` / `securityContext` are **deprecated**. While `manageSecurityContext` is `true`, a populated value still overrides the managed block; when `false`, they are suppressed along with the managed block.
+
 ---
 
 For more information, visit [Miggo Documentation](https://docs.miggo.io)

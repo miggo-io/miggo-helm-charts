@@ -180,3 +180,41 @@ Namespace configuration flags
 {{- $memlimitBytes := include "convertMemToBytes" . | mulf 0.8 -}}
 {{- printf "%dMiB" (divf $memlimitBytes 0x1p20 | floor | int64) -}}
 {{- end }}
+
+{{/*
+Security-context resolution. Returns the security-context body (no `securityContext:` key)
+for one slot, or empty. Callers wrap the result in `with` so the key is omitted when empty.
+
+  - manageSecurityContext=false -> empty (nothing rendered anywhere)
+  - a populated deprecated global (.global) -> the global wins
+  - otherwise -> the managed default (.managed) for this slot
+*/}}
+{{- define "miggo.securityContext.resolve" -}}
+{{- if .ctx.Values.manageSecurityContext -}}
+{{- if .global -}}
+{{- toYaml .global -}}
+{{- else if .managed -}}
+{{- toYaml .managed -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Container security context for the non-privileged components (watch/scanner/collector). */}}
+{{- define "miggo.containerSecurityContext" -}}
+{{- include "miggo.securityContext.resolve" (dict "ctx" . "global" .Values.securityContext "managed" (dict "runAsNonRoot" true "runAsUser" 65532 "runAsGroup" 65532)) -}}
+{{- end -}}
+
+{{/* Pod security context for the collector (adds fsGroup for the init->main config handoff). */}}
+{{- define "miggo.podSecurityContext.collector" -}}
+{{- include "miggo.securityContext.resolve" (dict "ctx" . "global" .Values.podSecurityContext "managed" (dict "fsGroup" 65532)) -}}
+{{- end -}}
+
+{{/* Pod security context for the privileged runtime DaemonSet (explicit root). */}}
+{{- define "miggo.podSecurityContext.runtime" -}}
+{{- include "miggo.securityContext.resolve" (dict "ctx" . "global" .Values.podSecurityContext "managed" (dict "runAsUser" 0 "runAsGroup" 0)) -}}
+{{- end -}}
+
+{{/* Pod security context for watch/scanner (no managed pod-level default; honors the global only). */}}
+{{- define "miggo.podSecurityContext.nonpriv" -}}
+{{- include "miggo.securityContext.resolve" (dict "ctx" . "global" .Values.podSecurityContext "managed" dict) -}}
+{{- end -}}

@@ -16,7 +16,7 @@ values:
   - values.yaml
 
 tests:
-  - it: should set component-specific nodeSelector on miggo-watch
+  - it: should merge component-specific nodeSelector with the default linux selector on miggo-watch
     template: templates/miggo-watch/deployment.yaml
     set:
       miggoWatch.nodeSelector:
@@ -25,9 +25,10 @@ tests:
       - equal:
           path: spec.template.spec.nodeSelector
           value:
+            kubernetes.io/os: linux
             Name: system
 
-  - it: should set component-specific nodeSelector on miggo-scanner
+  - it: should merge component-specific nodeSelector with the default linux selector on miggo-scanner
     template: templates/miggo-scanner/deployment.yaml
     set:
       miggoScanner.nodeSelector:
@@ -36,9 +37,10 @@ tests:
       - equal:
           path: spec.template.spec.nodeSelector
           value:
+            kubernetes.io/os: linux
             Name: system
 
-  - it: should set component-specific nodeSelector on miggo-collector
+  - it: should merge component-specific nodeSelector with the default linux selector on miggo-collector
     template: templates/miggo-collector/deployment.yaml
     set:
       miggoCollector.nodeSelector:
@@ -47,6 +49,7 @@ tests:
       - equal:
           path: spec.template.spec.nodeSelector
           value:
+            kubernetes.io/os: linux
             disktype: ssd
 
   - it: should merge global and component-specific nodeSelector on miggo-watch
@@ -61,6 +64,7 @@ tests:
           path: spec.template.spec.nodeSelector
           value:
             zone: us-east-1
+            kubernetes.io/os: linux
             Name: system
 
   - it: should merge global and component-specific nodeSelector on miggo-scanner
@@ -75,9 +79,10 @@ tests:
           path: spec.template.spec.nodeSelector
           value:
             zone: us-east-1
+            kubernetes.io/os: linux
             Name: system
 
-  - it: should only have global nodeSelector when component-specific is not set
+  - it: should merge the global nodeSelector with the default linux selector
     template: templates/miggo-watch/deployment.yaml
     set:
       nodeSelector:
@@ -87,12 +92,15 @@ tests:
           path: spec.template.spec.nodeSelector
           value:
             zone: us-east-1
+            kubernetes.io/os: linux
 
-  - it: should not render nodeSelector when neither global nor component-specific is set
+  - it: should render the default linux nodeSelector when nothing else is set
     template: templates/miggo-watch/deployment.yaml
     asserts:
-      - isNull:
+      - equal:
           path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/os: linux
 
   - it: should not affect miggo-runtime when only miggo-watch nodeSelector is set
     template: templates/miggo-runtime/daemonset.yaml
@@ -105,7 +113,7 @@ tests:
           value:
             kubernetes.io/os: linux
 
-  - it: should set nodeSelector only on watch and scanner but not on collector
+  - it: should keep the default linux nodeSelector on collector regardless of watch/scanner selectors
     template: templates/miggo-collector/deployment.yaml
     set:
       miggoWatch.nodeSelector:
@@ -113,5 +121,7 @@ tests:
       miggoScanner.nodeSelector:
         Name: system
     asserts:
-      - isNull:
+      - equal:
           path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/os: linux

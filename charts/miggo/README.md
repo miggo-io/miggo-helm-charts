@@ -93,6 +93,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | image.registry | string | `"registry.miggo.io"` | Registry host for all images |
 | imagePullSecrets | list | `[]` |  |
 | labels | object | `{}` | Global labels to add to all resources |
+| manageSecurityContext | bool | `true` | Enable Miggo-managed security contexts for all sensor pods/containers. When true (default): non-privileged components (collector/watch/scanner) run as 65532:65532 with runAsNonRoot, the collector pod gets fsGroup 65532, and the privileged runtime pod is pinned to an explicit 0:0. When false: no securityContext is rendered at all (the managed values and the deprecated fields below are both suppressed) and pods fall back to implicit root. |
 | miggo.clusterName | string | `"kubernetes-cluster"` | Name of the Kubernetes cluster |
 | miggoCollector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | miggoCollector.annotations | object | `{}` | Component-specific annotations |
@@ -115,7 +116,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.initContainers | list | `[]` | InitContainers to initialize the pod |
 | miggoCollector.instancePerNode | bool | `false` | Run an instance per node |
 | miggoCollector.labels | object | `{}` | Component-specific labels |
-| miggoCollector.nodeSelector | object | `{}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
+| miggoCollector.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoCollector.podLabels | object | `{}` | Component-specific pod labels |
 | miggoCollector.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
@@ -222,7 +223,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoScanner.imagePullSecretScanning | object | `{"enabled":true}` | pod in its logs. |
 | miggoScanner.labels | object | `{}` | Component-specific labels |
-| miggoScanner.nodeSelector | object | `{}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
+| miggoScanner.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoScanner.podLabels | object | `{}` | Component-specific pod labels |
 | miggoScanner.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-scanner |
@@ -248,7 +249,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.image.repository | string | `"miggo/miggo-watch"` | Image repository |
 | miggoWatch.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoWatch.labels | object | `{}` | Component-specific labels |
-| miggoWatch.nodeSelector | object | `{}` | Node selector for miggo-watch pods. Merged with global nodeSelector. |
+| miggoWatch.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-watch pods. Merged with global nodeSelector. |
 | miggoWatch.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoWatch.podLabels | object | `{}` | Component-specific pod labels |
 | miggoWatch.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-watch |
@@ -269,11 +270,11 @@ The following table lists the configurable parameters of the miggo chart and the
 | output.stdout | bool | `false` | Enable stdout logging (for debugging) |
 | podAnnotations | object | `{}` | Pod annotations to add to all pods |
 | podLabels | object | `{}` | Pod labels to add to all pods |
-| podSecurityContext | object | `{}` | Pod security context for all pods |
+| podSecurityContext | object | `{}` | DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a populated value here overrides the managed pod security context for all pods. |
 | priorityClassName | string | `""` | Priority class name for all pods |
 | probes.failureThreshold | int | `5` | Failure threshold for liveness and readiness probes across all components |
 | probes.timeoutSeconds | int | `10` | Timeout seconds for liveness and readiness probes across all components |
-| securityContext | object | `{}` | Container security context for all containers |
+| securityContext | object | `{}` | DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a populated value here overrides the managed container security context for all containers. |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.automount | bool | `true` | Automatically mount API credentials for the service account |
 | serviceAccount.name | string | `""` | Name of the service account. If not set, a name is generated |
@@ -409,6 +410,11 @@ curl http://localhost:6666/health
 3. **Network Security**
    - Configure appropriate network policies
    - Use TLS for OTLP communication
+
+4. **Pod Security Context** (`manageSecurityContext`, default `true`)
+   - The non-privileged components (collector, watch, scanner) run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff; the privileged runtime DaemonSet is pinned to an explicit `0:0` (it still requires `privileged`/`SYS_ADMIN`/`hostPID` for eBPF).
+   - Set `manageSecurityContext: false` to render no security context at all (full revert to implicit root).
+   - `podSecurityContext` / `securityContext` are **deprecated**. While `manageSecurityContext` is `true`, a populated value still overrides the managed block; when `false`, they are suppressed along with the managed block.
 
 ---
 

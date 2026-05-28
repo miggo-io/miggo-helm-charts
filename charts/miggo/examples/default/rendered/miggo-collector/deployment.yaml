@@ -6,10 +6,10 @@ metadata:
   name: example-collector
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.199
+    helm.sh/chart: miggo-0.0.202
     app.kubernetes.io/name: miggo-collector
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.522.1"
+    app.kubernetes.io/version: "v26.527.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,27 +23,29 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 65e5d7c099e5e4a77421d1529cc64473852b688914c17291321bbb974e056c01
+        checksum/config: 0a712bb3cb0f79ba88009fd063027540969589f6eb665eb2334aa4471d0c5799
       labels:
         component: collector
         miggo.io/app: example-collector
-        helm.sh/chart: miggo-0.0.199
+        helm.sh/chart: miggo-0.0.202
         app.kubernetes.io/name: miggo-collector
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.522.1"
+        app.kubernetes.io/version: "v26.527.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
         
         - name: miggo-regcred
       securityContext:
-        {}
+        fsGroup: 65532
       serviceAccountName: example-collector
       initContainers:
         - name: collector-init-container
-          image: "registry.miggo.io/miggo/miggo-collector:v26.522.1"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.527.1"
           securityContext:
-            {}
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh"]
           args:
@@ -74,8 +76,10 @@ spec:
       containers:
         - name: miggo-collector
           securityContext:
-            {}
-          image: "registry.miggo.io/miggo/miggo-collector:v26.522.1"
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+          image: "registry.miggo.io/miggo/miggo-collector:v26.527.1"
           imagePullPolicy: IfNotPresent
           args:
             - --config
@@ -102,15 +106,15 @@ spec:
               path: /health
               port: 6666
             periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 6666
             periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 5
           volumeMounts:
           - name: collector-config
             mountPath: /etc/collector
@@ -131,4 +135,6 @@ spec:
           items:
           - key: ACCESS_KEY
             path: ACCESS_KEY
+      nodeSelector:
+        kubernetes.io/os: linux
       priorityClassName: system-node-critical
