@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.204](https://img.shields.io/badge/Version-0.0.204-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.528.1](https://img.shields.io/badge/AppVersion-v26.528.1-informational?style=flat-square)
+![Version: 0.0.205](https://img.shields.io/badge/Version-0.0.205-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.528.1](https://img.shields.io/badge/AppVersion-v26.528.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -116,6 +116,9 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.initContainers | list | `[]` | InitContainers to initialize the pod |
 | miggoCollector.instancePerNode | bool | `false` | Run an instance per node |
 | miggoCollector.labels | object | `{}` | Component-specific labels |
+| miggoCollector.leaderElection.leaseDuration | string | `"75s"` | Duration that non-leader pods wait before considering the lease expired and trying to acquire it. Higher values reduce kube-apiserver polling rate but lengthen the worst-case k8s_cluster metric blindspot during leader failover. |
+| miggoCollector.leaderElection.renewDeadline | string | `"50s"` | Time the current leader has to renew the lease before losing leadership. Must be less than leaseDuration. |
+| miggoCollector.leaderElection.retryPeriod | string | `"10s"` | How often non-leader pods poll the apiserver to try to acquire the lease. Higher values reduce fleet-wide apiserver RPS, scaling especially well with daemonset deployments. |
 | miggoCollector.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoCollector.podLabels | object | `{}` | Component-specific pod labels |

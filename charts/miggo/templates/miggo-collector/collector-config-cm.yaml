@@ -21,6 +21,9 @@ data:
         auth_type: serviceAccount
         lease_name: {{ include "miggo.fullname" . }}-collector
         lease_namespace: {{ include "miggo.namespace" . }}
+        lease_duration: {{ .Values.miggoCollector.leaderElection.leaseDuration }}
+        renew_deadline: {{ .Values.miggoCollector.leaderElection.renewDeadline }}
+        retry_period: {{ .Values.miggoCollector.leaderElection.retryPeriod }}
 
       {{- with .Values.miggoCollector.extraExtensions }}
       {{- toYaml . | nindent 6 }}

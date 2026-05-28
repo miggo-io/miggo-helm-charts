@@ -6,10 +6,10 @@ metadata:
   name: example-runtime
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.202
+    helm.sh/chart: miggo-0.0.205
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.527.1"
+    app.kubernetes.io/version: "v26.528.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,10 +23,10 @@ spec:
         checksum/config: 6ed877707581906ad34573544b36de695bd4e68848d208fc2a19372f691cdd49
       labels:
         component: miggo-runtime
-        helm.sh/chart: miggo-0.0.202
+        helm.sh/chart: miggo-0.0.205
         app.kubernetes.io/name: miggo-runtime
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.527.1"
+        app.kubernetes.io/version: "v26.528.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -40,7 +40,7 @@ spec:
         - name: miggo-runtime
           securityContext:
             privileged: true
-          image: "registry.miggo.io/miggo/miggo-runtime:v26.527.1"
+          image: "registry.miggo.io/miggo/miggo-runtime:v26.528.1"
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
@@ -52,7 +52,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.202
+            - --chart-version=0.0.205
             - --disable-profiler=false
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
@@ -120,7 +120,7 @@ spec:
           - name: unix-socket
             mountPath: /tmp/grpc
         - name: profiler
-          image: "registry.miggo.io/miggo/miggo-profiler:v26.527.1"
+          image: "registry.miggo.io/miggo/miggo-profiler:v26.528.1"
           imagePullPolicy: IfNotPresent
           command:
             - /root/ebpf-profiler

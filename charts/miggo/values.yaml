@@ -602,6 +602,14 @@ miggoCollector:
     # -- Override global probes.failureThreshold for miggo-collector
     failureThreshold: ""
 
+  leaderElection:
+    # -- Duration that non-leader pods wait before considering the lease expired and trying to acquire it. Higher values reduce kube-apiserver polling rate but lengthen the worst-case k8s_cluster metric blindspot during leader failover.
+    leaseDuration: 75s
+    # -- Time the current leader has to renew the lease before losing leadership. Must be less than leaseDuration.
+    renewDeadline: 50s
+    # -- How often non-leader pods poll the apiserver to try to acquire the lease. Higher values reduce fleet-wide apiserver RPS, scaling especially well with daemonset deployments.
+    retryPeriod: 10s
+
   service:
     # -- Service type
     type: ClusterIP
