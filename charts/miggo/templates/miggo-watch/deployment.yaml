@@ -85,6 +85,7 @@ spec:
             {{- include "namespace.flags" . | nindent 12 }}
             {{ if .Values.output.api.enabled }}
             - --api-url={{ (include "apiEndpoint" . )}}
+            - --auth-url={{ .Values.config.authUrl }}
             {{ end }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}

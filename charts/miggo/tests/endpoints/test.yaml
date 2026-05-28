@@ -1,4 +1,4 @@
-suite: endpoint configuration (config.collectorUrl, config.apiUrl, legacy fallbacks)
+suite: endpoint configuration (config.collectorUrl, config.apiUrl, config.authUrl, legacy fallbacks)
 
 release:
   name: miggo
@@ -70,6 +70,27 @@ tests:
           path: spec.template.spec.containers[?(@.name == "analyzer")].args
           content: --api-url=https://api.miggo.io
 
+  - it: should pass config.authUrl to miggo-watch via --auth-url
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
+          content: --auth-url=https://auth.miggo.io
+
+  - it: should pass config.authUrl to miggo-runtime analyzer via --auth-url
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "analyzer")].args
+          content: --auth-url=https://auth.miggo.io
+
+  - it: should pass config.authUrl to the miggo-runtime container via --auth-url (authenticates without an api URL)
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --auth-url=https://auth.miggo.io
+
   # ---------- Custom values: explicit overrides propagate ----------
 
   - it: should propagate custom config.collectorUrl into collector-config exporters
@@ -124,6 +145,26 @@ tests:
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
           content: --api-url=https://my-api.example.com
+
+  - it: should propagate custom config.authUrl to miggo-watch --auth-url
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      config:
+        authUrl: https://my-auth.example.com
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
+          content: --auth-url=https://my-auth.example.com
+
+  - it: should propagate custom config.authUrl to the miggo-runtime container --auth-url
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      config:
+        authUrl: https://my-auth.example.com
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --auth-url=https://my-auth.example.com
 
   # ---------- Back-compat: legacy keys still honored as fallbacks ----------
 
