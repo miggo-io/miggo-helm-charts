@@ -52,8 +52,10 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         {{- include "miggoImagePullSecrets" . | nindent 8 }}
+      {{- with (include "miggo.podSecurityContext.collector" .) }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- . | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ include "miggo.serviceAccountName" . }}-collector
       initContainers:
       {{- if .Values.miggoCollector.initContainers }}
@@ -65,8 +67,10 @@ spec:
           {{- else }}
           image: "{{ .Values.image.registry }}/{{ .Values.miggoCollector.image.repository }}:{{ .Values.miggoCollector.image.tag | default .Chart.AppVersion }}"
           {{- end }}
+          {{- with (include "miggo.containerSecurityContext" .) }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- . | nindent 12 }}
+          {{- end }}
           imagePullPolicy: {{ .Values.miggoCollector.image.pullPolicy | default .Values.image.pullPolicy }}
           command: ["/bin/sh"]
           args:
@@ -115,8 +119,10 @@ spec:
           {{- end }}
       containers:
         - name: miggo-collector
+          {{- with (include "miggo.containerSecurityContext" .) }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- . | nindent 12 }}
+          {{- end }}
           {{- if .Values.miggoCollector.image.fullPath }}
           image: "{{ .Values.miggoCollector.image.fullPath }}"
           {{- else }}

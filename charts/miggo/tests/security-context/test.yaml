@@ -1,0 +1,172 @@
+suite: security context
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-runtime/fluent-bit-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  # --- manageSecurityContext enabled (default), no deprecated globals ---
+
+  - it: watch container runs as 65532 non-root, with no pod-level security context
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].securityContext.runAsUser
+          value: 65532
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].securityContext.runAsGroup
+          value: 65532
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].securityContext.runAsNonRoot
+          value: true
+      - notExists:
+          path: spec.template.spec.securityContext
+
+  - it: scanner container runs as 65532 non-root, with no pod-level security context
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].securityContext.runAsUser
+          value: 65532
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].securityContext.runAsGroup
+          value: 65532
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].securityContext.runAsNonRoot
+          value: true
+      - notExists:
+          path: spec.template.spec.securityContext
+
+  - it: collector main and init containers run as 65532 non-root, pod has fsGroup 65532
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].securityContext.runAsUser
+          value: 65532
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].securityContext.runAsNonRoot
+          value: true
+      - equal:
+          path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].securityContext.runAsUser
+          value: 65532
+      - equal:
+          path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].securityContext.runAsNonRoot
+          value: true
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 65532
+
+  - it: runtime pod is pinned to explicit root and the container stays privileged
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 0
+      - equal:
+          path: spec.template.spec.securityContext.runAsGroup
+          value: 0
+      - notExists:
+          path: spec.template.spec.securityContext.runAsNonRoot
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext.privileged
+          value: true
+
+  - it: non-privileged deployments pin the linux node selector
+    templates:
+      - templates/miggo-watch/deployment.yaml
+      - templates/miggo-scanner/deployment.yaml
+      - templates/miggo-collector/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
+          value: linux
+
+  # --- manageSecurityContext enabled, deprecated globals set (globals override the managed block) ---
+
+  - it: deprecated container-level global overrides the managed non-root context
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      securityContext:
+        runAsUser: 1234
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].securityContext.runAsUser
+          value: 1234
+
+  - it: deprecated pod-level global overrides the managed pod context, including the runtime 0:0
+    templates:
+      - templates/miggo-collector/deployment.yaml
+      - templates/miggo-runtime/daemonset.yaml
+    set:
+      podSecurityContext:
+        fsGroup: 2000
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+      - notExists:
+          path: spec.template.spec.securityContext.runAsUser
+
+  # --- manageSecurityContext disabled (master kill switch) ---
+
+  - it: disabled renders no managed security context on the non-privileged components
+    templates:
+      - templates/miggo-watch/deployment.yaml
+      - templates/miggo-scanner/deployment.yaml
+    set:
+      manageSecurityContext: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.securityContext
+      - notExists:
+          path: spec.template.spec.containers[0].securityContext
+
+  - it: disabled drops the collector pod fsGroup but leaves the runtime container privileged
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      manageSecurityContext: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.securityContext
+      - notExists:
+          path: spec.template.spec.containers[0].securityContext
+
+  - it: disabled keeps the runtime container privileged but drops the pod-level 0:0
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      manageSecurityContext: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.securityContext
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext.privileged
+          value: true
+
+  # --- manageSecurityContext disabled with deprecated globals set (kill switch suppresses them too) ---
+
+  - it: disabled suppresses the deprecated globals as well
+    templates:
+      - templates/miggo-watch/deployment.yaml
+      - templates/miggo-collector/deployment.yaml
+    set:
+      manageSecurityContext: false
+      securityContext:
+        runAsUser: 1234
+      podSecurityContext:
+        fsGroup: 2000
+    asserts:
+      - notExists:
+          path: spec.template.spec.securityContext
+      - notExists:
+          path: spec.template.spec.containers[0].securityContext

@@ -49,12 +49,16 @@ spec:
         {{- end }}
         {{- include "miggoImagePullSecrets" . | nindent 8 }}
       serviceAccountName: {{ include "miggo.serviceAccountName" . }}-watch
+      {{- with (include "miggo.podSecurityContext.nonpriv" .) }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- . | nindent 8 }}
+      {{- end }}
       containers:
         - name: miggo-watch
+          {{- with (include "miggo.containerSecurityContext" .) }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- . | nindent 12 }}
+          {{- end }}
           {{- if .Values.miggoWatch.image.fullPath }}
           image: "{{ .Values.miggoWatch.image.fullPath }}"
           {{- else }}

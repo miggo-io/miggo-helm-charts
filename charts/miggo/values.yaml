@@ -108,9 +108,17 @@ annotations: {}
 podAnnotations: {}
 # -- Pod labels to add to all pods
 podLabels: {}
-# -- Pod security context for all pods
+# -- Enable Miggo-managed security contexts for all sensor pods/containers. When true
+# (default): non-privileged components (collector/watch/scanner) run as 65532:65532 with
+# runAsNonRoot, the collector pod gets fsGroup 65532, and the privileged runtime pod is
+# pinned to an explicit 0:0. When false: no securityContext is rendered at all (the managed
+# values and the deprecated fields below are both suppressed) and pods fall back to implicit root.
+manageSecurityContext: true
+# -- DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a
+# populated value here overrides the managed pod security context for all pods.
 podSecurityContext: {}
-# -- Container security context for all containers
+# -- DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a
+# populated value here overrides the managed container security context for all containers.
 securityContext: {}
 # -- Additional environment variables for all containers
 extraEnvs: []
@@ -149,7 +157,8 @@ miggoWatch:
   # -- Additional volume mounts
   volumeMounts: []
   # -- Node selector for miggo-watch pods. Merged with global nodeSelector.
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/os: linux
 
   image:
     # -- Image repository
@@ -223,7 +232,8 @@ miggoScanner:
   # -- Additional volume mounts
   volumeMounts: []
   # -- Node selector for miggo-scanner pods. Merged with global nodeSelector.
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/os: linux
 
   serviceAccount:
     # -- Annotations to add to the service account
@@ -517,7 +527,8 @@ miggoCollector:
   # -- Additional volume mounts
   volumeMounts: []
   # -- Node selector for miggo-collector pods. Merged with global nodeSelector.
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/os: linux
   # -- InitContainers to initialize the pod
   initContainers: []
 
