@@ -76,7 +76,6 @@ spec:
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
             - --chart-version={{ .Chart.Version }}
-            # Runtime authenticates to Descope on startup (FetchTenantAndProject); needs the auth URL even without an API URL.
             - --auth-url={{ .Values.config.authUrl }}
             - --disable-profiler={{ not .Values.miggoRuntime.profiler.enabled }}
             - --enable-network-tracing={{ .Values.miggoRuntime.enableNetworkTracing }}
