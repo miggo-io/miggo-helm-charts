@@ -529,6 +529,9 @@ data:
         auth_type: serviceAccount
         lease_name: example-collector
         lease_namespace: default
+        lease_duration: 75s
+        renew_deadline: 50s
+        retry_period: 10s
 
     receivers:
       otlp:
@@ -625,7 +628,7 @@ data:
                 new_value: Miggo Collector
               - action: add_label
                 new_label: chart_version
-                new_value: 0.0.202
+                new_value: 0.0.206
 
       batch/metrics:
         timeout: 10s

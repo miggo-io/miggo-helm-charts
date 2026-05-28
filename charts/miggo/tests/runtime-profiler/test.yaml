@@ -64,6 +64,7 @@ tests:
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
             - --chart-version=1.0.0
+            - --auth-url=https://auth.miggo.io
             - --disable-profiler=false
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
