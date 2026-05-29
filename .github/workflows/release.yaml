@@ -50,6 +50,7 @@ jobs:
           version: v3.9.0
 
       - name: Run chart-releaser
+        id: release
         uses: ./.github/actions/helm-releaser
         with:
           charts_dir: charts
@@ -57,3 +58,20 @@ jobs:
         env:
           CR_TOKEN: "${{ steps.set-token.outputs.checkout_token }}"
           CR_GENERATE_RELEASE_NOTES: true
+
+      - name: Append bundled images to release notes
+        if: steps.release.outputs.changed_charts != ''
+        env:
+          GH_TOKEN: ${{ steps.set-token.outputs.checkout_token }}
+        run: |
+          version=$(grep -E '^version:' charts/miggo/Chart.yaml | head -1 | sed -E 's/version:[[:space:]]*//; s/"//g')
+          tag="miggo-${version}"
+          section=$(.github/scripts/bundled-images-notes.sh charts/miggo)
+          if ! body=$(gh release view "$tag" --json body -q .body 2>/dev/null); then
+            echo "::warning::release $tag not found, skipping bundled-images notes"
+            exit 0
+          fi
+          body="${body%%<!-- BUNDLED_IMAGES_START -->*}"
+          while [ "${body: -1}" = $'\n' ]; do body="${body%$'\n'}"; done
+          printf '%s\n\n%s\n' "$body" "$section" | gh release edit "$tag" --notes-file -
+          echo "$section" >> "$GITHUB_STEP_SUMMARY"
