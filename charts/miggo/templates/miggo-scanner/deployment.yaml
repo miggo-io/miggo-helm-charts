@@ -86,6 +86,9 @@ spec:
             - --cache-cm-name={{ include "miggo-scanner.configMapCacheName" . }}
             - --cache-cm-namespace={{ include "miggo.namespace" . }}
             {{ end }}
+            {{ if .Values.miggoScanner.registryCredentials.secretName }}
+            - --registry-credentials-path=/etc/registry-credentials/.dockerconfigjson
+            {{ end }}
             {{- include "namespace.flags" . | nindent 12 }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}
@@ -138,6 +141,11 @@ spec:
           {{- with .Values.miggoScanner.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
+          {{ if .Values.miggoScanner.registryCredentials.secretName }}
+          - name: registry-credentials
+            mountPath: /etc/registry-credentials
+            readOnly: true
+          {{ end }}
       volumes:
       {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
@@ -145,6 +153,14 @@ spec:
       {{- with .Values.miggoScanner.volumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
+      {{ if .Values.miggoScanner.registryCredentials.secretName }}
+      - name: registry-credentials
+        secret:
+          secretName: {{ .Values.miggoScanner.registryCredentials.secretName }}
+          items:
+            - key: .dockerconfigjson
+              path: .dockerconfigjson
+      {{ end }}
       {{- if or .Values.nodeSelector .Values.miggoScanner.nodeSelector }}
       nodeSelector:
       {{- with .Values.nodeSelector }}

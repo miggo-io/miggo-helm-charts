@@ -215,6 +215,13 @@ miggoScanner:
   # -- pod in its logs.
   imagePullSecretScanning:
     enabled: true
+  # -- Provided registry credentials for scanning images from private registries
+  # -- that workload pods do not reference via imagePullSecrets. Set secretName to the
+  # -- name of a kubernetes.io/dockerconfigjson secret in the scanner's namespace; the
+  # -- scanner mounts its .dockerconfigjson key and tries those credentials first,
+  # -- falling back to imagePullSecrets-derived and anonymous auth.
+  registryCredentials:
+    secretName: ""
   # -- Component-specific labels
   labels: {}
   # -- Component-specific annotations
