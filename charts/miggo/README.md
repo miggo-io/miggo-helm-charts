@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.207](https://img.shields.io/badge/Version-0.0.207-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.528.2](https://img.shields.io/badge/AppVersion-v26.528.2-informational?style=flat-square)
+![Version: 0.0.208](https://img.shields.io/badge/Version-0.0.208-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.528.2](https://img.shields.io/badge/AppVersion-v26.528.2-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -228,6 +228,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.podLabels | object | `{}` | Component-specific pod labels |
 | miggoScanner.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-scanner |
 | miggoScanner.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-scanner |
+| miggoScanner.registryCredentials | object | `{"secretName":""}` | falling back to imagePullSecrets-derived and anonymous auth. |
 | miggoScanner.resources.limits.cpu | string | `"3000m"` |  |
 | miggoScanner.resources.limits.memory | string | `"4Gi"` |  |
 | miggoScanner.resources.requests.cpu | string | `"1000m"` |  |
