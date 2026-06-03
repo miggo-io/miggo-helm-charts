@@ -1,0 +1,44 @@
+suite: scanner registry credentials
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: does not add registry-credentials arg when secretName is empty
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].args
+          content: --registry-credentials-path=/etc/registry-credentials/.dockerconfigjson
+
+  - it: mounts registry-credentials secret volume when secretName is set
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      miggoScanner.registryCredentials.secretName: customer-registry-creds
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: registry-credentials
+            secret:
+              secretName: customer-registry-creds
+              items:
+                - key: .dockerconfigjson
+                  path: .dockerconfigjson
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: registry-credentials
+            mountPath: /etc/registry-credentials
+            readOnly: true
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: --registry-credentials-path=/etc/registry-credentials/.dockerconfigjson
