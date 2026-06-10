@@ -23,5 +23,3 @@ spec:
       port: 4317
       protocol: TCP
       targetPort: 4317
-
-

@@ -466,48 +466,6 @@ miggoRuntime:
         memory: "100Mi"
         cpu: "100m"
 
-  analyzer:
-    # -- Install analyzer on each cluster node to provide endpoint URL to
-    # functions mapping and other runtime insights.
-    enabled: false
-    image:
-      # -- Image repository
-      repository: miggo/miggo-analyzer
-      # -- Image tag (defaults to Chart appVersion if not set)
-      tag:
-      # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
-      # Useful for local development with Minikube or when needing to specify a complete custom image path
-      fullPath:
-      # -- Image pull policy. Specifies when Kubernetes should pull the container image
-      pullPolicy:
-
-    # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
-    # configured resources.limits.memory. If no resources.limits.memory are
-    # defined then enabling does nothing. It is HIGHLY recommend to enable this
-    # setting and set a value for resources.limits.memory.
-    useGOMEMLIMIT: true
-
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 256Mi
-
-    securityContext:
-      privileged: true
-
-    healthcheck:
-      # -- Port number for health check endpoints
-      port: 6667
-
-    probes:
-      # -- Override global probes.timeoutSeconds for miggo-runtime analyzer
-      timeoutSeconds: ""
-      # -- Override global probes.failureThreshold for miggo-runtime analyzer
-      failureThreshold: ""
-
 miggoCollector:
   # -- Enable Collector component
   enabled: true

@@ -34,5 +34,3 @@ rules:
 - apiGroups: [""]
   resources: ["configmaps"]
   verbs: ["create", "get", "delete", "update"]
-
-

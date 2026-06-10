@@ -6,10 +6,10 @@ metadata:
   name: example-scanner
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.208
+    helm.sh/chart: miggo-0.0.213
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.528.2"
+    app.kubernetes.io/version: "v26.610.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,10 +23,10 @@ spec:
       annotations:
       labels:
         component: miggo-scanner
-        helm.sh/chart: miggo-0.0.208
+        helm.sh/chart: miggo-0.0.213
         app.kubernetes.io/name: miggo-scanner
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.528.2"
+        app.kubernetes.io/version: "v26.610.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -39,7 +39,7 @@ spec:
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
-          image: "registry.miggo.io/miggo/miggo-scanner:v26.528.2"
+          image: "registry.miggo.io/miggo/miggo-scanner:v26.610.1"
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
@@ -51,7 +51,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.208
+            - --chart-version=0.0.213
             - --queue-size=10000
             
             - --cache-flush-interval=168h
@@ -104,5 +104,3 @@ spec:
       
       nodeSelector:
         kubernetes.io/os: linux
-
-

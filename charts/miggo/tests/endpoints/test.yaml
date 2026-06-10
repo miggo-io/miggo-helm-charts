@@ -63,25 +63,11 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
           content: --api-url=https://api.miggo.io
 
-  - it: should pass config.apiUrl to miggo-runtime analyzer via --api-url
-    template: templates/miggo-runtime/daemonset.yaml
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "analyzer")].args
-          content: --api-url=https://api.miggo.io
-
   - it: should pass config.authUrl to miggo-watch via --auth-url
     template: templates/miggo-watch/deployment.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
-          content: --auth-url=https://auth.miggo.io
-
-  - it: should pass config.authUrl to miggo-runtime analyzer via --auth-url
-    template: templates/miggo-runtime/daemonset.yaml
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "analyzer")].args
           content: --auth-url=https://auth.miggo.io
 
   - it: should pass config.authUrl to the miggo-runtime container via --auth-url (authenticates without an api URL)

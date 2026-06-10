@@ -12,8 +12,6 @@ miggoScanner:
 
 miggoRuntime:
   enabled: true
-  analyzer:
-    enabled: true
   profiler:
     enabled: true
 

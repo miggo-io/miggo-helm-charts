@@ -60,9 +60,6 @@ tests:
     set:
       miggoRuntime:
         useGOMEMLIMIT: false
-        analyzer:
-          useGOMEMLIMIT: true
-          enabled: true
         profiler:
           useGOMEMLIMIT: true
           enabled: true
@@ -71,8 +68,6 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env[?(@.name == "GOMEMLIMIT")]
       - exists:
           path: spec.template.spec.containers[?(@.name == "profiler")].env[?(@.name == "GOMEMLIMIT")]
-      - exists:
-          path: spec.template.spec.containers[?(@.name == "analyzer")].env[?(@.name == "GOMEMLIMIT")]
 
   - it: miggo-watch denies its own install namespace by default
     template: templates/miggo-watch/deployment.yaml

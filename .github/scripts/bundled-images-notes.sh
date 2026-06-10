@@ -12,7 +12,6 @@ chart_dir="${1:-charts/miggo}"
 # default-disabled component must be added here with its own --set <c>.enabled=true.
 rendered=$(helm template "$chart_dir" \
   --set miggoRuntime.enabled=true \
-  --set miggoRuntime.analyzer.enabled=true \
   --set miggoRuntime.profiler.enabled=true \
   --set miggoRuntime.fluentbit.enabled=true)
 
