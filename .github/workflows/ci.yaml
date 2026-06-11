@@ -43,7 +43,7 @@ jobs:
           ref: ${{ github.head_ref }}
 
       - name: Create status check for final commit
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const finalSha = await github.rest.git.getRef({
