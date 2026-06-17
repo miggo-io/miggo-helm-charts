@@ -76,7 +76,6 @@ spec:
             - --metric-tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
             - --metric-interval={{ .Values.config.metrics.interval }}
             - --chart-version={{ .Chart.Version }}
-            - --auth-url={{ .Values.config.authUrl }}
             - --disable-profiler={{ not .Values.miggoRuntime.profiler.enabled }}
             - --enable-network-tracing={{ .Values.miggoRuntime.enableNetworkTracing }}
             - --enable-file-access-tracing={{ .Values.miggoRuntime.enableFileAccessTracing }}
@@ -112,15 +111,6 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
-          - name: MIGGO_RUNTIME_CLIENT_ID
-            value: {{ .Values.config.clientId }}
-          {{ if (include "accessKeySecret" .) }}
-          - name: MIGGO_RUNTIME_ACCESS_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "accessKeySecret" . }}
-                key: ACCESS_KEY
-          {{- end }}
           - name: KUBERNETES_CLUSTER_DOMAIN
             value: {{ quote .Values.kubernetesClusterDomain }}
           {{- with .Values.extraEnvs }}
