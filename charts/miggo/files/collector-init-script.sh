@@ -15,22 +15,16 @@
 # 2. **Reading Access Key:** Securely reads the access key from a mounted file or secret, used for
 #    authenticating against the miggo authentication service.
 #
-# 3. **API Request & Session JWT Acquisition:** Authenticates using client credentials with miggo's
-#    authentication backend, retrieves a session JWT, and validates the API connection.
+# 3. **OAuth2 Authentication:** Exchanges the client id + access key for a token via the OAuth2
+#    client-credentials flow against the auth service. A successful exchange is the fail-fast check
+#    that the credentials are valid and the auth backend is reachable.
 #
-# 4. **JWT Decoding:** Decodes the JWT, extracting its payload to retrieve project and tenant
-#    identifiers tied to the deployment.
+# 4. **Tenant/Project Logging (best-effort):** Decodes the token payload and logs the tenant and
+#    project for operator visibility. Tenant/project are enriched on the resource by the SaaS
+#    collector, so this is informational only and never blocks startup.
 #
-# 5. **Tenant Information Extraction:** Parses out tenant and project IDs from the JWT payload for
-#    later use in configuration and as environment variables.
-#
-# 6. **Dynamic Configuration Generation:** Fills a collector configuration template with the
-#    discovered and provided values (using envsubst), generating the final config file necessary
-#    for the miggo-collector to operate.
-#
-# 7. **Backend Connectivity Check:** Validates that the miggo backend APIs (and their health
-#    endpoints) are reachable with the generated credentials/config, retrying if needed and
-#    logging appropriately.
+# 5. **Configuration Generation:** Renders the collector configuration template to its final path
+#    (no tenant/project substitution is required).
 #
 # The script is tolerant to errors: it logs and aborts on failure for every critical step
 # to ensure that the collector never starts with invalid configuration or in an unhealthy
@@ -56,6 +50,7 @@ log() {
 }
 
 log_error() { log "ERROR" "$@"; }
+log_warn() { log "WARN " "$@"; }
 log_info() {
     [[ "${LOG_LEVEL}" == "INFO" || "${LOG_LEVEL}" == "DEBUG" ]] && log "INFO " "$@" || true
 }
@@ -83,7 +78,7 @@ validate_environment() {
         "ACCESS_KEY_MOUNT_LOCATION"
         "CONFIG_TEMPLATE_PATH"
         "CONFIG_OUTPUT_PATH"
-        "AUTH_BASE_URL"
+        "OAUTH2_TOKEN_URL"
     )
 
     for var in "${required_vars[@]}"; do
@@ -126,61 +121,6 @@ read_access_key() {
 
     log_info "Access key read successfully"
     echo "$access_key"
-}
-
-make_api_request() {
-    local client_id="$1"
-    local access_key="$2"
-    local attempt=1
-
-    log_info "Making API request to exchange access key"
-
-    while [[ $attempt -le $MAX_RETRIES ]]; do
-        log_info "API request attempt $attempt of $MAX_RETRIES"
-
-        local response
-        local http_code
-
-        # Make request with timeout and capture both response and HTTP code
-        if response=$(curl -s -w "\n%{http_code}" \
-            --max-time "$TIMEOUT" \
-            --retry 0 \
-            -X POST "${AUTH_BASE_URL}/v1/auth/accesskey/exchange" \
-            -H "Authorization: Bearer ${client_id}:${access_key}" \
-            -H "Content-Type: application/json" 2>/dev/null); then
-
-            http_code=$(echo "$response" | tail -n1)
-            response=$(echo "$response" | head -n -1)
-
-            log_debug "HTTP response code: $http_code"
-            log_debug "Response body: $response"
-
-            if [[ "$http_code" -eq 200 ]]; then
-                # Validate JSON response
-                if echo "$response" | jq empty 2>/dev/null; then
-                    log_info "API request successful"
-                    echo "$response"
-                    return 0
-                else
-                    log_error "Invalid JSON response received"
-                fi
-            else
-                log_error "API request failed with HTTP code: $http_code"
-            fi
-        else
-            log_error "API request failed (network/timeout error)"
-        fi
-
-        if [[ $attempt -lt $MAX_RETRIES ]]; then
-            log_info "Retrying in ${RETRY_DELAY} seconds..."
-            sleep "$RETRY_DELAY"
-        fi
-
-        ((attempt++))
-    done
-
-    log_error "API request failed after $MAX_RETRIES attempts"
-    return 1
 }
 
 decode_jwt_payload() {
@@ -228,44 +168,23 @@ decode_jwt_payload() {
 extract_tenant_info() {
     local jwt_payload="$1"
 
-    log_info "Extracting tenant information from JWT payload"
-
-    # Extract project ID
-    local project_id
+    # Tenant/project are enriched on the resource by the SaaS collector. These
+    # are logged for operator visibility only and never block startup.
+    local project_id tenant_id
     project_id=$(echo "$jwt_payload" | jq -r '.project_id // empty')
-    if [[ -z "$project_id" || "$project_id" == "null" ]]; then
-        log_error "Failed to extract project_id from JWT payload"
-        return 1
+    tenant_id=$(echo "$jwt_payload" | jq -r '.tenants // {} | keys[0] // empty')
+
+    if [[ -n "$project_id" ]]; then
+        log_info "Project ID: $project_id"
+    else
+        log_warn "project_id not present in token"
     fi
 
-    # Extract tenant information
-    local tenants_json
-    tenants_json=$(echo "$jwt_payload" | jq '.tenants // {}')
-
-    local tenant_count
-    tenant_count=$(echo "$tenants_json" | jq 'keys | length')
-
-    if [[ "$tenant_count" -eq 0 ]]; then
-        log_error "No tenants found in JWT payload"
-        return 1
+    if [[ -n "$tenant_id" ]]; then
+        log_info "Tenant ID: $tenant_id"
+    else
+        log_warn "tenant id not present in token"
     fi
-
-    local tenant_id
-    tenant_id=$(echo "$tenants_json" | jq -r 'keys[0] // empty')
-
-    if [[ -z "$tenant_id" || "$tenant_id" == "null" ]]; then
-        log_error "Failed to extract tenant_id from JWT payload"
-        return 1
-    fi
-
-    log_info "Tenant information extracted successfully"
-    log_info "Project ID: $project_id"
-    log_info "Tenant ID: $tenant_id"
-    log_info "Tenant count: $tenant_count"
-
-    # Export environment variables
-    export MIGGO_PROJECT_ID="$project_id"
-    export MIGGO_TENANT_ID="$tenant_id"
 
     return 0
 }
@@ -274,12 +193,6 @@ generate_config() {
     log_info "Generating configuration file"
     log_info "Template: ${CONFIG_TEMPLATE_PATH}"
     log_info "Output: ${CONFIG_OUTPUT_PATH}"
-
-    # Validate required environment variables are set
-    if [[ -z "${MIGGO_PROJECT_ID:-}" || -z "${MIGGO_TENANT_ID:-}" ]]; then
-        log_error "Required environment variables MIGGO_PROJECT_ID or MIGGO_TENANT_ID not set"
-        return 1
-    fi
 
     # Create temporary file for safer operation
     local temp_file
@@ -369,71 +282,6 @@ oauth2_get_token() {
     return 1
 }
 
-check_backend_health() {
-    local api_url="$1"
-    local access_token="$2"
-    local attempt=1
-
-    while true; do
-        log_info "Verifying backend connectivity attempt $attempt - $api_url"
-
-        local http_code
-
-        if http_code=$(curl -s -o /dev/null -w "%{http_code}" \
-            --max-time "$TIMEOUT" \
-            --retry 0 \
-            -X GET "$api_url" \
-            -H "Authorization: Bearer ${access_token}" 2>/dev/null); then
-
-            log_debug "Backend response code: $http_code"
-
-            if [[ "$http_code" -ge 200 && "$http_code" -lt 500 ]]; then
-                log_info "Backend connectivity verified successfully (HTTP $http_code)"
-                return 0
-            else
-                log_error "Backend connectivity check failed with HTTP code: $http_code"
-            fi
-        else
-            log_error "Backend connectivity check failed (network/timeout error)"
-        fi
-
-        log_info "Retrying in ${RETRY_DELAY} seconds..."
-        sleep "$RETRY_DELAY"
-
-        ((attempt++))
-    done
-}
-
-check_connectivity() {
-
-    local token_url="${OAUTH2_TOKEN_URL:-https://auth.miggo.io/oauth2/v1/token}"
-    local api_url="${API_HEALTH_URL:-https://api.miggo.io/health/status}"
-
-    log_info "Starting backend connectivity verification"
-    log_info "Token URL: $token_url"
-    log_info "Backend URL: $api_url"
-
-    local client_secret
-    client_secret=$(read_access_key) || {
-        log_error "Failed to read client credentials"
-        return 1
-    }
-
-    local access_token
-    access_token=$(oauth2_get_token "$CLIENT_ID" "$client_secret" "$token_url") || {
-        log_error "Failed to authenticate with backend"
-        return 1
-    }
-
-    check_backend_health "$api_url" "$access_token" || {
-        log_error "Backend connectivity verification failed"
-        return 1
-    }
-
-    log_info "Backend connectivity verification completed successfully"
-    return 0
-}
-
 main() {
     log_info "Starting collector initialization"
 
@@ -442,6 +290,7 @@ main() {
     readonly ACCESS_KEY_MOUNT_LOCATION="${ACCESS_KEY_MOUNT_LOCATION:-/var/secrets/access-key}"
     readonly CONFIG_TEMPLATE_PATH="${CONFIG_TEMPLATE_PATH:-/etc/collector-cm/config-template.yaml}"
     readonly CONFIG_OUTPUT_PATH="${CONFIG_OUTPUT_PATH:-/etc/collector/config.yaml}"
+    readonly OAUTH2_TOKEN_URL="${OAUTH2_TOKEN_URL:-https://auth.miggo.io/oauth2/v1/token}"
 
     # Validate environment
     validate_environment || {
@@ -456,43 +305,25 @@ main() {
         return 1
     }
 
-    # Make API request
-    local api_response
-    api_response=$(make_api_request "$CLIENT_ID" "$access_key") || {
-        log_error "API request failed"
+    # Authenticate via OAuth2 (client credentials). Obtaining a token is the
+    # fail-fast check that the access key is valid and the auth backend reachable.
+    local access_token
+    access_token=$(oauth2_get_token "$CLIENT_ID" "$access_key" "$OAUTH2_TOKEN_URL") || {
+        log_error "Failed to authenticate against ${OAUTH2_TOKEN_URL}"
         return 1
     }
 
-    # Extract JWT from response
-    local jwt
-    jwt=$(echo "$api_response" | jq -r '.sessionJwt // empty')
-    if [[ -z "$jwt" || "$jwt" == "null" ]]; then
-        log_error "Failed to extract sessionJwt from API response"
-        return 1
-    fi
-
-    # Decode JWT payload
+    # Best-effort: log the tenant/project carried by the token. Never fatal.
     local jwt_payload
-    jwt_payload=$(decode_jwt_payload "$jwt") || {
-        log_error "Failed to decode JWT payload"
-        return 1
-    }
-
-    # Extract tenant information
-    extract_tenant_info "$jwt_payload" || {
-        log_error "Failed to extract tenant information"
-        return 1
-    }
+    if jwt_payload=$(decode_jwt_payload "$access_token"); then
+        extract_tenant_info "$jwt_payload"
+    else
+        log_warn "Could not decode token payload; skipping tenant/project log"
+    fi
 
     # Generate configuration file
     generate_config || {
         log_error "Failed to generate configuration file"
-        return 1
-    }
-
-    # Verify Backend health
-    check_connectivity || {
-        log_error "Backend unreachable"
         return 1
     }
 
