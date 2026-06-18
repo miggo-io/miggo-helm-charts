@@ -74,7 +74,7 @@ data:
     processors:
       metricstransform:
         transforms:
-          - include: miggocol_process_uptime_seconds_total
+          - include: miggocol_process_uptime
             match_type: strict
             new_name: miggo_component_status
             action: combine

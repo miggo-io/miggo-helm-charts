@@ -415,7 +415,7 @@ data:
     processors:
       metricstransform:
         transforms:
-          - include: miggocol_process_uptime_seconds_total
+          - include: miggocol_process_uptime
             match_type: strict
             new_name: miggo_component_status
             action: combine
@@ -425,7 +425,7 @@ data:
                 new_value: Miggo Collector
               - action: add_label
                 new_label: chart_version
-                new_value: 0.0.219
+                new_value: 0.0.220
 
       batch/metrics:
         timeout: 10s
