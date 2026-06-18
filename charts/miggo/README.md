@@ -77,7 +77,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | config.accessKey | string | `""` | Access key for authentication (ignored when accessKeySecret is specified) |
 | config.accessKeySecret | string | `""` | Name of the secret containing the access key. Leave empty to create default secrets based on config.accessKey |
 | config.allowedNamespaces | string | `nil` | List of namespaces that are allowed to be processed If empty, all namespaces are included by default (before applying deniedNamespaces) Example: ["development", "staging", "production"] |
-| config.apiUrl | string | `"https://api.miggo.io"` | Miggo API base URL used by sensor components for health checks and other API calls. Decoupled from collectorUrl so OTLP and API traffic can terminate at different hosts. Takes precedence over the deprecated output.api.apiEndpoint. |
+| config.apiUrl | string | `"https://api.miggo.io"` | OBSOLETE: no longer consumed. Sensor components no longer call the Miggo backend API directly (auth + attribution are handled by the SaaS collector via OAuth2/JWT). Kept for backward compatibility; setting it has no effect. |
 | config.authUrl | string | `"https://auth.miggo.io"` | Base URL for the authentication service (Descope) |
 | config.clientId | string | `"P2UjsJwOFdIeUAtW0pGTJ5SeJAlq"` | Client ID for authentication |
 | config.collectorUrl | string | `"https://collector.miggo.io"` | Upstream URL where the in-cluster miggo-collector forwards OTel data. Takes precedence over the deprecated output.otlp.otlpEndpoint. |
@@ -250,8 +250,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.volumes | list | `[]` | Additional volumes |
 | namespaceOverride | string | `""` | Override the namespace where resources are deployed. If not set, uses Release.Namespace |
 | nodeSelector | object | `{}` | Node selector for all pods |
-| output.api.apiEndpoint | string | `""` | Deprecated. Use config.apiUrl instead. Consulted only as a fallback when config.apiUrl is unset, for backward compatibility. |
-| output.api.enabled | bool | `true` | Decide whether to communicate with Miggo Api |
+| output.api.apiEndpoint | string | `""` | OBSOLETE: no longer consumed. |
+| output.api.enabled | bool | `true` | OBSOLETE: no longer consumed. |
 | output.otlp.otlpEndpoint | string | `""` | Deprecated. Use config.collectorUrl instead. Consulted only as a fallback when config.collectorUrl is unset, for backward compatibility. |
 | output.otlp.tlsSkipVerify | bool | `false` | Skip TLS verification |
 | output.stdout | bool | `false` | Enable stdout logging (for debugging) |
