@@ -77,6 +77,12 @@ jobs:
           sed -i "s/^appVersion:.*/appVersion: \"${{ inputs.app_version }}\"/" charts/miggo/Chart.yaml
           echo "chart_version=${CHART_VERSION}" >> "$GITHUB_OUTPUT"
 
+      - name: Copy default values for chart packaging
+        # Helm excludes values.yaml from .Files, so we keep a copy in files/ that the
+        # miggo-values-defaults ConfigMap template reads via .Files.Get. This step
+        # produces it at package time so it never needs to be committed.
+        run: cp charts/miggo/values.yaml charts/miggo/files/default-values.yaml
+
       - name: Run chart-releaser
         uses: ./.github/actions/helm-releaser
         with:
