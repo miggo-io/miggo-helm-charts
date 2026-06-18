@@ -1,4 +1,4 @@
-suite: endpoint configuration (config.collectorUrl, config.apiUrl, config.authUrl, legacy fallbacks)
+suite: endpoint configuration (config.collectorUrl, config.authUrl, legacy fallbacks)
 
 release:
   name: miggo
@@ -8,8 +8,6 @@ templates:
   - templates/miggo-collector/deployment.yaml
   - templates/miggo-collector/collector-config-cm.yaml
   - templates/miggo-watch/deployment.yaml
-  - templates/miggo-runtime/daemonset.yaml
-  - templates/miggo-runtime/fluent-bit-cm.yaml
 
 values:
   - values.yaml
@@ -26,42 +24,17 @@ tests:
             .*otlphttp:
               +traces_endpoint: https://collector\.miggo\.io/v1/traces
               +metrics_endpoint: https://collector\.miggo\.io/v1/metrics
-              +logs_endpoint: https://collector\.miggo\.io/v1/logs.*
-      - matchRegex:
-          path: data["config-template.yaml"]
-          pattern: |
-            .*otlphttp/profiles:
-              +endpoint: https://collector\.miggo\.io.*
+              +logs_endpoint: https://collector\.miggo\.io/v1/logs
+              +profiles_endpoint: https://collector\.miggo\.io/v1development/profiles.*
 
-  - it: should set API_HEALTH_URL from config.apiUrl default
+  - it: should set AUTH_BASE_URL from config.authUrl default
     template: templates/miggo-collector/deployment.yaml
     asserts:
-      - contains:
-          path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].env
-          content:
-            name: API_HEALTH_URL
-            value: https://api.miggo.io/health/status
-
-  - it: should set OAUTH2_TOKEN_URL and AUTH_BASE_URL from config.authUrl default
-    template: templates/miggo-collector/deployment.yaml
-    asserts:
-      - contains:
-          path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].env
-          content:
-            name: OAUTH2_TOKEN_URL
-            value: https://auth.miggo.io/oauth2/v1/token
       - contains:
           path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].env
           content:
             name: AUTH_BASE_URL
             value: https://auth.miggo.io
-
-  - it: should pass config.authUrl to the miggo-runtime container via --auth-url (authenticates without an api URL)
-    template: templates/miggo-runtime/daemonset.yaml
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
-          content: --auth-url=https://auth.miggo.io
 
   # ---------- Custom values: explicit overrides propagate ----------
 
@@ -77,12 +50,20 @@ tests:
             .*otlphttp:
               +traces_endpoint: https://my-collector\.example\.com/v1/traces
               +metrics_endpoint: https://my-collector\.example\.com/v1/metrics
-              +logs_endpoint: https://my-collector\.example\.com/v1/logs.*
-      - matchRegex:
-          path: data["config-template.yaml"]
-          pattern: |
-            .*otlphttp/profiles:
-              +endpoint: https://my-collector\.example\.com.*
+              +logs_endpoint: https://my-collector\.example\.com/v1/logs
+              +profiles_endpoint: https://my-collector\.example\.com/v1development/profiles.*
+
+  - it: should propagate custom config.authUrl to AUTH_BASE_URL
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      config:
+        authUrl: https://my-auth.example.com
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].env
+          content:
+            name: AUTH_BASE_URL
+            value: https://my-auth.example.com
 
   - it: should send sensor components to config.collectorUrl when miggoCollector disabled
     template: templates/miggo-watch/deployment.yaml
@@ -96,29 +77,7 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
           content: --otlp-endpoint=https://my-collector.example.com
 
-  - it: should propagate custom config.apiUrl to API_HEALTH_URL
-    template: templates/miggo-collector/deployment.yaml
-    set:
-      config:
-        apiUrl: https://my-api.example.com
-    asserts:
-      - contains:
-          path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].env
-          content:
-            name: API_HEALTH_URL
-            value: https://my-api.example.com/health/status
-
-  - it: should propagate custom config.authUrl to the miggo-runtime container --auth-url
-    template: templates/miggo-runtime/daemonset.yaml
-    set:
-      config:
-        authUrl: https://my-auth.example.com
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
-          content: --auth-url=https://my-auth.example.com
-
-  # ---------- Back-compat: legacy keys still honored as fallbacks ----------
+  # ---------- Back-compat: legacy collector endpoint still honored as fallback ----------
 
   - it: should fall back to output.otlp.otlpEndpoint when config.collectorUrl is unset
     template: templates/miggo-collector/collector-config-cm.yaml
@@ -134,21 +93,6 @@ tests:
           pattern: |
             .*otlphttp:
               +traces_endpoint: https://legacy-upstream\.example\.com/v1/traces.*
-
-  - it: should fall back to output.api.apiEndpoint when config.apiUrl is unset
-    template: templates/miggo-collector/deployment.yaml
-    set:
-      config:
-        apiUrl: ""
-      output:
-        api:
-          apiEndpoint: https://legacy-api.example.com
-    asserts:
-      - contains:
-          path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].env
-          content:
-            name: API_HEALTH_URL
-            value: https://legacy-api.example.com/health/status
 
   - it: new config.collectorUrl should win over legacy output.otlp.otlpEndpoint when both are set
     template: templates/miggo-collector/collector-config-cm.yaml
@@ -167,29 +111,3 @@ tests:
       - notMatchRegex:
           path: data["config-template.yaml"]
           pattern: legacy\.example\.com
-
-  # ---------- Regression guard on the mis-propagation bug ----------
-  # Customer overrides collector URL but leaves api URL at default.
-  # Previously this silently routed API calls through the collector URL;
-  # now apiUrl has its own default so the two stay independent.
-
-  - it: should NOT leak custom config.collectorUrl into API_HEALTH_URL
-    template: templates/miggo-collector/deployment.yaml
-    set:
-      config:
-        collectorUrl: https://custom-collector.example.com
-      output:
-        api:
-          apiEndpoint: ""
-    asserts:
-      - contains:
-          path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].env
-          content:
-            name: API_HEALTH_URL
-            value: https://api.miggo.io/health/status
-      - notContains:
-          path: spec.template.spec.initContainers[?(@.name == "collector-init-container")].env
-          content:
-            name: API_HEALTH_URL
-            value: https://custom-collector.example.com/health/status
-
