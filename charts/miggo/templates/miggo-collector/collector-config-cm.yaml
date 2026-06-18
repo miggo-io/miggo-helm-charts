@@ -49,10 +49,6 @@ data:
                   regex: 'otelcol_(.*)'
                   target_label: __name__
                   replacement: 'miggocol_$1'
-                - target_label: "tenant-id"
-                  replacement: "${MIGGO_TENANT_ID}"
-                - target_label: "project-id"
-                  replacement: "${MIGGO_PROJECT_ID}"
                 - target_label: "miggo-name"
                   replacement: "{{ .Values.miggo.clusterName }}"
                 - target_label: "node-name"
@@ -76,42 +72,6 @@ data:
           - {{ include "miggo.namespace" . }}
 
     processors:
-      resource:
-        attributes:
-          - key: project
-            value: "${MIGGO_PROJECT_ID}"
-            action: insert
-          - key: tenant
-            value: "${MIGGO_TENANT_ID}"
-            action: insert
-
-      attributes:
-        actions:
-          - key: project
-            value: "${MIGGO_PROJECT_ID}"
-            action: insert
-          - key: tenant
-            value: "${MIGGO_TENANT_ID}"
-            action: insert
-
-      resource/metrics:
-        attributes:
-          - key: project-id
-            value: "${MIGGO_PROJECT_ID}"
-            action: insert
-          - key: tenant-id
-            value: "${MIGGO_TENANT_ID}"
-            action: insert
-
-      attributes/metrics:
-        actions:
-          - key: project-id
-            value: "${MIGGO_PROJECT_ID}"
-            action: insert
-          - key: tenant-id
-            value: "${MIGGO_TENANT_ID}"
-            action: insert
-
       metricstransform:
         transforms:
           - include: miggocol_process_uptime_seconds_total
@@ -191,14 +151,9 @@ data:
         traces_endpoint: {{ include "collectorUrl" . }}/v1/traces
         metrics_endpoint: {{ include "collectorUrl" . }}/v1/metrics
         logs_endpoint: {{ include "collectorUrl" . }}/v1/logs
+        profiles_endpoint: {{ include "collectorUrl" . }}/v1development/profiles
         auth:
           authenticator: oauth2client
-      {{- if .Values.miggoRuntime.profiler.enabled }}
-      otlphttp/profiles:
-        endpoint: {{ include "collectorUrl" . }}
-        auth:
-          authenticator: oauth2client
-      {{- end }}
 
       {{- with .Values.miggoCollector.extraExporters }}
       {{- toYaml . | nindent 6 }}
@@ -239,7 +194,7 @@ data:
           receivers:
             - otlp
           exporters:
-            - otlphttp/profiles
+            - otlphttp
             {{- range .Values.miggoCollector.extraExporterNames }}
             - {{ . }}
             {{- end }}
@@ -249,8 +204,6 @@ data:
             - otlp
           processors:
             - batch/metrics
-            - resource/metrics
-            - attributes/metrics
             {{- range .Values.miggoCollector.extraProcessorNames }}
             - {{ . }}
             {{- end }}
@@ -267,8 +220,6 @@ data:
           processors:
             - batch/metrics
             - metricstransform
-            - resource/metrics
-            - attributes/metrics
             {{- range .Values.miggoCollector.extraProcessorNames }}
             - {{ . }}
             {{- end }}
@@ -285,8 +236,6 @@ data:
             - k8s_cluster
           processors:
             - batch/metrics
-            - resource/metrics
-            - attributes/metrics
             - transform/k8s_metric
             {{- range .Values.miggoCollector.extraProcessorNames }}
             - {{ . }}
@@ -303,8 +252,6 @@ data:
             - otlp
           processors:
             - batch/traces
-            - resource
-            - attributes
             {{- range .Values.miggoCollector.extraProcessorNames }}
             - {{ . }}
             {{- end }}
@@ -319,8 +266,6 @@ data:
             - otlp
           processors:
             - batch/logs
-            - resource
-            - attributes
             {{- range .Values.miggoCollector.extraProcessorNames }}
             - {{ . }}
             {{- end }}
@@ -337,8 +282,6 @@ data:
             - filter/self-logs
             - transform/collector-self-logs
             - batch/logs
-            - resource
-            - attributes
             {{- range .Values.miggoCollector.extraProcessorNames }}
             - {{ . }}
             {{- end }}

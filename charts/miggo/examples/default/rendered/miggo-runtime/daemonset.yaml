@@ -6,7 +6,7 @@ metadata:
   name: example-runtime
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.218
+    helm.sh/chart: miggo-0.0.219
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
     app.kubernetes.io/version: "v26.617.1"
@@ -23,7 +23,7 @@ spec:
         checksum/config: 6ed877707581906ad34573544b36de695bd4e68848d208fc2a19372f691cdd49
       labels:
         component: miggo-runtime
-        helm.sh/chart: miggo-0.0.218
+        helm.sh/chart: miggo-0.0.219
         app.kubernetes.io/name: miggo-runtime
         app.kubernetes.io/instance: example
         app.kubernetes.io/version: "v26.617.1"
@@ -52,8 +52,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.218
-            - --auth-url=https://auth.miggo.io
+            - --chart-version=0.0.219
             - --disable-profiler=false
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
@@ -75,14 +74,6 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
-          - name: MIGGO_RUNTIME_CLIENT_ID
-            value: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
-          
-          - name: MIGGO_RUNTIME_ACCESS_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: access-key-secret
-                key: ACCESS_KEY
           - name: KUBERNETES_CLUSTER_DOMAIN
             value: 
           ports:

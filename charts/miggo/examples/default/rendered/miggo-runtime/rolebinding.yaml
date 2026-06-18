@@ -5,7 +5,7 @@ kind: ClusterRoleBinding
 metadata:
   name: example-pod-watcher-crb
   labels:
-    helm.sh/chart: miggo-0.0.218
+    helm.sh/chart: miggo-0.0.219
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
     app.kubernetes.io/version: "v26.617.1"
