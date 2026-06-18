@@ -19,9 +19,8 @@
 #    client-credentials flow against the auth service. A successful exchange is the fail-fast check
 #    that the credentials are valid and the auth backend is reachable.
 #
-# 4. **Tenant/Project Logging (best-effort):** Decodes the token payload and logs the tenant and
-#    project for operator visibility. Tenant/project are enriched on the resource by the SaaS
-#    collector, so this is informational only and never blocks startup.
+# 4. **Tenant Information Extraction:** Decodes the OAuth2 token payload and extracts the tenant
+#    and project identifiers, logging them. Aborts startup if either is missing or invalid.
 #
 # 5. **Configuration Generation:** Renders the collector configuration template to its final path
 #    (no tenant/project substitution is required).
@@ -50,7 +49,6 @@ log() {
 }
 
 log_error() { log "ERROR" "$@"; }
-log_warn() { log "WARN " "$@"; }
 log_info() {
     [[ "${LOG_LEVEL}" == "INFO" || "${LOG_LEVEL}" == "DEBUG" ]] && log "INFO " "$@" || true
 }
@@ -168,23 +166,34 @@ decode_jwt_payload() {
 extract_tenant_info() {
     local jwt_payload="$1"
 
-    # Tenant/project are enriched on the resource by the SaaS collector. These
-    # are logged for operator visibility only and never block startup.
-    local project_id tenant_id
+    log_info "Extracting tenant information from token payload"
+
+    local project_id
     project_id=$(echo "$jwt_payload" | jq -r '.project_id // empty')
-    tenant_id=$(echo "$jwt_payload" | jq -r '.tenants // {} | keys[0] // empty')
-
-    if [[ -n "$project_id" ]]; then
-        log_info "Project ID: $project_id"
-    else
-        log_warn "project_id not present in token"
+    if [[ -z "$project_id" || "$project_id" == "null" ]]; then
+        log_error "Failed to extract project_id from token payload"
+        return 1
     fi
 
-    if [[ -n "$tenant_id" ]]; then
-        log_info "Tenant ID: $tenant_id"
-    else
-        log_warn "tenant id not present in token"
+    local tenants_json
+    tenants_json=$(echo "$jwt_payload" | jq '.tenants // {}')
+
+    local tenant_count
+    tenant_count=$(echo "$tenants_json" | jq 'keys | length')
+    if [[ "$tenant_count" -eq 0 ]]; then
+        log_error "No tenants found in token payload"
+        return 1
     fi
+
+    local tenant_id
+    tenant_id=$(echo "$tenants_json" | jq -r 'keys[0] // empty')
+    if [[ -z "$tenant_id" || "$tenant_id" == "null" ]]; then
+        log_error "Failed to extract tenant_id from token payload"
+        return 1
+    fi
+
+    log_info "Project ID: $project_id"
+    log_info "Tenant ID: $tenant_id"
 
     return 0
 }
@@ -313,13 +322,18 @@ main() {
         return 1
     }
 
-    # Best-effort: log the tenant/project carried by the token. Never fatal.
+    # Decode the token and extract tenant/project; abort if either is missing
+    # or invalid.
     local jwt_payload
-    if jwt_payload=$(decode_jwt_payload "$access_token"); then
-        extract_tenant_info "$jwt_payload"
-    else
-        log_warn "Could not decode token payload; skipping tenant/project log"
-    fi
+    jwt_payload=$(decode_jwt_payload "$access_token") || {
+        log_error "Failed to decode token payload"
+        return 1
+    }
+
+    extract_tenant_info "$jwt_payload" || {
+        log_error "Failed to extract tenant information"
+        return 1
+    }
 
     # Generate configuration file
     generate_config || {
