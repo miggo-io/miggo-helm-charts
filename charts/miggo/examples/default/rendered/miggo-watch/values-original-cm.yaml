@@ -1,0 +1,13 @@
+---
+# Source: miggo/templates/miggo-watch/values-original-cm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: miggo-values-defaults
+  namespace: default
+data:
+  defaults.yaml: |
+    
+    
+
+

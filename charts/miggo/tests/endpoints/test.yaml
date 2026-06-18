@@ -56,20 +56,6 @@ tests:
             name: AUTH_BASE_URL
             value: https://auth.miggo.io
 
-  - it: should pass config.apiUrl to miggo-watch via --api-url
-    template: templates/miggo-watch/deployment.yaml
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
-          content: --api-url=https://api.miggo.io
-
-  - it: should pass config.authUrl to miggo-watch via --auth-url
-    template: templates/miggo-watch/deployment.yaml
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
-          content: --auth-url=https://auth.miggo.io
-
   - it: should pass config.authUrl to the miggo-runtime container via --auth-url (authenticates without an api URL)
     template: templates/miggo-runtime/daemonset.yaml
     asserts:
@@ -121,26 +107,6 @@ tests:
           content:
             name: API_HEALTH_URL
             value: https://my-api.example.com/health/status
-
-  - it: should propagate custom config.apiUrl to miggo-watch --api-url
-    template: templates/miggo-watch/deployment.yaml
-    set:
-      config:
-        apiUrl: https://my-api.example.com
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
-          content: --api-url=https://my-api.example.com
-
-  - it: should propagate custom config.authUrl to miggo-watch --auth-url
-    template: templates/miggo-watch/deployment.yaml
-    set:
-      config:
-        authUrl: https://my-auth.example.com
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
-          content: --auth-url=https://my-auth.example.com
 
   - it: should propagate custom config.authUrl to the miggo-runtime container --auth-url
     template: templates/miggo-runtime/daemonset.yaml
@@ -227,15 +193,3 @@ tests:
             name: API_HEALTH_URL
             value: https://custom-collector.example.com/health/status
 
-  - it: should NOT leak custom config.collectorUrl into miggo-watch --api-url
-    template: templates/miggo-watch/deployment.yaml
-    set:
-      config:
-        collectorUrl: https://custom-collector.example.com
-      output:
-        api:
-          apiEndpoint: ""
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
-          content: --api-url=https://api.miggo.io

@@ -27,3 +27,5 @@ roleRef:
   kind: Role
   name: miggo-scanner-role
   apiGroup: rbac.authorization.k8s.io
+
+

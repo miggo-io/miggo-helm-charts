@@ -1,0 +1,263 @@
+---
+# Source: miggo/templates/miggo-watch/values-rendered-cm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: miggo-values-rendered
+  namespace: default
+data:
+  rendered.yaml: |
+    
+    affinity: {}
+    annotations: {}
+    config:
+      accessKey: replace-with-your-access-key
+      accessKeySecret: ""
+      apiUrl: https://api.miggo.io
+      authUrl: https://auth.miggo.io
+      clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
+      collectorUrl: https://collector.miggo.io
+      includeSystemNamespaces: false
+      metrics:
+        interval: 60s
+      platform: ""
+    extraEnvs: []
+    extraEnvsFrom: []
+    healthcheck:
+      port: 6666
+    image:
+      pullPolicy: IfNotPresent
+      registry: registry.miggo.io
+    imagePullSecrets: []
+    labels: {}
+    manageSecurityContext: true
+    miggo:
+      clusterName: my-cluster
+    miggoCollector:
+      accessKeyMountLocation: /etc/miggo-access-key
+      annotations: {}
+      config:
+        internalLogVerbosity: INFO
+        logVerbosity: basic
+      enabled: true
+      extraEnvs: []
+      extraEnvsFrom: []
+      extraExporterNames: []
+      extraExporters: {}
+      extraExtensionNames: []
+      extraExtensions: {}
+      extraPipelines: {}
+      extraProcessorNames: []
+      extraProcessors: {}
+      image:
+        repository: miggo/miggo-collector
+      initContainers: []
+      instancePerNode: false
+      labels: {}
+      nodeSelector:
+        kubernetes.io/os: linux
+      podAnnotations: {}
+      podLabels: {}
+      priorityClassName: ""
+      probes:
+        failureThreshold: ""
+        timeoutSeconds: ""
+      replicas: 1
+      resources:
+        limits:
+          cpu: 100m
+          memory: 500Mi
+        requests:
+          cpu: 10m
+          memory: 200Mi
+      service:
+        annotations: {}
+        labels: {}
+        ports:
+        - name: http
+          port: 4318
+          protocol: TCP
+          targetPort: 4318
+        - name: grpc
+          port: 4317
+          protocol: TCP
+          targetPort: 4317
+        type: ClusterIP
+      useGOMEMLIMIT: true
+      volumeMounts: []
+      volumes: []
+    miggoRuntime:
+      affinity: {}
+      cgroupRegistryCleanInterval: 1h
+      cgroupRegistrySyncInterval: 1m
+      enableFileAccessTracing: false
+      enableNetworkTracing: false
+      enableWebAppProcessDetection: true
+      enabled: true
+      extraEnvs: []
+      extraEnvsFrom: []
+      fluentbit:
+        enabled: true
+        image:
+          repository: fluent/fluent-bit
+          tag: "5.0"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
+      hostIPC: true
+      hostPID: true
+      image:
+        repository: miggo/miggo-runtime
+      kubernetesClusterDomain: ""
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: ""
+      probes:
+        failureThreshold: ""
+        timeoutSeconds: ""
+      profiler:
+        dotnet: {}
+        enableNamespaceFiltering: true
+        enabled: true
+        enabledTracers:
+        - perl
+        - php
+        - python
+        - hotspot
+        - v8
+        - go
+        image:
+          repository: miggo/miggo-profiler
+        monitorInterval: 5s
+        probabilisticInterval: 1m0s
+        probabilisticThreshold: 100
+        reporterInterval: 5s
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 512Mi
+        samplesPerSecond: 20
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_ADMIN
+          privileged: true
+        useGOMEMLIMIT: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 512Mi
+      securityContext:
+        privileged: true
+      tolerations: []
+      useGOMEMLIMIT: true
+      volumeMounts: []
+      volumes: []
+    miggoScanner:
+      annotations: {}
+      config:
+        cache:
+          configMap:
+            enabled: true
+            name: ""
+          flushInterval: 168h
+          maxEntries: 10000
+        disableCompression: false
+        queueSize: 10000
+      enabled: true
+      extraEnvs: []
+      extraEnvsFrom: []
+      image:
+        repository: miggo/miggo-scanner
+      imagePullSecretScanning:
+        enabled: true
+      labels: {}
+      nodeSelector:
+        kubernetes.io/os: linux
+      podAnnotations: {}
+      podLabels: {}
+      probes:
+        failureThreshold: ""
+        timeoutSeconds: ""
+      registryCredentials:
+        secretName: ""
+      resources:
+        limits:
+          cpu: 3000m
+          memory: 4Gi
+        requests:
+          cpu: 1000m
+          memory: 2Gi
+      serviceAccount:
+        annotations: {}
+      useGOMEMLIMIT: true
+      volumeMounts: []
+      volumes: []
+    miggoWatch:
+      annotations: {}
+      config:
+        disableCompression: false
+        exclude: pod,replica-set
+        imageTrackerInterval: 1h
+        interval: 1h
+      enabled: true
+      extraEnvs: []
+      extraEnvsFrom: []
+      image:
+        repository: miggo/miggo-watch
+      labels: {}
+      nodeSelector:
+        kubernetes.io/os: linux
+      podAnnotations: {}
+      podLabels: {}
+      probes:
+        failureThreshold: ""
+        timeoutSeconds: ""
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 10m
+          memory: 256Mi
+      useGOMEMLIMIT: true
+      volumeMounts: []
+      volumes: []
+    namespaceOverride: ""
+    nodeSelector: {}
+    output:
+      api:
+        apiEndpoint: ""
+        enabled: true
+      otlp:
+        otlpEndpoint: ""
+        tlsSkipVerify: false
+      stdout: false
+    podAnnotations: {}
+    podLabels: {}
+    podSecurityContext: {}
+    priorityClassName: ""
+    probes:
+      failureThreshold: 5
+      timeoutSeconds: 10
+    securityContext: {}
+    serviceAccount:
+      annotations: {}
+      automount: true
+      name: ""
+    tolerations: []
+    volumeMounts: []
+    volumes: []
+
+

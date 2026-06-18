@@ -6,10 +6,10 @@ metadata:
   name: example-watch
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.213
+    helm.sh/chart: miggo-0.0.218
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.610.1"
+    app.kubernetes.io/version: "v26.617.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -21,12 +21,13 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/values: 1340781c178920c063a0db3c7f46bf0f746116d7237cb3c59ddd45fc41a48c86
       labels:
         component: miggo-watch
-        helm.sh/chart: miggo-0.0.213
+        helm.sh/chart: miggo-0.0.218
         app.kubernetes.io/name: miggo-watch
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.610.1"
+        app.kubernetes.io/version: "v26.617.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -39,7 +40,7 @@ spec:
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
-          image: "registry.miggo.io/miggo/miggo-watch:v26.610.1"
+          image: "registry.miggo.io/miggo/miggo-watch:v26.617.1"
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
@@ -51,17 +52,15 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.213
+            - --chart-version=0.0.218
             - --interval=1h
             - --image-tracker-interval=1h
             - --exclude=pod,replica-set
             
             - --include-system-namespaces=false
             - --denied-namespaces=default
-            
-            - --api-url=https://api.miggo.io
-            - --auth-url=https://auth.miggo.io
-            
+            - --original-sensor-helm-values=/etc/miggo/values/defaults.yaml
+            - --rendered-sensor-helm-values=/etc/miggo/values/rendered.yaml
           envFrom:
           env:
             - name: MIGGO_WATCH_NODE_NAME
@@ -72,16 +71,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-          
-            - name: MIGGO_WATCH_CLIENT_ID
-              value: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
-            
-            - name: MIGGO_WATCH_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: access-key-secret
-                  key: ACCESS_KEY
-          
             - name: GOMEMLIMIT
               value: "204MiB"
           ports:
@@ -108,6 +97,20 @@ spec:
               cpu: 10m
               memory: 256Mi
           volumeMounts:
+          - name: miggo-values-rendered
+            mountPath: /etc/miggo/values/rendered.yaml
+            subPath: rendered.yaml
+          - name: miggo-values-defaults
+            mountPath: /etc/miggo/values/defaults.yaml
+            subPath: defaults.yaml
       volumes:
+      - name: miggo-values-rendered
+        configMap:
+          name: miggo-values-rendered
+      - name: miggo-values-defaults
+        configMap:
+          name: miggo-values-defaults
       nodeSelector:
         kubernetes.io/os: linux
+
+
