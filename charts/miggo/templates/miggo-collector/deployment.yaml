@@ -89,8 +89,8 @@ spec:
               value: {{ .Values.config.clientId }}
             - name: ACCESS_KEY_MOUNT_LOCATION
               value: {{ .Values.miggoCollector.accessKeyMountLocation }}
-            - name: OAUTH2_TOKEN_URL
-              value: {{ .Values.config.authUrl }}/oauth2/v1/token
+            - name: AUTH_BASE_URL
+              value: {{ .Values.config.authUrl }}
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}

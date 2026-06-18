@@ -76,7 +76,7 @@ validate_environment() {
         "ACCESS_KEY_MOUNT_LOCATION"
         "CONFIG_TEMPLATE_PATH"
         "CONFIG_OUTPUT_PATH"
-        "OAUTH2_TOKEN_URL"
+        "AUTH_BASE_URL"
     )
 
     for var in "${required_vars[@]}"; do
@@ -168,6 +168,7 @@ extract_tenant_info() {
 
     log_info "Extracting tenant information from token payload"
 
+    # Claim names match the gateway's JWT mapping: tenant = "dct", project = "project_id".
     local project_id
     project_id=$(echo "$jwt_payload" | jq -r '.project_id // empty')
     if [[ -z "$project_id" || "$project_id" == "null" ]]; then
@@ -175,20 +176,10 @@ extract_tenant_info() {
         return 1
     fi
 
-    local tenants_json
-    tenants_json=$(echo "$jwt_payload" | jq '.tenants // {}')
-
-    local tenant_count
-    tenant_count=$(echo "$tenants_json" | jq 'keys | length')
-    if [[ "$tenant_count" -eq 0 ]]; then
-        log_error "No tenants found in token payload"
-        return 1
-    fi
-
     local tenant_id
-    tenant_id=$(echo "$tenants_json" | jq -r 'keys[0] // empty')
+    tenant_id=$(echo "$jwt_payload" | jq -r '.dct // empty')
     if [[ -z "$tenant_id" || "$tenant_id" == "null" ]]; then
-        log_error "Failed to extract tenant_id from token payload"
+        log_error "Failed to extract tenant id (dct) from token payload"
         return 1
     fi
 
@@ -299,7 +290,7 @@ main() {
     readonly ACCESS_KEY_MOUNT_LOCATION="${ACCESS_KEY_MOUNT_LOCATION:-/var/secrets/access-key}"
     readonly CONFIG_TEMPLATE_PATH="${CONFIG_TEMPLATE_PATH:-/etc/collector-cm/config-template.yaml}"
     readonly CONFIG_OUTPUT_PATH="${CONFIG_OUTPUT_PATH:-/etc/collector/config.yaml}"
-    readonly OAUTH2_TOKEN_URL="${OAUTH2_TOKEN_URL:-https://auth.miggo.io/oauth2/v1/token}"
+    readonly AUTH_BASE_URL="${AUTH_BASE_URL:-https://auth.miggo.io}"
 
     # Validate environment
     validate_environment || {
@@ -317,8 +308,9 @@ main() {
     # Authenticate via OAuth2 (client credentials). Obtaining a token is the
     # fail-fast check that the access key is valid and the auth backend reachable.
     local access_token
-    access_token=$(oauth2_get_token "$CLIENT_ID" "$access_key" "$OAUTH2_TOKEN_URL") || {
-        log_error "Failed to authenticate against ${OAUTH2_TOKEN_URL}"
+    local token_url="${AUTH_BASE_URL}/oauth2/v1/token"
+    access_token=$(oauth2_get_token "$CLIENT_ID" "$access_key" "$token_url") || {
+        log_error "Failed to authenticate against ${token_url}"
         return 1
     }
 
