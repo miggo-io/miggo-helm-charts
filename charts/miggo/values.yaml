@@ -46,10 +46,9 @@ config:
   # Takes precedence over the deprecated output.otlp.otlpEndpoint.
   collectorUrl: "https://collector.miggo.io"
 
-  # -- Miggo API base URL used by sensor components for health checks and
-  # other API calls. Decoupled from collectorUrl so OTLP and API traffic can
-  # terminate at different hosts. Takes precedence over the deprecated
-  # output.api.apiEndpoint.
+  # -- OBSOLETE: no longer consumed. Sensor components no longer call the Miggo
+  # backend API directly (auth + attribution are handled by the SaaS collector
+  # via OAuth2/JWT). Kept for backward compatibility; setting it has no effect.
   apiUrl: "https://api.miggo.io"
 
   # -- Access key for authentication (ignored when accessKeySecret is specified)
@@ -85,11 +84,13 @@ output:
     # -- Skip TLS verification
     tlsSkipVerify: false
 
+  # OBSOLETE: sensor components no longer call the Miggo backend API (auth +
+  # attribution are handled by the SaaS collector via OAuth2/JWT). These fields
+  # are no longer consumed; kept for backward compatibility, setting them has no effect.
   api:
-    # -- Decide whether to communicate with Miggo Api
+    # -- OBSOLETE: no longer consumed.
     enabled: true
-    # -- Deprecated. Use config.apiUrl instead. Consulted only as a fallback
-    # when config.apiUrl is unset, for backward compatibility.
+    # -- OBSOLETE: no longer consumed.
     apiEndpoint: ""
 
 serviceAccount:
