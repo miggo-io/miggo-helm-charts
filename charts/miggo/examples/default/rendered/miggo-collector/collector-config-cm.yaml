@@ -415,9 +415,6 @@ data:
     processors:
       metricstransform:
         transforms:
-          # Heartbeat source: otelcol's internal uptime metric, exposed as
-          # otelcol_process_uptime and relabeled to miggocol_process_uptime.
-          # Re-verify this name when bumping the collector — otelcol may rename it.
           - include: miggocol_process_uptime
             match_type: strict
             new_name: miggo_component_status

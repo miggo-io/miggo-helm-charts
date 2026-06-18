@@ -23,7 +23,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 4f06e93d093ad6a4f5ca4629801b39d42d21305c9439dc04e7989060c76391e2
+        checksum/config: 1de8c48c3e2d211ac2b3b4111a5e6707206476b14c83986e722cc4ba224c0523
       labels:
         component: collector
         miggo.io/app: example-collector
