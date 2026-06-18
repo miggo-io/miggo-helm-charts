@@ -1,0 +1,10 @@
+{{ if .Values.miggoWatch.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: miggo-values-defaults
+  namespace: {{ include "miggo.namespace" . }}
+data:
+  defaults.yaml: |
+    {{ .Files.Get "files/default-values.yaml" | nindent 4 }}
+{{ end }}

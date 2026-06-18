@@ -27,6 +27,7 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/values: {{ .Values | toYaml | sha256sum }}
         {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
@@ -83,6 +84,8 @@ spec:
             - --disable-compression
             {{ end }}
             {{- include "namespace.flags" . | nindent 12 }}
+            - --original-sensor-helm-values=/etc/miggo/values/defaults.yaml
+            - --rendered-sensor-helm-values=/etc/miggo/values/rendered.yaml
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
@@ -128,6 +131,12 @@ spec:
           resources:
             {{- toYaml .Values.miggoWatch.resources | nindent 12 }}
           volumeMounts:
+          - name: miggo-values-rendered
+            mountPath: /etc/miggo/values/rendered.yaml
+            subPath: rendered.yaml
+          - name: miggo-values-defaults
+            mountPath: /etc/miggo/values/defaults.yaml
+            subPath: defaults.yaml
           {{- with .Values.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
@@ -135,6 +144,12 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
       volumes:
+      - name: miggo-values-rendered
+        configMap:
+          name: miggo-values-rendered
+      - name: miggo-values-defaults
+        configMap:
+          name: miggo-values-defaults
       {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}

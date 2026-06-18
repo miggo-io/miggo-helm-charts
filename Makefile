@@ -46,6 +46,15 @@ check-examples:
 				echo "Passed $${example}"; \
 			else \
 				echo "Failed $${example}. run 'make generate-examples' to re-render the example with the latest $${example}/values.yaml"; \
+				diff -r "$${EXAMPLES_DIR}/$${example}/rendered" "${TMP_DIRECTORY}/$${example}/$${chart_name}/templates"; \
+				echo "--- committed values-original-cm.yaml ---"; \
+				cat "$${EXAMPLES_DIR}/$${example}/rendered/miggo-watch/values-original-cm.yaml" 2>/dev/null || echo "(not found)"; \
+				echo "--- generated values-original-cm.yaml ---"; \
+				cat "${TMP_DIRECTORY}/$${example}/$${chart_name}/templates/miggo-watch/values-original-cm.yaml" 2>/dev/null || echo "(not found)"; \
+				echo "--- committed values-rendered-cm.yaml ---"; \
+				cat "$${EXAMPLES_DIR}/$${example}/rendered/miggo-watch/values-rendered-cm.yaml" 2>/dev/null || echo "(not found)"; \
+				echo "--- generated values-rendered-cm.yaml ---"; \
+				cat "${TMP_DIRECTORY}/$${example}/$${chart_name}/templates/miggo-watch/values-rendered-cm.yaml" 2>/dev/null || echo "(not found)"; \
 				rm -rf ${TMP_DIRECTORY}; \
 				exit 1; \
 			fi; \
