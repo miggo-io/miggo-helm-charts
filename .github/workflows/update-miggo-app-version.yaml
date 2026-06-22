@@ -39,7 +39,7 @@ jobs:
           repositories: "miggo-helm-charts"
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: miggo-io/miggo-helm-charts
           show-progress: false
