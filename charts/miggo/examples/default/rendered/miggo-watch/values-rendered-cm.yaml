@@ -168,6 +168,7 @@ data:
       annotations: {}
       config:
         cache:
+          cleanupInterval: 1h
           configMap:
             enabled: true
             name: ""
