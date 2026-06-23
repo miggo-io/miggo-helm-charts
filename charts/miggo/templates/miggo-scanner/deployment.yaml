@@ -81,6 +81,7 @@ spec:
             - --disable-compression
             {{ end }}
             - --cache-flush-interval={{ .Values.miggoScanner.config.cache.flushInterval }}
+            - --cache-cleanup-interval={{ .Values.miggoScanner.config.cache.cleanupInterval }}
             - --cache-size={{ .Values.miggoScanner.config.cache.maxEntries }}
             {{ if .Values.miggoScanner.config.cache.configMap.enabled }}
             - --cache-cm-name={{ include "miggo-scanner.configMapCacheName" . }}

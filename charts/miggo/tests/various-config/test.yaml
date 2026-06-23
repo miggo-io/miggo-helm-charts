@@ -46,6 +46,9 @@ tests:
           content: --cache-flush-interval=1m
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --cache-cleanup-interval=30m
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
           content: --cache-cm-name=test
 
   - it: miggo-runtime config

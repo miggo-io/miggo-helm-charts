@@ -20,6 +20,7 @@ miggoScanner:
     disableCompression: true
     cache:
       flushInterval: "1m"
+      cleanupInterval: "30m"
       maxEntries: 1234
       configMap:
         enabled: true
