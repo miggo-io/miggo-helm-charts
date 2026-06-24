@@ -268,7 +268,7 @@ miggoScanner:
       # -- Max age of a cache entry before it is removed (0 to disable)
       flushInterval: "168h"
       # -- How often to scan and remove stale cache entries (0 to disable)
-      cleanupInterval: "1h"
+      cleanupInterval: "15m"
       # -- Maximum number of entries in cache
       maxEntries: 10000
 
