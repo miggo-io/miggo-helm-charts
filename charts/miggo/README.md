@@ -194,7 +194,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
 | miggoRuntime.volumes | list | `[]` |  |
 | miggoScanner.annotations | object | `{}` | Component-specific annotations |
-| miggoScanner.config.cache.cleanupInterval | string | `"1h"` | How often to scan and remove stale cache entries (0 to disable) |
+| miggoScanner.config.cache.cleanupInterval | string | `"15m"` | How often to scan and remove stale cache entries (0 to disable) |
 | miggoScanner.config.cache.configMap.enabled | bool | `true` | Enable persisted ConfigMap based cache |
 | miggoScanner.config.cache.configMap.name | string | `""` | Name of the ConfigMap (generated if not set) |
 | miggoScanner.config.cache.flushInterval | string | `"168h"` | Max age of a cache entry before it is removed (0 to disable) |
