@@ -37,7 +37,7 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout final state
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
