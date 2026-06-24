@@ -6,10 +6,10 @@ metadata:
   name: example-collector
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.220
+    helm.sh/chart: miggo-0.0.222
     app.kubernetes.io/name: miggo-collector
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.617.1"
+    app.kubernetes.io/version: "v26.618.6"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,14 +23,14 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 1de8c48c3e2d211ac2b3b4111a5e6707206476b14c83986e722cc4ba224c0523
+        checksum/config: 2f500154f840691b3184076457edaa233fe5c1bf8e6dff82b125c0cabe4b3fd7
       labels:
         component: collector
         miggo.io/app: example-collector
-        helm.sh/chart: miggo-0.0.220
+        helm.sh/chart: miggo-0.0.222
         app.kubernetes.io/name: miggo-collector
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.617.1"
+        app.kubernetes.io/version: "v26.618.6"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -41,7 +41,7 @@ spec:
       serviceAccountName: example-collector
       initContainers:
         - name: collector-init-container
-          image: "registry.miggo.io/miggo/miggo-collector:v26.617.1"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.618.6"
           securityContext:
             runAsGroup: 65532
             runAsNonRoot: true
@@ -75,7 +75,7 @@ spec:
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
-          image: "registry.miggo.io/miggo/miggo-collector:v26.617.1"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.618.6"
           imagePullPolicy: IfNotPresent
           args:
             - --config
