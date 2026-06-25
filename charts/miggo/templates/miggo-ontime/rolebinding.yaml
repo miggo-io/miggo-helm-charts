@@ -1,0 +1,34 @@
+{{- if .Values.miggoOntime.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "miggo.fullname" . }}-ontime-pod-watcher-crb
+  labels:
+  {{- include "miggo.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "miggo.fullname" . }}-ontime-pod-watcher-cr
+subjects:
+- kind: ServiceAccount
+  name: {{ include "miggo.fullname" . }}-ontime
+  namespace: '{{ include "miggo.namespace" . }}'
+{{- end }}
+
+{{- if and .Values.miggoOntime.enabled (eq .Values.config.platform "openshift") }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "miggo.fullname" . }}-ontime-scc-privileged
+  labels:
+  {{- include "miggo.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "miggo.fullname" . }}-ontime-scc-privileged
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "miggo.fullname" . }}-ontime
+    namespace: '{{ include "miggo.namespace" . }}'
+{{- end }}

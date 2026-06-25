@@ -1,0 +1,182 @@
+{{ if .Values.miggoOntime.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "miggo.fullname" . }}-ontime
+  namespace: {{ include "miggo.namespace" . }}
+  labels:
+    {{- include "miggo.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+    {{- with .Values.miggoOntime.labels }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+  annotations:
+  {{- with .Values.annotations }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with .Values.miggoOntime.annotations }}
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+    {{- include "miggoOntime.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/miggo-ontime/config-cm.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with .Values.miggoOntime.podAnnotations }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      labels:
+        component: miggo-ontime
+        {{- include "miggoOntime.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with .Values.miggoOntime.podLabels }}
+        {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+    spec:
+      imagePullSecrets:
+        {{- with .Values.imagePullSecrets }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- include "miggoImagePullSecrets" . | nindent 8 }}
+      serviceAccountName: {{ include "miggo.serviceAccountName" . }}-ontime
+      {{- with (include "miggo.podSecurityContext.runtime" .) }}
+      securityContext:
+        {{- . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: miggo-ontime
+          securityContext:
+            {{- toYaml .Values.miggoOntime.securityContext | nindent 12 }}
+          {{- if .Values.miggoOntime.image.fullPath }}
+          image: "{{ .Values.miggoOntime.image.fullPath }}"
+          {{- else }}
+          image: "{{ .Values.image.registry }}/{{ .Values.miggoOntime.image.repository }}:{{ .Values.miggoOntime.image.tag | default "latest" }}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.miggoOntime.image.pullPolicy | default .Values.image.pullPolicy }}
+          args:
+            - --config
+            - /etc/ontime/config.yaml
+          {{- range $key, $value := .Values.miggoOntime.extraArgs }}
+            {{- if kindIs "invalid" $value }}
+            - --{{ $key }}
+            {{- else }}
+            - --{{ $key }}={{ $value }}
+            {{- end }}
+          {{- end }}
+          envFrom:
+          {{- with .Values.extraEnvsFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.miggoOntime.extraEnvsFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          env:
+          - name: MIGGO_ONTIME_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          {{- with .Values.extraEnvs }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.miggoOntime.extraEnvs }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- if .Values.miggoOntime.health.enabled }}
+          # OnTime's health server binds 127.0.0.1:8082, so kubelet httpGet (pod IP)
+          # can't reach it — use an exec probe inside the container (Alpine ships wget).
+          # Swap to httpGet once miggo-ontime can bind the health server externally.
+          livenessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "wget -q -O- http://127.0.0.1:8082/health >/dev/null 2>&1"]
+            periodSeconds: 10
+            timeoutSeconds: {{ .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.failureThreshold }}
+          readinessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "wget -q -O- http://127.0.0.1:8082/health >/dev/null 2>&1"]
+            periodSeconds: 10
+            timeoutSeconds: {{ .Values.probes.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.failureThreshold }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.miggoOntime.resources | nindent 12 }}
+          volumeMounts:
+          - name: ontime-config
+            mountPath: /etc/ontime
+            readOnly: true
+          - name: debugfs
+            mountPath: /sys/kernel/debug
+            readOnly: true
+          - name: tracefs
+            mountPath: /sys/kernel/tracing
+            readOnly: true
+          - name: cgroupfs
+            mountPath: /cgroup
+            readOnly: true
+          {{- with .Values.volumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.miggoOntime.volumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+      hostIPC: {{ .Values.miggoOntime.hostIPC }}
+      hostPID: {{ .Values.miggoOntime.hostPID }}
+      volumes:
+      - name: ontime-config
+        configMap:
+          name: {{ include "miggo.fullname" . }}-ontime-config
+      - name: debugfs
+        hostPath:
+          path: /sys/kernel/debug
+      - name: tracefs
+        hostPath:
+          path: /sys/kernel/tracing
+      - name: cgroupfs
+        hostPath:
+          path: /sys/fs/cgroup
+      {{- with .Values.volumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.miggoOntime.volumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      nodeSelector:
+      {{- with .Values.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.miggoOntime.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.affinity .Values.miggoOntime.affinity }}
+      affinity:
+        {{- with .Values.affinity }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.miggoOntime.affinity }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- if or .Values.tolerations .Values.miggoOntime.tolerations }}
+      tolerations:
+        {{- with .Values.tolerations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.miggoOntime.tolerations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- end }}
+      {{- $priorityClassName := .Values.miggoOntime.priorityClassName | default .Values.priorityClassName | default "system-node-critical" }}
+      {{- if $priorityClassName }}
+      priorityClassName: {{ $priorityClassName }}
+      {{- end }}
+{{ end }}

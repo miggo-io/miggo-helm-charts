@@ -86,6 +86,49 @@ data:
       useGOMEMLIMIT: true
       volumeMounts: []
       volumes: []
+    miggoOntime:
+      affinity: {}
+      configOverrides: {}
+      enabled: false
+      events:
+      - cloud_meta_probe
+      extraArgs: {}
+      extraEnvs: []
+      extraEnvsFrom: []
+      features:
+      - hold
+      - procfs
+      - detect
+      - detections
+      - enricher
+      health:
+        enabled: true
+      hostIPC: true
+      hostPID: true
+      image:
+        repository: miggo/miggo-ontime
+      logLevel: info
+      nodeSelector:
+        kubernetes.io/os: linux
+      otel:
+        eventsPerSec:
+          fw_drop: 100
+          net_flow: 500
+        serviceName: miggo-ontime
+      priorityClassName: ""
+      resources:
+        limits:
+          cpu: "1"
+          memory: 1Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      securityContext:
+        privileged: true
+      stdout: false
+      tolerations: []
+      volumeMounts: []
+      volumes: []
     miggoRuntime:
       affinity: {}
       cgroupRegistryCleanInterval: 1h
@@ -168,7 +211,7 @@ data:
       annotations: {}
       config:
         cache:
-          cleanupInterval: 1h
+          cleanupInterval: 15m
           configMap:
             enabled: true
             name: ""

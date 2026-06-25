@@ -1,0 +1,4 @@
+# Baseline for the OnTime suite: the feature gate on. Individual tests override
+# via `set:` (e.g. to assert the gate renders nothing when off).
+miggoOntime:
+  enabled: true
