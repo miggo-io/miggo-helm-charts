@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.223](https://img.shields.io/badge/Version-0.0.223-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.624.3](https://img.shields.io/badge/AppVersion-v26.624.3-informational?style=flat-square)
+![Version: 0.0.224](https://img.shields.io/badge/Version-0.0.224-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.624.3](https://img.shields.io/badge/AppVersion-v26.624.3-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -131,6 +131,35 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoCollector.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoCollector.volumes | list | `[]` | Additional volumes |
+| miggoOntime.affinity | object | `{}` | Affinity settings for the miggo-ontime DaemonSet. Global affinity specified in .Values.affinity will be merged with this configuration. |
+| miggoOntime.configOverrides | object | `{}` | Free-form map deep-merged over the chart's rendered OnTime config. Use it to tune any field not exposed as a first-class value above — intervals, caches, internal-only features (inference / firewall / pipeline / retainer / github) and their feature_options, extra sinks, per-event options, etc. Lists replace, maps merge. The chart always re-asserts the otel sink endpoint, so overriding it has no effect. See docs/miggo-ontime.md for worked examples. |
+| miggoOntime.enabled | bool | `false` | Install the OnTime runtime detection agent on each cluster node. OnTime runs in parallel to the Runtime and Profiler and submits detection events to the Collector. It depends only on the Collector, not on miggoRuntime, so it is gated independently. |
+| miggoOntime.events | list | `["cloud_meta_probe"]` | Detection recipes (events) to enable. Mirrors the OnTime standalone config catalog, grouped by detection method; everything is commented out except the single POC detection (cloud_meta_probe). Uncomment entries to enable more — OnTime has no compile-time block list, so any listed recipe is enabled. net_flow / fw_drop are telemetry (not detections) and stay off by default. |
+| miggoOntime.extraArgs | object | `{}` | Additional command-line arguments (e.g. network-flows, report). OnTime is configured via the config file; these are extra flags only. |
+| miggoOntime.extraEnvs | list | `[]` | Additional environment variables |
+| miggoOntime.extraEnvsFrom | list | `[]` | Additional environment variables from sources |
+| miggoOntime.features | list | `["hold","procfs","detect","detections","enricher"]` | OnTime features to enable (see the OnTime config reference) |
+| miggoOntime.health.enabled | bool | `true` | Run OnTime's internal health server and add an exec liveness/readiness probe that checks it. The server binds 127.0.0.1:8082 (localhost only), so the probe is an in-container `wget` exec rather than httpGet — once miggo-ontime can bind the health server externally, this becomes a plain httpGet. Probe timeouts and thresholds come from the global .Values.probes. |
+| miggoOntime.hostIPC | bool | `true` | Use the host's ipc namespace. |
+| miggoOntime.hostPID | bool | `true` | Use the host's pid namespace. |
+| miggoOntime.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
+| miggoOntime.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
+| miggoOntime.image.repository | string | `"miggo/miggo-ontime"` | Image repository |
+| miggoOntime.image.tag | string | `nil` | Image tag. Defaults to "latest" — OnTime releases on its own version line (v0.0.x), independent of the chart appVersion. Pin to a specific tag for production. |
+| miggoOntime.logLevel | string | `"info"` | OnTime log level: info, debug, warn, error |
+| miggoOntime.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector settings |
+| miggoOntime.otel.eventsPerSec | object | `{"fw_drop":100,"net_flow":500}` | Per-second caps for high-frequency observation events |
+| miggoOntime.otel.serviceName | string | `"miggo-ontime"` | service.name attribute on emitted OTel records |
+| miggoOntime.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
+| miggoOntime.resources.limits.cpu | string | `"1"` |  |
+| miggoOntime.resources.limits.memory | string | `"1Gi"` |  |
+| miggoOntime.resources.requests.cpu | string | `"500m"` |  |
+| miggoOntime.resources.requests.memory | string | `"512Mi"` |  |
+| miggoOntime.securityContext.privileged | bool | `true` |  |
+| miggoOntime.stdout | bool | `false` | Also send events to stdout (alongside the otel sink) for debugging. |
+| miggoOntime.tolerations | list | `[]` | Tolerations for the miggo-ontime DaemonSet. Global tolerations specified in .Values.tolerations will be merged with this list. |
+| miggoOntime.volumeMounts | list | `[]` | Additional volume mounts for all containers |
+| miggoOntime.volumes | list | `[]` | Additional volumes |
 | miggoRuntime.affinity | object | `{}` | Affinity settings for the miggo-runtime DaemonSet. Global affinity specified in .Values.affinity will be merged with this configuration. |
 | miggoRuntime.cgroupRegistryCleanInterval | string | `"1h"` | Interval between sweeps to remove cgroups whose paths no longer exist on the filesystem |
 | miggoRuntime.cgroupRegistrySyncInterval | string | `"1m"` | Interval between full cgroup state syncs from the Runtime to the Profiler |
