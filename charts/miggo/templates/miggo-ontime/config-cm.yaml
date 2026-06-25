@@ -1,0 +1,21 @@
+{{ if .Values.miggoOntime.enabled }}
+{{- /* Build the config: chart base, deep-merge user overrides, then force the otel
+       sink endpoint so the in-cluster Collector wiring is always chart-controlled. */}}
+{{- $cfg := include "miggoOntime.baseConfig" . | fromYaml }}
+{{- $cfg = mergeOverwrite $cfg (deepCopy .Values.miggoOntime.configOverrides) }}
+{{- $_ := set (index $cfg "sink_options" "otel") "endpoint" (include "otlpProfilesEndpoint" .) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "miggo.fullname" . }}-ontime-config
+  namespace: {{ include "miggo.namespace" . }}
+  labels:
+    {{- include "miggo.labels" . | nindent 4 }}
+data:
+  # OnTime reads this as `ontime --config /etc/ontime/config.yaml`. Base config is from
+  # the curated miggoOntime values; miggoOntime.configOverrides is deep-merged on top;
+  # the chart re-asserts the otel sink endpoint (in-cluster Collector). Override
+  # examples: see docs/miggo-ontime.md.
+  config.yaml: |
+{{ toYaml $cfg | indent 4 }}
+{{- end }}

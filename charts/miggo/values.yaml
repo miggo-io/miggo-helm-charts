@@ -469,6 +469,209 @@ miggoRuntime:
         memory: "100Mi"
         cpu: "100m"
 
+miggoOntime:
+  # -- Install the OnTime runtime detection agent on each cluster node. OnTime runs
+  # in parallel to the Runtime and Profiler and submits detection events to the
+  # Collector. It depends only on the Collector, not on miggoRuntime, so it is gated
+  # independently.
+  enabled: false
+
+  image:
+    # -- Image repository
+    repository: miggo/miggo-ontime
+    # -- Image tag. Defaults to "latest" — OnTime releases on its own version line
+    # (v0.0.x), independent of the chart appVersion. Pin to a specific tag for production.
+    tag:
+    # -- Optional full image path override. If set, takes precedence over registry/repository/tag settings.
+    # Useful for local development with Minikube or when needing to specify a complete custom image path
+    fullPath:
+    # -- Image pull policy. Specifies when Kubernetes should pull the container image
+    pullPolicy:
+
+  #### OnTime config. The chart renders /etc/ontime/config.yaml and passes it via
+  #### --config. Structural defaults (intervals, caches, functionalities) are fixed
+  #### by the chart; the tunables below are what you normally change. The OTel sink
+  #### endpoint is wired by the chart to the in-cluster Collector.
+
+  # -- OnTime log level: info, debug, warn, error
+  logLevel: info
+
+  # -- OnTime features to enable (see the OnTime config reference)
+  features:
+    - hold
+    - procfs
+    - detect
+    - detections
+    - enricher
+
+  # -- Detection recipes (events) to enable. Mirrors the OnTime standalone config
+  # catalog, grouped by detection method; everything is commented out except the
+  # single POC detection (cloud_meta_probe). Uncomment entries to enable more —
+  # OnTime has no compile-time block list, so any listed recipe is enabled.
+  # net_flow / fw_drop are telemetry (not detections) and stay off by default.
+  events:
+    # Informational / telemetry events.
+    # - fw_drop
+    # - net_flow
+    # - sys_profile
+
+    # Detection recipes for file access patterns.
+    # - file_example
+    # - log_wipe
+    # - self_delete
+    # - cap_modify
+    # - proc_mem_write
+    # - core_path_write
+    # - cpu_probe
+    # - cred_file_access
+    # - miner_drop
+    # - proc_env_read
+    # - fs_probe
+    # - shlib_write
+    # - jvm_debug_inject
+    # - jvm_agent_inject
+    # - hw_probe
+    # - os_probe
+    # - net_if_probe
+    # - sys_state_probe
+    # - repo_cfg_write
+    # - pam_cfg_write
+    # - sched_debug_probe
+    # - shell_cfg_write
+    # - tls_cert_read
+    # - sudo_cfg_write
+    # - sysrq_probe
+    # - bpf_cfg_read
+    # - kern_prot_bypass
+
+    # Detection recipes for execution patterns.
+    # - exec_example
+    # - loader_exec
+    # - jit_exec
+    # - cred_grep
+    # - miner_exec
+    # - encoder_exec
+    # - dos_tool
+    # - odd_path_exec
+    # - file_flags_set
+    # - stealth_exec
+    # - interp_to_shell
+    # - exfil_tool
+    # - mitm_tool
+    # - scan_tool
+    # - sniffer_tool
+    # - net_offens_tool
+    # - passwd_run
+    # - ctr_escape
+    # - webshell_exec
+    # - webshell_spawn
+
+    # Detection recipes for environment variable patterns.
+    # - ld_preload_abuse
+
+    # Detection recipes for network peer patterns.
+    - cloud_meta_probe  # enabled by default for the POC
+    # - peer_example
+    # - adult_domain
+    # - dga_domain
+    # - dga_domain_light
+    # - badware_domain
+    # - dyndns_domain
+    # - typosquat_domain
+    # - gambling_domain
+    # - gambling_domain_light
+    # - new_domain
+    # - new_domain_light
+    # - phish_domain
+    # - phish_domain_light
+    # - piracy_domain
+    # - plaintext_proto
+    # - c2_domain
+    # - c2_domain_light
+    # - c2_domain_medium
+    # - tracker_domain
+    # - vpn_bypass_domain
+
+    # Detections with specific eBPF logic (kernel LCE). Enable only on matching
+    # vulnerable kernels.
+    # - copy_fail_attempt
+    # - dirty_frag_attempt
+    # - fragnesia_attempt
+    # - ssh_keysign_pwn_attempt
+    # - dirty_cbc_attempt
+    # - pin_theft_attempt
+    # - nft_catchall_uaf_attempt
+
+  otel:
+    # -- service.name attribute on emitted OTel records
+    serviceName: miggo-ontime
+    # -- Per-second caps for high-frequency observation events
+    eventsPerSec:
+      fw_drop: 100
+      net_flow: 500
+
+  health:
+    # -- Run OnTime's internal health server and add an exec liveness/readiness probe
+    # that checks it. The server binds 127.0.0.1:8082 (localhost only), so the probe
+    # is an in-container `wget` exec rather than httpGet — once miggo-ontime can bind
+    # the health server externally, this becomes a plain httpGet. Probe timeouts and
+    # thresholds come from the global .Values.probes.
+    enabled: true
+
+  # -- Also send events to stdout (alongside the otel sink) for debugging.
+  stdout: false
+
+  # -- Free-form map deep-merged over the chart's rendered OnTime config. Use it to
+  # tune any field not exposed as a first-class value above — intervals, caches,
+  # internal-only features (inference / firewall / pipeline / retainer / github) and
+  # their feature_options, extra sinks, per-event options, etc. Lists replace, maps
+  # merge. The chart always re-asserts the otel sink endpoint, so overriding it has no
+  # effect. See docs/miggo-ontime.md for worked examples.
+  configOverrides: {}
+
+  # -- Additional command-line arguments (e.g. network-flows, report). OnTime is
+  # configured via the config file; these are extra flags only.
+  extraArgs: {}
+  # -- Additional environment variables
+  extraEnvs: []
+  # -- Additional environment variables from sources
+  extraEnvsFrom: []
+  # -- Additional volumes
+  volumes: []
+  # -- Additional volume mounts for all containers
+  volumeMounts: []
+
+  # -- Node selector settings
+  nodeSelector:
+    kubernetes.io/os: linux
+
+  # -- Tolerations for the miggo-ontime DaemonSet. Global tolerations specified in
+  # .Values.tolerations will be merged with this list.
+  tolerations: []
+
+  # -- Affinity settings for the miggo-ontime DaemonSet. Global affinity specified in
+  # .Values.affinity will be merged with this configuration.
+  affinity: {}
+
+  # -- Priority class name (defaults to global priorityClassName or system-node-critical)
+  priorityClassName: ""
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+  securityContext:
+    privileged: true
+
+  # -- Use the host's pid namespace.
+  hostPID: true
+  # -- Use the host's ipc namespace.
+  hostIPC: true
+
 miggoCollector:
   # -- Enable Collector component
   enabled: true
