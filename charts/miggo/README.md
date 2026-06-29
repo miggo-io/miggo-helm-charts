@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.224](https://img.shields.io/badge/Version-0.0.224-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.629.1](https://img.shields.io/badge/AppVersion-v26.629.1-informational?style=flat-square)
+![Version: 0.0.225](https://img.shields.io/badge/Version-0.0.225-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.629.1](https://img.shields.io/badge/AppVersion-v26.629.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -259,6 +259,13 @@ The following table lists the configurable parameters of the miggo chart and the
 | podAnnotations | object | `{}` | Pod annotations to add to all pods |
 | podLabels | object | `{}` | Pod labels to add to all pods |
 | podSecurityContext | object | `{}` | DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a populated value here overrides the managed pod security context for all pods. |
+| pprof.cpu.enabled | bool | `true` | Enable CPU profile scraping by the Collector's diagnostic pipeline |
+| pprof.cpu.interval | string | `"1m"` | How often to trigger a CPU profile collection |
+| pprof.cpu.period | int | `10` | Duration of each blocking CPU profile collection in seconds (passed as ?seconds=N to the pprof HTTP endpoint). Must be an integer. |
+| pprof.memory.enabled | bool | `true` | Enable heap profile scraping by the Collector's diagnostic pipeline |
+| pprof.memory.interval | string | `"10s"` | How often to collect a heap snapshot |
+| pprof.port | int | `6050` | Port to expose pprof HTTP endpoints on for Scanner, Watch, and Runtime. 0 disables pprof entirely (default). When non-zero, the pod label miggo.io/pprof-port is set so the Collector can auto-discover and scrape these endpoints for self-diagnostic profiling. |
+| pprof.profilerPort | int | `6051` | Separate pprof port for the Profiler sidecar container, which shares the Runtime pod's network namespace and therefore cannot reuse pprof.port. 0 disables profiler pprof (default). Only relevant when miggoRuntime.profiler.enabled is true. |
 | priorityClassName | string | `""` | Priority class name for all pods |
 | probes.failureThreshold | int | `5` | Failure threshold for liveness and readiness probes across all components |
 | probes.timeoutSeconds | int | `10` | Timeout seconds for liveness and readiness probes across all components |

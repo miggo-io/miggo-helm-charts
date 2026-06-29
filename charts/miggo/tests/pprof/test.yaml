@@ -1,0 +1,224 @@
+suite: pprof diagnostic profiling
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-watch/deployment.yaml
+  - templates/miggo-scanner/deployment.yaml
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-runtime/fluent-bit-cm.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+  - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  # --- pod labels ---
+
+  - it: should add pprof-port label to watch pod when pprof.port is set
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels["miggo.io/pprof-port"]
+          value: "6060"
+
+  - it: should not add pprof-port label to watch pod when pprof.port is 0
+    template: templates/miggo-watch/deployment.yaml
+    asserts:
+      - notExists:
+          path: spec.template.metadata.labels["miggo.io/pprof-port"]
+
+  - it: should add pprof-port label to scanner pod when pprof.port is set
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels["miggo.io/pprof-port"]
+          value: "6060"
+
+  - it: should add pprof-port label to runtime pod when pprof.port is set
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels["miggo.io/pprof-port"]
+          value: "6060"
+
+  - it: should add pprof-profiler-port label to runtime pod when profilerPort is set
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      pprof.port: 6060
+      pprof.profilerPort: 6061
+      miggoRuntime.profiler.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels["miggo.io/pprof-profiler-port"]
+          value: "6061"
+
+  - it: should not add pprof-profiler-port label when profiler is disabled
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      pprof.port: 6060
+      pprof.profilerPort: 6061
+    asserts:
+      - notExists:
+          path: spec.template.metadata.labels["miggo.io/pprof-profiler-port"]
+
+  # --- container args ---
+
+  - it: should pass --pprof-port to watch container
+    template: templates/miggo-watch/deployment.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-watch")].args
+          content: "--pprof-port=6060"
+
+  - it: should pass --pprof-port to scanner container
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: "--pprof-port=6060"
+
+  - it: should pass --pprof-port to runtime container
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: "--pprof-port=6060"
+
+  - it: should pass -pprof arg to profiler sidecar when profilerPort is set
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      pprof.port: 6060
+      pprof.profilerPort: 6061
+      miggoRuntime.profiler.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "profiler")].args
+          content: "-pprof=0.0.0.0:6061"
+
+  # --- collector deployment args ---
+
+  - it: should load diagnostic config in collector when pprof.port is set
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].args
+          content: "/etc/collector/diagnostic-pprof.yaml"
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].args
+          content: "service.profilesSupport"
+
+  - it: should not load diagnostic config in collector when pprof.port is 0
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].args
+          content: "/etc/collector/diagnostic-pprof.yaml"
+
+  # --- collector main config ---
+
+  - it: should add k8s_observer to collector service extensions when pprof.port is set
+    template: templates/miggo-collector/collector-config-cm.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "- k8s_observer"
+
+  - it: should not add k8s_observer to collector service extensions when pprof.port is 0
+    template: templates/miggo-collector/collector-config-cm.yaml
+    asserts:
+      - notMatchRegex:
+          path: data["config-template.yaml"]
+          pattern: "k8s_observer"
+
+  # --- diagnostic ConfigMap ---
+
+  - it: should create diagnostic-pprof ConfigMap when pprof.port is set
+    template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "receiver_creator/diagnostics"
+      - matchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "pprof/cpu"
+      - matchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "pprof/heap"
+      - matchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "otlp_http/diagnostics"
+
+  - it: should not create diagnostic-pprof ConfigMap when pprof.port is 0
+    template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should restrict k8s_observer to local node in DaemonSet mode
+    template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+    set:
+      pprof.port: 6060
+      miggoCollector.instancePerNode: true
+    asserts:
+      - matchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: 'node: "\$\{env:NODE_NAME\}"'
+
+  - it: should not restrict k8s_observer to node in Deployment mode
+    template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - notMatchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "node:"
+
+  - it: should include profiler receivers in diagnostic config when profilerPort is set
+    template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+    set:
+      pprof.port: 6060
+      pprof.profilerPort: 6061
+      miggoRuntime.profiler.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "pprof/profiler-cpu"
+      - matchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "pprof/profiler-heap"
+
+  - it: should not include profiler receivers when profilerPort is 0
+    template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+    set:
+      pprof.port: 6060
+    asserts:
+      - notMatchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "pprof/profiler"

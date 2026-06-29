@@ -6,10 +6,10 @@ metadata:
   name: example-runtime
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.222
+    helm.sh/chart: miggo-0.0.225
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.618.6"
+    app.kubernetes.io/version: "v26.629.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,11 +23,13 @@ spec:
         checksum/config: 6ed877707581906ad34573544b36de695bd4e68848d208fc2a19372f691cdd49
       labels:
         component: miggo-runtime
-        helm.sh/chart: miggo-0.0.222
+        helm.sh/chart: miggo-0.0.225
         app.kubernetes.io/name: miggo-runtime
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.618.6"
+        app.kubernetes.io/version: "v26.629.1"
         app.kubernetes.io/managed-by: Helm
+        miggo.io/pprof-port: "6050"
+        miggo.io/pprof-profiler-port: "6051"
     spec:
       imagePullSecrets:
         
@@ -40,7 +42,7 @@ spec:
         - name: miggo-runtime
           securityContext:
             privileged: true
-          image: "registry.miggo.io/miggo/miggo-runtime:v26.618.6"
+          image: "registry.miggo.io/miggo/miggo-runtime:v26.629.1"
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
@@ -52,7 +54,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.222
+            - --chart-version=0.0.225
             - --disable-profiler=false
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
@@ -60,6 +62,7 @@ spec:
             - --cgroup-registry-sync-interval=1m
             - --cgroup-registry-clean-interval=1h
             - --cgroup-root-dir=/cgroup
+            - --pprof-port=6050
             - --include-system-namespaces=false
             - --denied-namespaces=default
           envFrom:
@@ -112,7 +115,7 @@ spec:
           - name: unix-socket
             mountPath: /tmp/grpc
         - name: profiler
-          image: "registry.miggo.io/miggo/miggo-profiler:v26.618.6"
+          image: "registry.miggo.io/miggo/miggo-profiler:v26.629.1"
           imagePullPolicy: IfNotPresent
           command:
             - /root/ebpf-profiler
@@ -125,6 +128,7 @@ spec:
             - -probabilistic-threshold=100
             - -probabilistic-interval=1m0s
             - -tracers=perl,php,python,hotspot,v8,go
+            - -pprof=0.0.0.0:6051
           env:
             - name: GOMEMLIMIT
               value: "409MiB"

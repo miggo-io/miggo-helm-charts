@@ -98,7 +98,7 @@ tests:
           pattern: "(?s)traces:.*?- batch/traces"
       - matchRegex:
           path: data["config-template.yaml"]
-          pattern: "(?s)traces:.*?- otlphttp"
+          pattern: "(?s)traces:.*?- otlp_http"
       - matchRegex:
           path: data["config-template.yaml"]
           pattern: "(?s)traces:.*?- debug"
