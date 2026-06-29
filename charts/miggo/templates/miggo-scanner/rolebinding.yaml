@@ -5,7 +5,7 @@ metadata:
   name: miggo-scanner-cluster-binding
 subjects:
 - kind: ServiceAccount
-  name: {{ include "miggo.serviceAccountName" . }}-scanner
+  name: {{ include "miggo-scanner.serviceAccountName" . }}
   namespace: {{ include "miggo.namespace" . }}
 roleRef:
   kind: ClusterRole
@@ -21,7 +21,7 @@ metadata:
   namespace: {{ include "miggo.namespace" . }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "miggo.serviceAccountName" . }}-scanner
+  name: {{ include "miggo-scanner.serviceAccountName" . }}
   namespace: {{ include "miggo.namespace" . }}
 roleRef:
   kind: Role

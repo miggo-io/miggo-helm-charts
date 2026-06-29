@@ -21,3 +21,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "miggo-scanner.configMapCacheName" -}}
 {{- default (printf "%s-cache" (include "miggo.fullname" .)) .Values.miggoScanner.config.cache.configMap.name }}
 {{- end }}
+
+{{- define "miggo-scanner.serviceAccountName" -}}
+{{- if .Values.miggoScanner.serviceAccount.name -}}
+{{- .Values.miggoScanner.serviceAccount.name -}}
+{{- else -}}
+{{- include "miggo.serviceAccountName" . }}-scanner
+{{- end -}}
+{{- end }}
