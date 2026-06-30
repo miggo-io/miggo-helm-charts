@@ -36,6 +36,9 @@ spec:
       labels:
         component: miggo-scanner
         {{- include "miggo-scanner.labels" . | nindent 8 }}
+        {{- if .Values.pprof.port }}
+        miggo.io/pprof-port: {{ .Values.pprof.port | quote }}
+        {{- end }}
         {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
@@ -90,6 +93,7 @@ spec:
             {{ if .Values.miggoScanner.registryCredentials.secretName }}
             - --registry-credentials-path=/etc/registry-credentials/.dockerconfigjson
             {{ end }}
+            - --pprof-port={{ .Values.pprof.port }}
             {{- include "namespace.flags" . | nindent 12 }}
           envFrom:
           {{- with .Values.extraEnvsFrom }}

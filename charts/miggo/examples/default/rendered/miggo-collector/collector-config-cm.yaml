@@ -386,10 +386,6 @@ data:
               static_configs:
                 - targets: [ 'localhost:8888' ]
               metric_relabel_configs:
-                - source_labels: [__name__]
-                  regex: 'otelcol_(.*)'
-                  target_label: __name__
-                  replacement: 'miggocol_$1'
                 - target_label: "miggo-name"
                   replacement: "my-cluster"
                 - target_label: "node-name"
@@ -413,8 +409,12 @@ data:
           - default
 
     processors:
-      metricstransform:
+      metrics_transform:
         transforms:
+          - include: 'otelcol_(.*)'
+            match_type: regexp
+            action: update
+            new_name: "miggocol_$1"
           - include: miggocol_process_uptime
             match_type: strict
             new_name: miggo_component_status
@@ -425,7 +425,7 @@ data:
                 new_value: Miggo Collector
               - action: add_label
                 new_label: chart_version
-                new_value: 0.0.222
+                new_value: 0.0.225
 
       batch/metrics:
         timeout: 10s
@@ -440,22 +440,22 @@ data:
         metric_statements:
         - context: metric
           statements:
-            - set(name, Concat(["miggocol", name], "."))
+            - set(metric.name, Concat(["miggocol", metric.name], "."))
         - context: datapoint
           statements:
-            - merge_maps(attributes, resource.attributes, "insert")
-            - set(attributes["miggo-name"], "my-cluster")
-            - set(attributes["pod.hostname"], attributes["k8s.pod.name"])
-            - delete_key(attributes, "k8s.pod.name")
-            - set(attributes["node.name"], attributes["k8s.node.name"])
-            - delete_key(attributes, "k8s.node.name")
-            - delete_key(attributes, "container.id")
-            - delete_key(attributes, "k8s.pod.uid")
-            - delete_key(attributes, "otel.scope.name")
-            - delete_key(attributes, "otel.scope.version")
-            - delete_key(attributes, "pod.hostname")
-            - delete_key(attributes, "container.image.name")
-            - delete_key(attributes, "container.image.tag")
+            - merge_maps(datapoint.attributes, resource.attributes, "insert")
+            - set(datapoint.attributes["miggo-name"], "my-cluster")
+            - set(datapoint.attributes["pod.hostname"], datapoint.attributes["k8s.pod.name"])
+            - delete_key(datapoint.attributes, "k8s.pod.name")
+            - set(datapoint.attributes["node.name"], datapoint.attributes["k8s.node.name"])
+            - delete_key(datapoint.attributes, "k8s.node.name")
+            - delete_key(datapoint.attributes, "container.id")
+            - delete_key(datapoint.attributes, "k8s.pod.uid")
+            - delete_key(datapoint.attributes, "otel.scope.name")
+            - delete_key(datapoint.attributes, "otel.scope.version")
+            - delete_key(datapoint.attributes, "pod.hostname")
+            - delete_key(datapoint.attributes, "container.image.name")
+            - delete_key(datapoint.attributes, "container.image.tag")
 
       filter/self-logs:
         logs:
@@ -484,7 +484,7 @@ data:
       prometheus:
         endpoint: 0.0.0.0:8889
 
-      otlphttp:
+      otlp_http:
         traces_endpoint: https://collector.miggo.io/v1/traces
         metrics_endpoint: https://collector.miggo.io/v1/metrics
         logs_endpoint: https://collector.miggo.io/v1/logs
@@ -495,7 +495,9 @@ data:
     service:
       telemetry:
         resource:
-          origin: "selflogs"
+          attributes:
+            - name: origin
+              value: "selflogs"
         logs:
           encoding: json
           level: "INFO"
@@ -518,12 +520,13 @@ data:
         - health_check
         - oauth2client
         - k8s_leader_elector
+        - k8s_observer
       pipelines:
         profiles:
           receivers:
             - otlp
           exporters:
-            - otlphttp
+            - otlp_http
         metrics/sensors:
           receivers:
             - otlp
@@ -532,17 +535,17 @@ data:
           exporters:
             - debug
             - prometheus
-            - otlphttp
+            - otlp_http
         metrics/collector:
           receivers:
             - prometheus
           processors:
             - batch/metrics
-            - metricstransform
+            - metrics_transform
           exporters:
             - debug
             - prometheus
-            - otlphttp
+            - otlp_http
 
         metrics/k8s:
           receivers:
@@ -552,7 +555,7 @@ data:
             - transform/k8s_metric
           exporters:
             - prometheus
-            - otlphttp
+            - otlp_http
 
         traces:
           receivers:
@@ -561,7 +564,7 @@ data:
             - batch/traces
           exporters:
             - debug
-            - otlphttp
+            - otlp_http
         logs:
           receivers:
             - otlp
@@ -569,7 +572,7 @@ data:
             - batch/logs
           exporters:
             - debug
-            - otlphttp
+            - otlp_http
         logs/self:
           receivers:
             - otlp
@@ -578,6 +581,6 @@ data:
             - transform/collector-self-logs
             - batch/logs
           exporters:
-            - otlphttp
+            - otlp_http
 
 

@@ -1,0 +1,106 @@
+{{- if and .Values.miggoCollector.enabled .Values.pprof.port }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: diagnostic-pprof-config-cm
+  namespace: {{ include "miggo.namespace" . }}
+data:
+  diagnostic-pprof.yaml: |
+    extensions:
+      k8s_observer:
+        auth_type: serviceAccount
+        observe_pods: true
+        observe_nodes: false
+        observe_services: false
+        {{- if .Values.miggoCollector.instancePerNode }}
+        node: "${env:NODE_NAME}"
+        {{- end }}
+        namespaces:
+          - {{ include "miggo.namespace" . }}
+
+    receivers:
+      receiver_creator/diagnostics:
+        watch_observers: [k8s_observer]
+        receivers:
+          {{- if .Values.pprof.memory.enabled }}
+          pprof/heap:
+            rule: type == "pod" && labels["miggo.io/pprof-port"] != ""
+            resource_attributes:
+              component: '`labels["component"]`'
+            config:
+              remote:
+                endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-port\"]`/debug/pprof/heap"
+                collection_interval: {{ .Values.pprof.memory.interval }}
+                initial_delay: 10s
+          {{- end }}
+          {{- if .Values.pprof.cpu.enabled }}
+          pprof/cpu:
+            rule: type == "pod" && labels["miggo.io/pprof-port"] != ""
+            resource_attributes:
+              component: '`labels["component"]`'
+            config:
+              remote:
+                endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-port\"]`/debug/pprof/profile?seconds={{ .Values.pprof.cpu.period }}"
+                collection_interval: {{ .Values.pprof.cpu.interval }}
+                initial_delay: 10s
+          {{- end }}
+          {{- if and .Values.miggoRuntime.profiler.enabled .Values.pprof.profilerPort }}
+          {{- if .Values.pprof.memory.enabled }}
+          pprof/profiler-heap:
+            rule: type == "pod" && labels["miggo.io/pprof-profiler-port"] != ""
+            resource_attributes:
+              component: '`labels["component"]`'
+            config:
+              remote:
+                endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-profiler-port\"]`/debug/pprof/heap"
+                collection_interval: {{ .Values.pprof.memory.interval }}
+                initial_delay: 10s
+          {{- end }}
+          {{- if .Values.pprof.cpu.enabled }}
+          pprof/profiler-cpu:
+            rule: type == "pod" && labels["miggo.io/pprof-profiler-port"] != ""
+            resource_attributes:
+              component: '`labels["component"]`'
+            config:
+              remote:
+                endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-profiler-port\"]`/debug/pprof/profile?seconds={{ .Values.pprof.cpu.period }}"
+                collection_interval: {{ .Values.pprof.cpu.interval }}
+                initial_delay: 10s
+          {{- end }}
+          {{- end }}
+
+    processors:
+      resource/diagnostics:
+        attributes:
+          - key: service.name
+            value: "sensor_diagnostic"
+            action: upsert
+          - key: cluster.name
+            value: {{ .Values.miggo.clusterName | quote }}
+            action: upsert
+          - key: node.name
+            value: "${env:NODE_NAME}"
+            action: upsert
+          - key: k8s.namespace.name
+            action: delete
+          - key: k8s.pod.name
+            action: delete
+          - key: k8s.pod.uid
+            action: delete
+    
+    exporters:
+      otlp_http/diagnostics:
+        profiles_endpoint: {{ include "collectorUrl" . }}/v1development/profiles
+        auth:
+          authenticator: oauth2client
+
+    service:
+      pipelines:
+        profiles/diagnostics:
+          receivers:
+            - receiver_creator/diagnostics
+          processors:
+            - resource/diagnostics
+          exporters:
+            - otlp_http/diagnostics
+{{- end }}

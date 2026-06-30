@@ -6,10 +6,10 @@ metadata:
   name: example-collector
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.222
+    helm.sh/chart: miggo-0.0.225
     app.kubernetes.io/name: miggo-collector
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.618.6"
+    app.kubernetes.io/version: "v26.629.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,14 +23,15 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 2f500154f840691b3184076457edaa233fe5c1bf8e6dff82b125c0cabe4b3fd7
+        checksum/config: d177b2343487a3042a00a608ac441c76b51c2b9b3e9be400796abea1b1cf9bfd
+        checksum/diagnostic-config: 3596c29323e3031ab643183daee6fa8305a9a9ff32088ff0acad6927a9ec01e2
       labels:
         component: collector
         miggo.io/app: example-collector
-        helm.sh/chart: miggo-0.0.222
+        helm.sh/chart: miggo-0.0.225
         app.kubernetes.io/name: miggo-collector
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.618.6"
+        app.kubernetes.io/version: "v26.629.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -41,7 +42,7 @@ spec:
       serviceAccountName: example-collector
       initContainers:
         - name: collector-init-container
-          image: "registry.miggo.io/miggo/miggo-collector:v26.618.6"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.629.1"
           securityContext:
             runAsGroup: 65532
             runAsNonRoot: true
@@ -75,11 +76,13 @@ spec:
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
-          image: "registry.miggo.io/miggo/miggo-collector:v26.618.6"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.629.1"
           imagePullPolicy: IfNotPresent
           args:
             - --config
             - /etc/collector/config.yaml
+            - --config
+            - /etc/collector/diagnostic-pprof.yaml
             - --feature-gates
             - service.profilesSupport
           envFrom:
@@ -114,6 +117,9 @@ spec:
           volumeMounts:
           - name: collector-config
             mountPath: /etc/collector
+          - name: diagnostic-pprof-config
+            mountPath: /etc/collector/diagnostic-pprof.yaml
+            subPath: diagnostic-pprof.yaml
           
           - name: access-key
             mountPath: /etc/miggo-access-key
@@ -124,6 +130,9 @@ spec:
       - name: collector-config-cm
         configMap:
           name: collector-config-cm
+      - name: diagnostic-pprof-config
+        configMap:
+          name: diagnostic-pprof-config-cm
       
       - name: access-key
         secret:

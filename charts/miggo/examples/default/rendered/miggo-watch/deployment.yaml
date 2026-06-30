@@ -6,10 +6,10 @@ metadata:
   name: example-watch
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.222
+    helm.sh/chart: miggo-0.0.225
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.618.6"
+    app.kubernetes.io/version: "v26.629.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -21,14 +21,15 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/values: 54235a249eb0896296c72d49305bba6aeed0f3807a7de29be338a489baa9d1e8
+        checksum/values: cda57b326fa4a24605245186b8f7c37fc90efac6ec5fd01c3784f12c0858667b
       labels:
         component: miggo-watch
-        helm.sh/chart: miggo-0.0.222
+        helm.sh/chart: miggo-0.0.225
         app.kubernetes.io/name: miggo-watch
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.618.6"
+        app.kubernetes.io/version: "v26.629.1"
         app.kubernetes.io/managed-by: Helm
+        miggo.io/pprof-port: "6050"
     spec:
       imagePullSecrets:
         
@@ -40,7 +41,7 @@ spec:
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
-          image: "registry.miggo.io/miggo/miggo-watch:v26.618.6"
+          image: "registry.miggo.io/miggo/miggo-watch:v26.629.1"
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
@@ -52,11 +53,12 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.222
+            - --chart-version=0.0.225
             - --interval=1h
             - --image-tracker-interval=1h
             - --exclude=pod,replica-set
             
+            - --pprof-port=6050
             - --include-system-namespaces=false
             - --denied-namespaces=default
             - --original-sensor-helm-values=/etc/miggo/values/defaults.yaml

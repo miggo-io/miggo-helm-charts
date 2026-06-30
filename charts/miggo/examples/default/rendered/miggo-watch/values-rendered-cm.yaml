@@ -168,7 +168,7 @@ data:
       annotations: {}
       config:
         cache:
-          cleanupInterval: 1h
+          cleanupInterval: 15m
           configMap:
             enabled: true
             name: ""
@@ -248,6 +248,16 @@ data:
     podAnnotations: {}
     podLabels: {}
     podSecurityContext: {}
+    pprof:
+      cpu:
+        enabled: false
+        interval: 10s
+        period: 10
+      memory:
+        enabled: true
+        interval: 10s
+      port: 6050
+      profilerPort: 6051
     priorityClassName: ""
     probes:
       failureThreshold: 5
