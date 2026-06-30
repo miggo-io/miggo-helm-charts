@@ -16,13 +16,6 @@ permissions:
   statuses: write
 
 jobs:
-  verify-and-bump:
-    uses: ./.github/workflows/bump-version.yaml
-
-  generate-helm-docs:
-    needs: verify-and-bump
-    uses: ./.github/workflows/run-helm-docs.yaml
-
   helm-lint:
     needs: verify-and-bump
     uses: ./.github/workflows/helm-lint.yaml

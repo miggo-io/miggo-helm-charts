@@ -24,6 +24,7 @@ spec:
     metadata:
       annotations:
         checksum/config: d177b2343487a3042a00a608ac441c76b51c2b9b3e9be400796abea1b1cf9bfd
+        checksum/diagnostic-config: 3596c29323e3031ab643183daee6fa8305a9a9ff32088ff0acad6927a9ec01e2
       labels:
         component: collector
         miggo.io/app: example-collector
