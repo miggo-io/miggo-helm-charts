@@ -48,7 +48,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         {{- include "miggoImagePullSecrets" . | nindent 8 }}
-      serviceAccountName: {{ include "miggo.serviceAccountName" . }}-scanner
+      serviceAccountName: {{ include "miggo-scanner.serviceAccountName" . }}
       {{- with (include "miggo.podSecurityContext.nonpriv" .) }}
       securityContext:
         {{- . | nindent 8 }}

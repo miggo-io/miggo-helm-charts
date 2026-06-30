@@ -244,7 +244,13 @@ miggoScanner:
     kubernetes.io/os: linux
 
   serviceAccount:
-    # -- Annotations to add to the service account
+    # -- Name of a pre-existing ServiceAccount to use. When empty (default), the
+    # chart creates its own ServiceAccount. When set, the chart skips creation
+    # and uses this name — for when your IaC (e.g. Terraform + IRSA / EKS Pod
+    # Identity) owns the ServiceAccount lifecycle.
+    name: ""
+    # -- Annotations to add to the chart-created ServiceAccount. Ignored when
+    # name is set (pre-existing SA).
     annotations: {}
 
   image:
