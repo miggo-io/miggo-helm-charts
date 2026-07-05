@@ -81,3 +81,20 @@ jobs:
           while [ "${body: -1}" = $'\n' ]; do body="${body%$'\n'}"; done
           printf '%s\n\n%s\n' "$body" "$section" | gh release edit "$tag" --notes-file -
           echo "$section" >> "$GITHUB_STEP_SUMMARY"
+      
+      # Verifies the chart version is actually resolvable in the published index.yaml.
+      # deploy-pages can report success without the CDN having the update yet, or fail
+      # in ways that aren't obvious upstream
+      - name: Verify chart is actually published
+        run: |
+          version=$(grep -E '^version:' charts/miggo/Chart.yaml | head -1 | sed -E 's/version:[[:space:]]*//; s/"//g')
+          for i in $(seq 1 20); do
+            if curl -sf https://miggo-io.github.io/miggo-helm-charts/index.yaml | grep "version: ${version}\$"; then
+              echo "Chart version ${version} confirmed live"
+              exit 0
+            fi
+            echo "Not live yet, retrying in 15s..."
+            sleep 15
+          done
+          echo "::error::Chart version ${version} not found in published index.yaml"
+          exit 1
