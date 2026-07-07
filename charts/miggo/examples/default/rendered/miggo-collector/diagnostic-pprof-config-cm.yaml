@@ -1,0 +1,76 @@
+---
+# Source: miggo/templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: diagnostic-pprof-config-cm
+  namespace: default
+data:
+  diagnostic-pprof.yaml: |
+    extensions:
+      k8s_observer:
+        auth_type: serviceAccount
+        observe_pods: true
+        observe_nodes: false
+        observe_services: false
+        namespaces:
+          - default
+
+    receivers:
+      receiver_creator/diagnostics:
+        watch_observers: [k8s_observer]
+        receivers:
+          pprof/heap:
+            rule: type == "pod" && labels["miggo.io/pprof-port"] != ""
+            resource_attributes:
+              component: '`labels["component"]`'
+            config:
+              remote:
+                endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-port\"]`/debug/pprof/heap"
+                collection_interval: 10s
+                initial_delay: 10s
+          pprof/profiler-heap:
+            rule: type == "pod" && labels["miggo.io/pprof-profiler-port"] != ""
+            resource_attributes:
+              component: '`labels["component"]`'
+            config:
+              remote:
+                endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-profiler-port\"]`/debug/pprof/heap"
+                collection_interval: 10s
+                initial_delay: 10s
+
+    processors:
+      resource/diagnostics:
+        attributes:
+          - key: service.name
+            value: "sensor_diagnostic"
+            action: upsert
+          - key: cluster.name
+            value: "my-cluster"
+            action: upsert
+          - key: node.name
+            value: "${env:NODE_NAME}"
+            action: upsert
+          - key: k8s.namespace.name
+            action: delete
+          - key: k8s.pod.name
+            action: delete
+          - key: k8s.pod.uid
+            action: delete
+    
+    exporters:
+      otlp_http/diagnostics:
+        profiles_endpoint: https://collector.miggo.io/v1development/profiles
+        auth:
+          authenticator: oauth2client
+
+    service:
+      pipelines:
+        profiles/diagnostics:
+          receivers:
+            - receiver_creator/diagnostics
+          processors:
+            - resource/diagnostics
+          exporters:
+            - otlp_http/diagnostics
+
