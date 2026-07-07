@@ -37,6 +37,9 @@ spec:
       labels:
         component: miggo-watch
         {{- include "miggo-watch.labels" . | nindent 8 }}
+        {{- if .Values.pprof.port }}
+        miggo.io/pprof-port: {{ .Values.pprof.port | quote }}
+        {{- end }}
         {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
@@ -83,6 +86,7 @@ spec:
             {{ if .Values.miggoWatch.config.disableCompression }}
             - --disable-compression
             {{ end }}
+            - --pprof-port={{ .Values.pprof.port }}
             {{- include "namespace.flags" . | nindent 12 }}
             - --original-sensor-helm-values=/etc/miggo/values/defaults.yaml
             - --rendered-sensor-helm-values=/etc/miggo/values/rendered.yaml

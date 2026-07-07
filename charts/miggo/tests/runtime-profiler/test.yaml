@@ -34,7 +34,7 @@ tests:
       - matchRegex:
           path: data["config-template.yaml"]
           pattern: |
-            .*otlphttp:
+            .*otlp_http:
               +traces_endpoint: https://collector\.miggo\.io/v1/traces
               +metrics_endpoint: https://collector\.miggo\.io/v1/metrics
               +logs_endpoint: https://collector\.miggo\.io/v1/logs
@@ -44,7 +44,7 @@ tests:
       - matchRegex:
           path: data["config-template.yaml"]
           pattern: |
-            (?s).*pipelines:.*profiles:\s+receivers:\s+-\s+otlp\s+exporters:\s+-\s+otlphttp\s.*
+            (?s).*pipelines:.*profiles:\s+receivers:\s+-\s+otlp\s+exporters:\s+-\s+otlp_http\s.*
 
   - it: should add both miggo-runtime and profiler containers to the DaemonSet spec
     template: templates/miggo-runtime/daemonset.yaml
@@ -74,6 +74,7 @@ tests:
             - --cgroup-registry-sync-interval=1m
             - --cgroup-registry-clean-interval=1h
             - --cgroup-root-dir=/cgroup
+            - --pprof-port=0
             - --include-system-namespaces=false
             - --denied-namespaces=miggo-space
       - equal:

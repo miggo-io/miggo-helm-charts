@@ -128,7 +128,11 @@ spec:
           args:
             - --config
             - /etc/collector/config.yaml
-            {{- if .Values.miggoRuntime.profiler.enabled }}
+            {{- if .Values.pprof.port }}
+            - --config
+            - /etc/collector/diagnostic-pprof.yaml
+            {{- end }}
+            {{- if or .Values.miggoRuntime.profiler.enabled .Values.pprof.port }}
             - --feature-gates
             - service.profilesSupport
             {{- end }}
@@ -173,6 +177,11 @@ spec:
           volumeMounts:
           - name: collector-config
             mountPath: /etc/collector
+          {{- if .Values.pprof.port }}
+          - name: diagnostic-pprof-config
+            mountPath: /etc/collector/diagnostic-pprof.yaml
+            subPath: diagnostic-pprof.yaml
+          {{- end }}
           {{ if (include "accessKeySecret" .) }}
           - name: access-key
             mountPath: {{ .Values.miggoCollector.accessKeyMountLocation }}
@@ -190,6 +199,11 @@ spec:
       - name: collector-config-cm
         configMap:
           name: collector-config-cm
+      {{- if .Values.pprof.port }}
+      - name: diagnostic-pprof-config
+        configMap:
+          name: diagnostic-pprof-config-cm
+      {{- end }}
       {{ if (include "accessKeySecret" .) }}
       - name: access-key
         secret:

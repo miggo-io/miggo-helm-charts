@@ -1,5 +1,8 @@
 miggo:
-  clusterName: "simple-test"
+  clusterName: "pprof-test"
+
+config:
+  accessKey: "test-key"
 
 miggoWatch:
   enabled: true
@@ -9,6 +12,8 @@ miggoScanner:
 
 miggoRuntime:
   enabled: true
+  profiler:
+    enabled: false
 
 miggoCollector:
   enabled: true

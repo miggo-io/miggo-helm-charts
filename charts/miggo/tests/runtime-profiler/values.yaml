@@ -17,3 +17,7 @@ miggoRuntime:
 
 miggoCollector:
   enabled: true
+
+pprof:
+  port: 0
+  profilerPort: 0
