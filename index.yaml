@@ -907,19 +907,6 @@ entries:
     version: 0.0.1
   miggo:
   - apiVersion: v2
-    appVersion: v26.708.3
-    created: "2026-07-08T14:55:31.905224485Z"
-    description: A Helm chart for Miggo
-    digest: afbdd3a74657184bdfd7ae83c4310e9de6f1a59daaaec0798b9642bb0e8c4202
-    maintainers:
-    - name: miggo-io
-      url: https://github.com/miggo-io
-    name: miggo
-    type: application
-    urls:
-    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-0.0.229/miggo-0.0.229.tgz
-    version: 0.0.229
-  - apiVersion: v2
     appVersion: v26.706.1
     created: "2026-07-06T06:09:45.185391006Z"
     description: A Helm chart for Miggo
