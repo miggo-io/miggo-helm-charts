@@ -35,12 +35,12 @@ pprof:
     # ?seconds=N to the pprof HTTP endpoint). Must be an integer.
     period: 10
     # -- How often to trigger a CPU profile collection
-    interval: 10s
+    interval: 1m
   memory:
     # -- Enable heap profile scraping by the Collector's diagnostic pipeline
     enabled: true
     # -- How often to collect a heap snapshot
-    interval: 10s
+    interval: 1m
 
 probes:
   # -- Timeout seconds for liveness and readiness probes across all components
