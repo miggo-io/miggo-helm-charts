@@ -252,11 +252,11 @@ data:
     pprof:
       cpu:
         enabled: false
-        interval: 10s
+        interval: 1m
         period: 10
       memory:
         enabled: true
-        interval: 10s
+        interval: 1m
       port: 6050
       profilerPort: 6051
     priorityClassName: ""
