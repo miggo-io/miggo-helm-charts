@@ -220,8 +220,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.resources.limits.memory | string | `"4Gi"` |  |
 | miggoScanner.resources.requests.cpu | string | `"1000m"` |  |
 | miggoScanner.resources.requests.memory | string | `"2Gi"` |  |
-| miggoScanner.serviceAccount.annotations | object | `{}` | Annotations to add to the chart-created ServiceAccount. Ignored when name is set (pre-existing SA). |
-| miggoScanner.serviceAccount.name | string | `""` | Name of a pre-existing ServiceAccount to use. When empty (default), the chart creates its own ServiceAccount. When set, the chart skips creation and uses this name — for when your IaC (e.g. Terraform + IRSA / EKS Pod Identity) owns the ServiceAccount lifecycle. |
+| miggoScanner.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | miggoScanner.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoScanner.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoScanner.volumes | list | `[]` | Additional volumes |
@@ -260,6 +259,13 @@ The following table lists the configurable parameters of the miggo chart and the
 | podAnnotations | object | `{}` | Pod annotations to add to all pods |
 | podLabels | object | `{}` | Pod labels to add to all pods |
 | podSecurityContext | object | `{}` | DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a populated value here overrides the managed pod security context for all pods. |
+| pprof.cpu.enabled | bool | `false` | Enable CPU profile scraping by the Collector's diagnostic pipeline |
+| pprof.cpu.interval | string | `"10s"` | How often to trigger a CPU profile collection |
+| pprof.cpu.period | int | `10` | Duration of each blocking CPU profile collection in seconds (passed as ?seconds=N to the pprof HTTP endpoint). Must be an integer. |
+| pprof.memory.enabled | bool | `true` | Enable heap profile scraping by the Collector's diagnostic pipeline |
+| pprof.memory.interval | string | `"10s"` | How often to collect a heap snapshot |
+| pprof.port | int | `6050` | Port to expose pprof HTTP endpoints on for Scanner, Watch, and Runtime. 0 disables pprof entirely. |
+| pprof.profilerPort | int | `6051` | Separate pprof port for the Profiler sidecar container, which shares the Runtime pod's network namespace and therefore cannot reuse pprof.port. 0 disables profiler pprof. |
 | priorityClassName | string | `""` | Priority class name for all pods |
 | probes.failureThreshold | int | `5` | Failure threshold for liveness and readiness probes across all components |
 | probes.timeoutSeconds | int | `10` | Timeout seconds for liveness and readiness probes across all components |

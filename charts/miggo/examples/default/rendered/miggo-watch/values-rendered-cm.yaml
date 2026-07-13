@@ -249,6 +249,16 @@ data:
     podAnnotations: {}
     podLabels: {}
     podSecurityContext: {}
+    pprof:
+      cpu:
+        enabled: false
+        interval: 1m
+        period: 10
+      memory:
+        enabled: true
+        interval: 1m
+      port: 6050
+      profilerPort: 6051
     priorityClassName: ""
     probes:
       failureThreshold: 5
