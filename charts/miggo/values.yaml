@@ -89,6 +89,11 @@ config:
   # Example: ["test", "deprecated"]
   deniedNamespaces:
 
+  # -- When set to true (default), the release namespace is automatically added
+  # to deniedNamespaces. Set to false when the sensor needs to watch its own
+  # namespace (e.g. dual-tenant setups where workloads share the release namespace).
+  denyReleaseNamespace: true
+
   # -- When set to true, includes system namespaces like kube-system etc.
   # When false (default), automatically adds system namespaces to deniedNamespaces
   # It's recommended to keep this false unless you specifically need to operate on system namespaces
