@@ -37,6 +37,7 @@ data:
       accessKeyMountLocation: /etc/miggo-access-key
       annotations: {}
       config:
+        heartbeatInterval: 2m
         internalLogVerbosity: INFO
         logVerbosity: basic
       enabled: true
