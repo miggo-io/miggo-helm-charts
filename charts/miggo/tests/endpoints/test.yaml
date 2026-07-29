@@ -7,6 +7,8 @@ release:
 templates:
   - templates/miggo-collector/deployment.yaml
   - templates/miggo-collector/collector-config-cm.yaml
+  - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+  - templates/miggo-collector/heartbeat-debug-config-cm.yaml
   - templates/miggo-watch/deployment.yaml
 
 values:

@@ -99,9 +99,6 @@ tests:
       - matchRegex:
           path: data["config-template.yaml"]
           pattern: "(?s)traces:.*?- otlp_http"
-      - matchRegex:
-          path: data["config-template.yaml"]
-          pattern: "(?s)traces:.*?- debug"
 
   - it: must not emit any /prod pipeline keys when no extras are set
     asserts:

@@ -10,6 +10,8 @@ templates:
   - templates/miggo-runtime/daemonset.yaml
   - templates/miggo-collector/deployment.yaml
   - templates/miggo-collector/collector-config-cm.yaml
+  - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+  - templates/miggo-collector/heartbeat-debug-config-cm.yaml
   - templates/image-pull-secret.yaml
   - templates/access-key-secret.yaml
   - templates/miggo-runtime/fluent-bit-cm.yaml
@@ -38,10 +40,10 @@ tests:
           value: null
       - lengthEqual:
           path: spec.template.spec.volumes
-          count: 2
+          count: 3
       - lengthEqual:
           path: spec.template.spec.containers[0].volumeMounts
-          count: 1
+          count: 2
 
   - it: sensor daemonset
     template: templates/miggo-runtime/daemonset.yaml
