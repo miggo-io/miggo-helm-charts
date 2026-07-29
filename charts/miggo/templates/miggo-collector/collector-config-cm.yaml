@@ -213,7 +213,6 @@ data:
             - {{ . }}
             {{- end }}
           exporters:
-            - debug
             - prometheus
             - otlp_http
             {{- range .Values.miggoCollector.extraExporterNames }}
@@ -229,7 +228,6 @@ data:
             - {{ . }}
             {{- end }}
           exporters:
-            - debug
             - prometheus
             - otlp_http
             {{- range .Values.miggoCollector.extraExporterNames }}
@@ -261,7 +259,6 @@ data:
             - {{ . }}
             {{- end }}
           exporters:
-            - debug
             - otlp_http
             {{- range .Values.miggoCollector.extraExporterNames }}
             - {{ . }}
@@ -275,7 +272,6 @@ data:
             - {{ . }}
             {{- end }}
           exporters:
-            - debug
             - otlp_http
             {{- range .Values.miggoCollector.extraExporterNames }}
             - {{ . }}

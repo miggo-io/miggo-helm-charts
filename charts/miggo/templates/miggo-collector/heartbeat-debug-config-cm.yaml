@@ -1,0 +1,70 @@
+{{- if .Values.miggoCollector.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: heartbeat-debug-config-cm
+  namespace: {{ include "miggo.namespace" . }}
+data:
+  heartbeat-debug.yaml: |
+    processors:
+      # send_batch_size must stay non-zero: the batch processor treats 0 as
+      # "send immediately" (no timer is started), not "no size trigger".
+      # 1,000,000 is high enough that the timeout below is the only trigger
+      # under normal heartbeat volumes, while still bounding worst-case
+      # memory if something floods the pipeline within one interval.
+      batch/heartbeat_logs:
+        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        send_batch_size: 1000000
+        send_batch_max_size: 0
+
+      batch/heartbeat_metrics:
+        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        send_batch_size: 1000000
+        send_batch_max_size: 0
+
+      batch/heartbeat_profiles:
+        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        send_batch_size: 1000000
+        send_batch_max_size: 0
+
+      batch/heartbeat_traces:
+        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        send_batch_size: 1000000
+        send_batch_max_size: 0
+
+    service:
+      pipelines:
+        logs/debug:
+          receivers:
+            - otlp
+          processors:
+            - batch/heartbeat_logs
+          exporters:
+            - debug
+
+        metrics/debug:
+          receivers:
+            - otlp
+          processors:
+            - batch/heartbeat_metrics
+          exporters:
+            - debug
+
+        {{- if .Values.miggoRuntime.profiler.enabled }}
+        profiles/debug:
+          receivers:
+            - otlp
+          processors:
+            - batch/heartbeat_profiles
+          exporters:
+            - debug
+        {{- end }}
+
+        traces/debug:
+          receivers:
+            - otlp
+          processors:
+            - batch/heartbeat_traces
+          exporters:
+            - debug
+{{- end }}
