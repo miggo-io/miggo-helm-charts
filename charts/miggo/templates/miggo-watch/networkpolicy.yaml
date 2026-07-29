@@ -1,0 +1,30 @@
+{{- if .Values.networkPolicy.enabled }}
+{{- if .Values.miggoWatch.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "miggo.fullname" . }}-watch
+  namespace: {{ include "miggo.namespace" . }}
+  labels:
+    {{- include "miggo-watch.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "miggo-watch.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: {{ .Values.healthcheck.port }}
+    {{- if .Values.pprof.port }}
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "miggo-collector.selectorLabels" . | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.pprof.port }}
+    {{- end }}
+{{- end }}
+{{- end }}

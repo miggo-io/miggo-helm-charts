@@ -251,6 +251,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoWatch.volumes | list | `[]` | Additional volumes |
 | namespaceOverride | string | `""` | Override the namespace where resources are deployed. If not set, uses Release.Namespace |
+| networkPolicy.enabled | bool | `false` | Render a NetworkPolicy per component, restricting each to the in-cluster traffic it actually needs (Principle of Least Authority). Requires a CNI that enforces NetworkPolicy (e.g. Calico, Cilium); on CNIs that don't (e.g. plain AWS VPC CNI), these resources are created but have no effect. |
 | nodeSelector | object | `{}` | Node selector for all pods |
 | output.api.apiEndpoint | string | `""` | OBSOLETE: no longer consumed. |
 | output.api.enabled | bool | `true` | OBSOLETE: no longer consumed. |
@@ -404,7 +405,7 @@ curl http://localhost:6666/health
    - Review and adjust permissions as needed
 
 3. **Network Security**
-   - Configure appropriate network policies
+   - Set `networkPolicy.enabled: true` to render a NetworkPolicy per component, restricting each to the in-cluster traffic it actually needs.
    - Use TLS for OTLP communication
 
 4. **Pod Security Context** (`manageSecurityContext`, default `true`)
