@@ -12,6 +12,7 @@ templates:
   - templates/miggo-collector/deployment.yaml
   - templates/miggo-collector/collector-config-cm.yaml
   - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+  - templates/miggo-collector/heartbeat-debug-config-cm.yaml
 
 values:
   - values.yaml
@@ -157,6 +158,7 @@ tests:
     template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
     set:
       pprof.port: 6060
+      pprof.cpu.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -205,6 +207,7 @@ tests:
     set:
       pprof.port: 6060
       pprof.profilerPort: 6061
+      pprof.cpu.enabled: true
       miggoRuntime.profiler.enabled: true
     asserts:
       - matchRegex:

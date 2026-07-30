@@ -425,7 +425,7 @@ data:
                 new_value: Miggo Collector
               - action: add_label
                 new_label: chart_version
-                new_value: 0.0.230
+                new_value: 0.0.231
 
       batch/metrics:
         timeout: 10s
@@ -533,7 +533,6 @@ data:
           processors:
             - batch/metrics
           exporters:
-            - debug
             - prometheus
             - otlp_http
         metrics/collector:
@@ -543,7 +542,6 @@ data:
             - batch/metrics
             - metrics_transform
           exporters:
-            - debug
             - prometheus
             - otlp_http
 
@@ -563,7 +561,6 @@ data:
           processors:
             - batch/traces
           exporters:
-            - debug
             - otlp_http
         logs:
           receivers:
@@ -571,7 +568,6 @@ data:
           processors:
             - batch/logs
           exporters:
-            - debug
             - otlp_http
         logs/self:
           receivers:

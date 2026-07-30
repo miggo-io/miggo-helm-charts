@@ -32,7 +32,7 @@ data:
           pprof/profiler-heap:
             rule: type == "pod" && labels["miggo.io/pprof-profiler-port"] != ""
             resource_attributes:
-              component: '`labels["component"]`'
+              component: 'miggo-profiler'
             config:
               remote:
                 endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-profiler-port\"]`/debug/pprof/heap"

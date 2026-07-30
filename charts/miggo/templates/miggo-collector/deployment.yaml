@@ -31,6 +31,7 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/miggo-collector/collector-config-cm.yaml") . | sha256sum }}
         checksum/diagnostic-config: {{ include (print $.Template.BasePath "/miggo-collector/diagnostic-pprof-config-cm.yaml") . | sha256sum }}
+        checksum/heartbeat-debug-config: {{ include (print $.Template.BasePath "/miggo-collector/heartbeat-debug-config-cm.yaml") . | sha256sum }}
         {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
@@ -129,6 +130,8 @@ spec:
           args:
             - --config
             - /etc/collector/config.yaml
+            - --config
+            - /etc/collector/heartbeat-debug.yaml
             {{- if .Values.pprof.port }}
             - --config
             - /etc/collector/diagnostic-pprof.yaml
@@ -178,6 +181,9 @@ spec:
           volumeMounts:
           - name: collector-config
             mountPath: /etc/collector
+          - name: heartbeat-debug-config
+            mountPath: /etc/collector/heartbeat-debug.yaml
+            subPath: heartbeat-debug.yaml
           {{- if .Values.pprof.port }}
           - name: diagnostic-pprof-config
             mountPath: /etc/collector/diagnostic-pprof.yaml
@@ -200,6 +206,9 @@ spec:
       - name: collector-config-cm
         configMap:
           name: collector-config-cm
+      - name: heartbeat-debug-config
+        configMap:
+          name: heartbeat-debug-config-cm
       {{- if .Values.pprof.port }}
       - name: diagnostic-pprof-config
         configMap:

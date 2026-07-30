@@ -575,6 +575,9 @@ miggoCollector:
     logVerbosity: basic
     # -- Telemetry log verbosity level (`INFO`, `DEBUG`, `WARN` or `ERROR`)
     internalLogVerbosity: INFO
+    # -- Batch timeout for the heartbeat debug pipelines (logs/metrics/profiles/traces).
+    # Controls how often the `debug` exporter prints a counts-only summary line.
+    heartbeatInterval: 2m
 
   # -- When enabled, the chart will set the GOMEMLIMIT env var to 80% of the
   # configured resources.limits.memory. If no resources.limits.memory are

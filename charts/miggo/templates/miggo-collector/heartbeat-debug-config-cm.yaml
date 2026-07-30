@@ -1,0 +1,81 @@
+{{- if .Values.miggoCollector.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: heartbeat-debug-config-cm
+  namespace: {{ include "miggo.namespace" . }}
+data:
+  heartbeat-debug.yaml: |
+    processors:
+      # Purpose: these "heartbeat" batch processors feed a parallel debug
+      # pipeline (see logs/debug, metrics/debug, etc. below) that periodically
+      # logs record counts (spans/metrics/logs seen) via the debug exporter.
+      # This gives us a lightweight "the collector is alive and receiving
+      # data" signal for troubleshooting and traceability, without spamming
+      # logs on every batch like the main pipelines do (which can be dozens
+      # of lines per minute). Instead we get one summary line per
+      # heartbeatInterval, aggregated across everything received in that window.
+      #
+      # Implementation note: send_batch_size must stay non-zero here.
+      # The batch processor treats 0 as "flush immediately on every item"
+      # (no size threshold, no timer), NOT "no size trigger" — the opposite
+      # of what you'd expect. Setting it to a very high value (1,000,000)
+      # means the timeout is the only realistic trigger under normal
+      # heartbeat volumes, while still bounding worst-case memory if the
+      # pipeline is flooded within a single interval.
+      batch/heartbeat_logs:
+        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        send_batch_size: 1000000
+        send_batch_max_size: 0
+
+      batch/heartbeat_metrics:
+        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        send_batch_size: 1000000
+        send_batch_max_size: 0
+
+      batch/heartbeat_profiles:
+        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        send_batch_size: 1000000
+        send_batch_max_size: 0
+
+      batch/heartbeat_traces:
+        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        send_batch_size: 1000000
+        send_batch_max_size: 0
+
+    service:
+      pipelines:
+        logs/debug:
+          receivers:
+            - otlp
+          processors:
+            - batch/heartbeat_logs
+          exporters:
+            - debug
+
+        metrics/debug:
+          receivers:
+            - otlp
+          processors:
+            - batch/heartbeat_metrics
+          exporters:
+            - debug
+
+        {{- if .Values.miggoRuntime.profiler.enabled }}
+        profiles/debug:
+          receivers:
+            - otlp
+          processors:
+            - batch/heartbeat_profiles
+          exporters:
+            - debug
+        {{- end }}
+
+        traces/debug:
+          receivers:
+            - otlp
+          processors:
+            - batch/heartbeat_traces
+          exporters:
+            - debug
+{{- end }}

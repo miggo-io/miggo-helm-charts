@@ -7,6 +7,8 @@ release:
 templates:
   - templates/miggo-collector/deployment.yaml
   - templates/miggo-collector/collector-config-cm.yaml
+  - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+  - templates/miggo-collector/heartbeat-debug-config-cm.yaml
   - templates/miggo-runtime/daemonset.yaml
   - templates/miggo-runtime/fluent-bit-cm.yaml
 
@@ -24,6 +26,8 @@ tests:
           value:
             - --config
             - /etc/collector/config.yaml
+            - --config
+            - /etc/collector/heartbeat-debug.yaml
             - --feature-gates
             - service.profilesSupport
   - it: should configure collector to receive and export profiles

@@ -6,10 +6,10 @@ metadata:
   name: example-collector
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.230
+    helm.sh/chart: miggo-0.0.231
     app.kubernetes.io/name: miggo-collector
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.708.4"
+    app.kubernetes.io/version: "v26.713.2"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,15 +23,16 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 0922ff6b253c4ddc67dfdd44df170a883d1a1bbbb070b40b990a39796f774259
-        checksum/diagnostic-config: 910452082d3a26a54f7d939f3f214eaca76a46ac4b7a421d9395d9672b05db36
+        checksum/config: ba7de647f556a29e005e870d928071e8b95b9e5dc3705bc464dea9c252d00d32
+        checksum/diagnostic-config: f10018e2f0aedf397986fdf6f108a44f8db53a9cc1ec6aa8865f85d03d5bdef8
+        checksum/heartbeat-debug-config: 70ffd8a0b05b835958cb5f65b590ffe9478b33ba2b31e59d788058e490370e12
       labels:
         component: collector
         miggo.io/app: example-collector
-        helm.sh/chart: miggo-0.0.230
+        helm.sh/chart: miggo-0.0.231
         app.kubernetes.io/name: miggo-collector
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.708.4"
+        app.kubernetes.io/version: "v26.713.2"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -42,7 +43,7 @@ spec:
       serviceAccountName: example-collector
       initContainers:
         - name: collector-init-container
-          image: "registry.miggo.io/miggo/miggo-collector:v26.708.4"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.713.2"
           securityContext:
             runAsGroup: 65532
             runAsNonRoot: true
@@ -76,11 +77,13 @@ spec:
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
-          image: "registry.miggo.io/miggo/miggo-collector:v26.708.4"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.713.2"
           imagePullPolicy: IfNotPresent
           args:
             - --config
             - /etc/collector/config.yaml
+            - --config
+            - /etc/collector/heartbeat-debug.yaml
             - --config
             - /etc/collector/diagnostic-pprof.yaml
             - --feature-gates
@@ -117,6 +120,9 @@ spec:
           volumeMounts:
           - name: collector-config
             mountPath: /etc/collector
+          - name: heartbeat-debug-config
+            mountPath: /etc/collector/heartbeat-debug.yaml
+            subPath: heartbeat-debug.yaml
           - name: diagnostic-pprof-config
             mountPath: /etc/collector/diagnostic-pprof.yaml
             subPath: diagnostic-pprof.yaml
@@ -130,6 +136,9 @@ spec:
       - name: collector-config-cm
         configMap:
           name: collector-config-cm
+      - name: heartbeat-debug-config
+        configMap:
+          name: heartbeat-debug-config-cm
       - name: diagnostic-pprof-config
         configMap:
           name: diagnostic-pprof-config-cm
