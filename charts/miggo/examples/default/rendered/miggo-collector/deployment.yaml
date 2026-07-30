@@ -25,7 +25,7 @@ spec:
       annotations:
         checksum/config: ba7de647f556a29e005e870d928071e8b95b9e5dc3705bc464dea9c252d00d32
         checksum/diagnostic-config: f10018e2f0aedf397986fdf6f108a44f8db53a9cc1ec6aa8865f85d03d5bdef8
-        checksum/heartbeat-debug-config: 70ffd8a0b05b835958cb5f65b590ffe9478b33ba2b31e59d788058e490370e12
+        checksum/heartbeat-debug-config: d72c105d89be1b4ee6569477f8b4a8f7efdf00a2919169c9787d4df141da0d46
       labels:
         component: collector
         miggo.io/app: example-collector

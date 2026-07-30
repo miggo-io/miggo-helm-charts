@@ -1,9 +1,10 @@
-{{- if .Values.miggoCollector.enabled }}
+---
+# Source: miggo/templates/miggo-collector/heartbeat-debug-config-cm.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: heartbeat-debug-config-cm
-  namespace: {{ include "miggo.namespace" . }}
+  namespace: default
 data:
   heartbeat-debug.yaml: |
     processors:
@@ -24,17 +25,17 @@ data:
       # heartbeat volumes, while still bounding worst-case memory if the
       # pipeline is flooded within a single interval.
       batch/heartbeat_logs:
-        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        timeout: 2m
         send_batch_size: 1000000
         send_batch_max_size: 0
 
       batch/heartbeat_metrics:
-        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        timeout: 2m
         send_batch_size: 1000000
         send_batch_max_size: 0
 
       batch/heartbeat_traces:
-        timeout: {{ .Values.miggoCollector.config.heartbeatInterval }}
+        timeout: 2m
         send_batch_size: 1000000
         send_batch_max_size: 0
 
@@ -63,4 +64,4 @@ data:
             - batch/heartbeat_traces
           exporters:
             - debug
-{{- end }}
+
