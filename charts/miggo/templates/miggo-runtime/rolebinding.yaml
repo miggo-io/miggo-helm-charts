@@ -11,7 +11,7 @@ roleRef:
   name: {{ include "miggo.fullname" . }}-pod-watcher-cr
 subjects:
 - kind: ServiceAccount
-  name: {{ include "miggo.fullname" . }}-runtime
+  name: {{ include "miggo.serviceAccountName" . }}-runtime
   namespace: '{{ include "miggo.namespace" . }}'
 {{- end }}
 
@@ -29,6 +29,6 @@ roleRef:
   name: {{ include "miggo.fullname" . }}-scc-privileged
 subjects:
   - kind: ServiceAccount
-    name: {{ include "miggo.fullname" . }}-runtime
+    name: {{ include "miggo.serviceAccountName" . }}-runtime
     namespace: '{{ include "miggo.namespace" . }}'
 {{- end }}
