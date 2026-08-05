@@ -238,6 +238,8 @@ data:
       volumeMounts: []
       volumes: []
     namespaceOverride: ""
+    networkPolicy:
+      enabled: false
     nodeSelector: {}
     output:
       api:
