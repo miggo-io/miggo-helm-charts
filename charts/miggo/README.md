@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.231](https://img.shields.io/badge/Version-0.0.231-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.713.2](https://img.shields.io/badge/AppVersion-v26.713.2-informational?style=flat-square)
+![Version: 0.0.232](https://img.shields.io/badge/Version-0.0.232-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.807.1](https://img.shields.io/badge/AppVersion-v26.807.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -97,6 +97,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggo.clusterName | string | `"kubernetes-cluster"` | Name of the Kubernetes cluster |
 | miggoCollector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | miggoCollector.annotations | object | `{}` | Component-specific annotations |
+| miggoCollector.config.heartbeatInterval | string | `"2m"` | Batch timeout for the heartbeat debug pipelines (logs/metrics/profiles/traces). Controls how often the `debug` exporter prints a counts-only summary line. |
 | miggoCollector.config.internalLogVerbosity | string | `"INFO"` | Telemetry log verbosity level (`INFO`, `DEBUG`, `WARN` or `ERROR`) |
 | miggoCollector.config.logVerbosity | string | `"basic"` | Log verbosity level (`detailed`, `normal`, or `basic`) |
 | miggoCollector.enabled | bool | `true` | Enable Collector component |
