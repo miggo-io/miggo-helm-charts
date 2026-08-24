@@ -11,6 +11,7 @@ templates:
   - templates/miggo-collector/heartbeat-debug-config-cm.yaml
   - templates/miggo-runtime/daemonset.yaml
   - templates/miggo-runtime/fluent-bit-cm.yaml
+  - templates/miggo-runtime/miggo-shield-cm.yaml
 
 values:
   - values.yaml
@@ -225,3 +226,110 @@ tests:
       - equal:
           path: spec.template.spec.containers[?(@.name == "profiler-logs")].image
           value: custom/img:special
+
+  # MiggoShield: no enable flag, so an empty config must leave the blocker
+  # entirely unwired rather than mounted-but-inert.
+  - it: should not wire the MiggoShield blocker when no policy is configured
+    template: templates/miggo-runtime/miggo-shield-cm.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should leave the profiler container untouched when no MiggoShield policy is configured
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "profiler")].env
+          content:
+            name: MIGGO_RUNTIME_SHIELD_CONFIG
+            value: /etc/miggo/miggo-shield.yaml
+      - notContains:
+          path: spec.template.spec.volumes
+          content:
+            name: miggo-shield
+            configMap:
+              name: profiler-miggo-shield
+
+  - it: should render the MiggoShield policy under a kind/version envelope
+    template: templates/miggo-runtime/miggo-shield-cm.yaml
+    set:
+      miggoRuntime:
+        profiler:
+          shield:
+            config:
+              watched_namespaces:
+                - langflow
+              python:
+                watched_functions:
+                  - name: verify_code
+                block_exec_from:
+                  - ssti
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: metadata.name
+          value: profiler-miggo-shield
+      # The chart owns the envelope; the body is the operator's, passed through.
+      - matchRegex:
+          path: data["miggo-shield.yaml"]
+          pattern: |
+            ^kind: MiggoShield
+            version: v1
+            config:
+      - matchRegex:
+          path: data["miggo-shield.yaml"]
+          pattern: 'watched_namespaces:\n  - langflow'
+      - matchRegex:
+          path: data["miggo-shield.yaml"]
+          pattern: 'block_exec_from:\n    - ssti'
+      - matchRegex:
+          path: data["miggo-shield.yaml"]
+          pattern: 'watched_functions:\n    - name: verify_code'
+
+  - it: should mount the MiggoShield policy into the profiler when one is configured
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime:
+        profiler:
+          shield:
+            config:
+              python:
+                watched_functions:
+                  - name: verify_code
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "profiler")].env
+          content:
+            name: MIGGO_RUNTIME_SHIELD_CONFIG
+            value: /etc/miggo/miggo-shield.yaml
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "profiler")].volumeMounts
+          content:
+            name: miggo-shield
+            mountPath: /etc/miggo
+            readOnly: true
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: miggo-shield
+            configMap:
+              name: profiler-miggo-shield
+
+  # The blocker's argv-capture programs reference both runtimes' process maps, so
+  # the profiler refuses to start without both tracers. Fail at install time
+  # instead of crash-looping on every node.
+  - it: should refuse a MiggoShield policy without the python and hotspot tracers
+    template: templates/miggo-runtime/miggo-shield-cm.yaml
+    set:
+      miggoRuntime:
+        profiler:
+          enabledTracers: [python, go]
+          shield:
+            config:
+              python:
+                watched_functions:
+                  - name: verify_code
+    asserts:
+      - failedTemplate:
+          errorMessage: 'miggoRuntime.profiler.shield.config is set, so miggoRuntime.profiler.enabledTracers must include both "python" and "hotspot": the blocker''s argv-capture programs reference both runtimes'' process maps, and the profiler refuses to start without them.'
