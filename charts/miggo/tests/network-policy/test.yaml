@@ -1,0 +1,277 @@
+suite: network policy rendering
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-collector/networkpolicy.yaml
+  - templates/miggo-watch/networkpolicy.yaml
+  - templates/miggo-scanner/networkpolicy.yaml
+  - templates/miggo-runtime/networkpolicy.yaml
+
+values:
+  - values.yaml
+
+tests:
+  # --- disabled by default ---
+
+  - it: should not render the collector NetworkPolicy when networkPolicy.enabled is false
+    template: templates/miggo-collector/networkpolicy.yaml
+    set:
+      networkPolicy.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render the watch NetworkPolicy when networkPolicy.enabled is false
+    template: templates/miggo-watch/networkpolicy.yaml
+    set:
+      networkPolicy.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render the scanner NetworkPolicy when networkPolicy.enabled is false
+    template: templates/miggo-scanner/networkpolicy.yaml
+    set:
+      networkPolicy.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render the runtime NetworkPolicy when networkPolicy.enabled is false
+    template: templates/miggo-runtime/networkpolicy.yaml
+    set:
+      networkPolicy.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # --- collector ---
+
+  - it: should select only collector pods and restrict ingress only
+    template: templates/miggo-collector/networkpolicy.yaml
+    asserts:
+      - isKind:
+          of: NetworkPolicy
+      - equal:
+          path: spec.podSelector.matchLabels
+          value:
+            app.kubernetes.io/name: miggo-collector
+            app.kubernetes.io/instance: miggo
+      - equal:
+          path: spec.policyTypes
+          value: [Ingress]
+      - notExists:
+          path: spec.egress
+
+  - it: should allow healthcheck ingress from anywhere for kubelet probes
+    template: templates/miggo-collector/networkpolicy.yaml
+    asserts:
+      - equal:
+          path: spec.ingress[0]
+          value:
+            ports:
+              - protocol: TCP
+                port: 6666
+
+  - it: should allow otlp http ingress from watch, scanner and runtime
+    template: templates/miggo-collector/networkpolicy.yaml
+    asserts:
+      - equal:
+          path: spec.ingress[1]
+          value:
+            from:
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: miggo-watch
+                    app.kubernetes.io/instance: miggo
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: miggo-scanner
+                    app.kubernetes.io/instance: miggo
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: miggo-runtime
+                    app.kubernetes.io/instance: miggo
+            ports:
+              - protocol: TCP
+                port: 4318
+
+  - it: should allow otlp grpc ingress from runtime only
+    template: templates/miggo-collector/networkpolicy.yaml
+    asserts:
+      - equal:
+          path: spec.ingress[2]
+          value:
+            from:
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: miggo-runtime
+                    app.kubernetes.io/instance: miggo
+            ports:
+              - protocol: TCP
+                port: 4317
+
+  - it: should not render when the collector is disabled
+    template: templates/miggo-collector/networkpolicy.yaml
+    set:
+      miggoCollector.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # --- watch ---
+
+  - it: should select only watch pods and restrict ingress only
+    template: templates/miggo-watch/networkpolicy.yaml
+    asserts:
+      - isKind:
+          of: NetworkPolicy
+      - equal:
+          path: spec.podSelector.matchLabels
+          value:
+            app.kubernetes.io/name: miggo-watch
+            app.kubernetes.io/instance: miggo
+      - equal:
+          path: spec.policyTypes
+          value: [Ingress]
+      - notExists:
+          path: spec.egress
+
+  - it: should allow healthcheck ingress from anywhere for kubelet probes
+    template: templates/miggo-watch/networkpolicy.yaml
+    asserts:
+      - equal:
+          path: spec.ingress[0]
+          value:
+            ports:
+              - protocol: TCP
+                port: 6666
+
+  - it: should allow pprof ingress from the collector only
+    template: templates/miggo-watch/networkpolicy.yaml
+    asserts:
+      - equal:
+          path: spec.ingress[1]
+          value:
+            from:
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: miggo-collector
+                    app.kubernetes.io/instance: miggo
+            ports:
+              - protocol: TCP
+                port: 6050
+
+  - it: should not allow pprof ingress when pprof.port is 0
+    template: templates/miggo-watch/networkpolicy.yaml
+    set:
+      pprof.port: 0
+    asserts:
+      - lengthEqual:
+          path: spec.ingress
+          count: 1
+
+  # --- scanner ---
+
+  - it: should select only scanner pods and restrict ingress only
+    template: templates/miggo-scanner/networkpolicy.yaml
+    asserts:
+      - isKind:
+          of: NetworkPolicy
+      - equal:
+          path: spec.podSelector.matchLabels
+          value:
+            app.kubernetes.io/name: miggo-scanner
+            app.kubernetes.io/instance: miggo
+      - equal:
+          path: spec.policyTypes
+          value: [Ingress]
+      - notExists:
+          path: spec.egress
+
+  - it: should allow pprof ingress from the collector only
+    template: templates/miggo-scanner/networkpolicy.yaml
+    asserts:
+      - equal:
+          path: spec.ingress[1]
+          value:
+            from:
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: miggo-collector
+                    app.kubernetes.io/instance: miggo
+            ports:
+              - protocol: TCP
+                port: 6050
+
+  - it: should not render when the scanner is disabled
+    template: templates/miggo-scanner/networkpolicy.yaml
+    set:
+      miggoScanner.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # --- runtime ---
+
+  - it: should select only runtime pods and restrict ingress only
+    template: templates/miggo-runtime/networkpolicy.yaml
+    asserts:
+      - isKind:
+          of: NetworkPolicy
+      - equal:
+          path: spec.podSelector.matchLabels
+          value:
+            app.kubernetes.io/name: miggo-runtime
+            app.kubernetes.io/instance: miggo
+      - equal:
+          path: spec.policyTypes
+          value: [Ingress]
+      - notExists:
+          path: spec.egress
+
+  - it: should allow both the main and profiler pprof ports from the collector only
+    template: templates/miggo-runtime/networkpolicy.yaml
+    asserts:
+      - equal:
+          path: spec.ingress[1]
+          value:
+            from:
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: miggo-collector
+                    app.kubernetes.io/instance: miggo
+            ports:
+              - protocol: TCP
+                port: 6050
+      - equal:
+          path: spec.ingress[2]
+          value:
+            from:
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: miggo-collector
+                    app.kubernetes.io/instance: miggo
+            ports:
+              - protocol: TCP
+                port: 6051
+
+  - it: should not render the profiler pprof ingress when profilerPort is 0
+    template: templates/miggo-runtime/networkpolicy.yaml
+    set:
+      pprof.profilerPort: 0
+    asserts:
+      - lengthEqual:
+          path: spec.ingress
+          count: 2
+
+  - it: should not render when runtime is disabled
+    template: templates/miggo-runtime/networkpolicy.yaml
+    set:
+      miggoRuntime.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
