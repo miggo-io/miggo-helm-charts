@@ -254,16 +254,15 @@ tests:
     template: templates/miggo-runtime/miggo-shield-cm.yaml
     set:
       miggoRuntime:
-        profiler:
-          shield:
-            config:
-              watched_namespaces:
-                - langflow
-              python:
-                watched_functions:
-                  - name: verify_code
-                block_exec_from:
-                  - ssti
+        shield:
+          config:
+            watched_namespaces:
+              - langflow
+            python:
+              watched_functions:
+                - name: validate_code
+              block_exec_from:
+                - ssti
     asserts:
       - isKind:
           of: ConfigMap
@@ -285,18 +284,17 @@ tests:
           pattern: 'block_exec_from:\n    - ssti'
       - matchRegex:
           path: data["miggo-shield.yaml"]
-          pattern: 'watched_functions:\n    - name: verify_code'
+          pattern: 'watched_functions:\n    - name: validate_code'
 
   - it: should mount the MiggoShield policy into the profiler when one is configured
     template: templates/miggo-runtime/daemonset.yaml
     set:
       miggoRuntime:
-        profiler:
-          shield:
-            config:
-              python:
-                watched_functions:
-                  - name: verify_code
+        shield:
+          config:
+            python:
+              watched_functions:
+                - name: validate_code
     asserts:
       - contains:
           path: spec.template.spec.containers[?(@.name == "profiler")].env
@@ -325,11 +323,11 @@ tests:
       miggoRuntime:
         profiler:
           enabledTracers: [python, go]
-          shield:
-            config:
-              python:
-                watched_functions:
-                  - name: verify_code
+        shield:
+          config:
+            python:
+              watched_functions:
+                - name: validate_code
     asserts:
       - failedTemplate:
-          errorMessage: 'miggoRuntime.profiler.shield.config is set, so miggoRuntime.profiler.enabledTracers must include both "python" and "hotspot": the blocker''s argv-capture programs reference both runtimes'' process maps, and the profiler refuses to start without them.'
+          errorMessage: 'miggoRuntime.shield.config is set, so miggoRuntime.profiler.enabledTracers must include both "python" and "hotspot": the blocker''s argv-capture programs reference both runtimes'' process maps, and the profiler refuses to start without them.'

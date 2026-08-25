@@ -29,7 +29,7 @@ spec:
         {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
         checksum/config: {{ include (print $.Template.BasePath "/miggo-runtime/fluent-bit-cm.yaml") . | sha256sum }}
         {{- end }}
-        {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.profiler.shield.config }}
+        {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.shield.config }}
         checksum/miggo-shield: {{ include (print $.Template.BasePath "/miggo-runtime/miggo-shield-cm.yaml") . | sha256sum }}
         {{- end }}
       {{- with .Values.podAnnotations }}
@@ -231,7 +231,7 @@ spec:
             - name: MIGGO_DOTNET_STRINGS_CACHE_TTL
               value: {{ . | quote }}
           {{- end }}
-          {{- if .Values.miggoRuntime.profiler.shield.config }}
+          {{- if .Values.miggoRuntime.shield.config }}
             - name: MIGGO_RUNTIME_SHIELD_CONFIG
               value: /etc/miggo/miggo-shield.yaml
           {{- end }}
@@ -254,7 +254,7 @@ spec:
               readOnly: true
             - name: unix-socket
               mountPath: /tmp/grpc
-            {{- if .Values.miggoRuntime.profiler.shield.config }}
+            {{- if .Values.miggoRuntime.shield.config }}
             - name: miggo-shield
               mountPath: /etc/miggo
               readOnly: true
@@ -321,7 +321,7 @@ spec:
       - name: cgroupfs
         hostPath:
           path: /sys/fs/cgroup
-      {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.profiler.shield.config }}
+      {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.shield.config }}
       - name: miggo-shield
         configMap:
           name: profiler-miggo-shield

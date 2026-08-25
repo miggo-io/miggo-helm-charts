@@ -474,38 +474,38 @@ miggoRuntime:
       # -- TTL for entries in the PE strings LRU cache (MIGGO_DOTNET_STRINGS_CACHE_TTL), e.g. "10m". Leave empty to use the profiler default.
       stringsCacheTTL:
 
-    # MiggoShield: the BPF-LSM child-process blocker. It denies the execve of a
-    # child process spawned while a watched function is on the call stack, which
-    # is the usual last step of an RCE or command-injection payload.
-    #
-    # The document has two independent halves. watched_namespaces,
-    # watched_workloads and watched_labels select where to enforce: each
-    # non-empty selector must match, an empty one is a wildcard, and an entirely
-    # empty scope enforces on every workload on the node. A section per language
-    # selects what to watch for, via block_exec_from (attack classes the sensor
-    # expands to its own function lists) and watched_functions (names those lists
-    # do not cover yet).
-    #
-    # There is deliberately no enable flag: a language section with no watched
-    # functions arms nothing, so a config cannot look armed while enforcing
-    # nothing. Parsing is strict - an unknown field or an unknown block_exec_from
-    # class makes the profiler refuse to start, because a typo that silently
-    # narrows what is blocked is worse than a sensor that does not come up.
-    shield:
-      # -- The `config:` body of the MiggoShield document, passed through verbatim
-      # (the chart adds only the kind/version envelope), so keys are the sensor's own
-      # snake_case and policy can be copied from its docs unchanged. Empty ships no
-      # policy and arms nothing. Requires the `python` and `hotspot` tracers.
-      config: {}
-      #  watched_namespaces:
-      #    - langflow
-      #  watched_workloads:
-      #    - deployment/langflow
-      #  python:
-      #    watched_functions:
-      #      - name: verify_code
-      #    block_exec_from:
-      #      - ssti
+  # MiggoShield: the BPF-LSM child-process blocker. It denies the execve of a
+  # child process spawned while a watched function is on the call stack, which
+  # is the usual last step of an RCE or command-injection payload.
+  #
+  # The document has two independent halves. watched_namespaces,
+  # watched_workloads and watched_labels select where to enforce: each
+  # non-empty selector must match, an empty one is a wildcard, and an entirely
+  # empty scope enforces on every workload on the node. A section per language
+  # selects what to watch for, via block_exec_from (attack classes the sensor
+  # expands to its own function lists) and watched_functions (names those lists
+  # do not cover yet).
+  #
+  # There is deliberately no enable flag: a language section with no watched
+  # functions arms nothing, so a config cannot look armed while enforcing
+  # nothing. Parsing is strict - an unknown field or an unknown block_exec_from
+  # class makes the sensor refuse to start, because a typo that silently
+  # narrows what is blocked is worse than a sensor that does not come up.
+  shield:
+    # -- The `config:` body of the MiggoShield document, passed through verbatim
+    # (the chart adds only the kind/version envelope), so keys are the sensor's own
+    # snake_case and policy can be copied from its docs unchanged. Empty ships no
+    # policy and arms nothing. Requires the `python` and `hotspot` tracers.
+    config: {}
+    #  watched_namespaces:
+    #    - langflow
+    #  watched_workloads:
+    #    - deployment/langflow
+    #  python:
+    #    watched_functions:
+    #      - name: validate_code
+    #    block_exec_from:
+    #      - ssti
 
   fluentbit:
     # -- Install fluent-bit on each cluster node to forward the profiler logs to the Collector

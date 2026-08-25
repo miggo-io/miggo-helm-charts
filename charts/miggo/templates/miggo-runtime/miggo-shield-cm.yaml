@@ -1,7 +1,7 @@
-{{- if and .Values.miggoRuntime.enabled .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.profiler.shield.config }}
+{{- if and .Values.miggoRuntime.enabled .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.shield.config }}
 {{- $tracers := .Values.miggoRuntime.profiler.enabledTracers }}
 {{- if not (and (has "python" $tracers) (has "hotspot" $tracers)) }}
-{{- fail "miggoRuntime.profiler.shield.config is set, so miggoRuntime.profiler.enabledTracers must include both \"python\" and \"hotspot\": the blocker's argv-capture programs reference both runtimes' process maps, and the profiler refuses to start without them." }}
+{{- fail "miggoRuntime.shield.config is set, so miggoRuntime.profiler.enabledTracers must include both \"python\" and \"hotspot\": the blocker's argv-capture programs reference both runtimes' process maps, and the profiler refuses to start without them." }}
 {{- end }}
 apiVersion: v1
 kind: ConfigMap
@@ -15,5 +15,5 @@ data:
     kind: MiggoShield
     version: v1
     config:
-      {{- toYaml .Values.miggoRuntime.profiler.shield.config | nindent 6 }}
+      {{- toYaml .Values.miggoRuntime.shield.config | nindent 6 }}
 {{- end }}
