@@ -55,7 +55,9 @@ jobs:
           show-progress: false
           fetch-depth: 0
           token: "${{ steps.set-token.outputs.checkout_token }}"
-          ref: 'main'
+          # DAQ-204 one-off: packages this branch instead of main. Must revert to
+          # 'main' before this file goes anywhere near the default branch.
+          ref: 'feature/daq-204-scanner-cache-flush-24h'
       
       - name: Configure Git
         run: |
