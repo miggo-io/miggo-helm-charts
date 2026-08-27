@@ -55,7 +55,7 @@ spec:
             - --chart-version=0.0.231
             - --queue-size=10000
             
-            - --cache-flush-interval=168h
+            - --cache-flush-interval=24h
             - --cache-cleanup-interval=15m
             - --cache-size=10000
             

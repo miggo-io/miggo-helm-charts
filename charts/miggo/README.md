@@ -199,7 +199,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.config.cache.cleanupInterval | string | `"15m"` | How often to scan and remove stale cache entries (0 to disable) |
 | miggoScanner.config.cache.configMap.enabled | bool | `true` | Enable persisted ConfigMap based cache |
 | miggoScanner.config.cache.configMap.name | string | `""` | Name of the ConfigMap (generated if not set) |
-| miggoScanner.config.cache.flushInterval | string | `"168h"` | Max age of a cache entry before it is removed (0 to disable) |
+| miggoScanner.config.cache.flushInterval | string | `"24h"` | Max age of a cache entry before it is removed (0 to disable) |
 | miggoScanner.config.cache.maxEntries | int | `10000` | Maximum number of entries in cache |
 | miggoScanner.config.disableCompression | bool | `false` | Disable compression for data transfer |
 | miggoScanner.config.queueSize | int | `10000` | Max limit of the processing queue |
