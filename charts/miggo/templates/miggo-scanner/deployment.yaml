@@ -151,6 +151,11 @@ spec:
             mountPath: /etc/registry-credentials
             readOnly: true
           {{ end }}
+          {{ if (include "accessKeySecret" .) }}
+          - name: access-key
+            mountPath: /etc/miggo-access-key
+            readOnly: true
+          {{ end }}
       volumes:
       {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
@@ -165,6 +170,14 @@ spec:
           items:
             - key: .dockerconfigjson
               path: .dockerconfigjson
+      {{ end }}
+      {{ if (include "accessKeySecret" .) }}
+      - name: access-key
+        secret:
+          secretName: {{ include "accessKeySecret" . }}
+          items:
+            - key: ACCESS_KEY
+              path: ACCESS_KEY
       {{ end }}
       {{- if or .Values.nodeSelector .Values.miggoScanner.nodeSelector }}
       nodeSelector:

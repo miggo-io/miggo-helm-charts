@@ -173,7 +173,7 @@ data:
           configMap:
             enabled: true
             name: ""
-          flushInterval: 168h
+          flushInterval: 24h
           maxEntries: 10000
         disableCompression: false
         queueSize: 10000
