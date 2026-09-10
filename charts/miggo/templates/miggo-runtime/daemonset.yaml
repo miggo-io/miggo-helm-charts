@@ -26,9 +26,6 @@ spec:
   template:
     metadata:
       annotations:
-        {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
-        checksum/config: {{ include (print $.Template.BasePath "/miggo-runtime/fluent-bit-cm.yaml") . | sha256sum }}
-        {{- end }}
         {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.shield.config }}
         checksum/miggo-shield: {{ include (print $.Template.BasePath "/miggo-runtime/miggo-shield-cm.yaml") . | sha256sum }}
         {{- end }}
@@ -43,9 +40,6 @@ spec:
         {{- include "miggoRuntime.labels" . | nindent 8 }}
         {{- if .Values.pprof.port }}
         miggo.io/pprof-port: {{ .Values.pprof.port | quote }}
-        {{- end }}
-        {{- if and .Values.miggoRuntime.profiler.enabled .Values.pprof.profilerPort }}
-        miggo.io/pprof-profiler-port: {{ .Values.pprof.profilerPort | quote }}
         {{- end }}
         {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
@@ -93,6 +87,19 @@ spec:
             - --cgroup-registry-clean-interval={{ .Values.miggoRuntime.cgroupRegistryCleanInterval }}
             - --cgroup-root-dir=/cgroup
             - --pprof-port={{ .Values.pprof.port }}
+            
+            - --profiles-otlp-endpoint={{ (include "otlpProfilesEndpoint" .) }}
+            - --profiler-reporter-interval={{ .Values.miggoRuntime.profiler.reporterInterval }}
+            - --profiler-samples-per-second={{ .Values.miggoRuntime.profiler.samplesPerSecond }}
+            - --profiler-monitor-interval={{ .Values.miggoRuntime.profiler.monitorInterval }}
+            - --profiler-probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
+            - --profiler-probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
+            - --profiler-tracers={{ join "," .Values.miggoRuntime.profiler.enabledTracers }}
+            - --profiler-enable-cgroup-filter={{ .Values.miggoRuntime.profiler.enableNamespaceFiltering }}
+            {{- if .Values.miggoRuntime.shield.config }}
+            - --shield-config=/etc/miggo/miggo-shield.yaml
+            {{- end }}
+            
             {{- include "namespace.flags" . | nindent 12 }}
           {{- range $key, $value := .Values.miggoRuntime.extraArgs }}
             {{- if kindIs "invalid" $value }}
@@ -101,6 +108,14 @@ spec:
             - --{{ $key }}={{ $value }}
             {{- end }}
           {{- end }}
+          {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
+            {{- if kindIs "invalid" $value }}
+            - --{{ $key }}
+            {{- else }}
+            - --{{ $key }}={{ $value }}
+            {{- end }}
+          {{- end }}
+          
           envFrom:
           {{- with .Values.extraEnvsFrom }}
           {{- toYaml . | nindent 10 }}
@@ -123,6 +138,22 @@ spec:
                 fieldPath: metadata.name
           - name: KUBERNETES_CLUSTER_DOMAIN
             value: {{ quote .Values.kubernetesClusterDomain }}
+          {{- with .Values.miggoRuntime.profiler.dotnet.peCacheSize }}
+          - name: MIGGO_DOTNET_PE_CACHE_SIZE
+            value: {{ . | quote }}
+          {{- end }}
+          {{- with .Values.miggoRuntime.profiler.dotnet.peCacheTTL }}
+          - name: MIGGO_DOTNET_PE_CACHE_TTL
+            value: {{ . | quote }}
+          {{- end }}
+          {{- with .Values.miggoRuntime.profiler.dotnet.stringsCacheSize }}
+          - name: MIGGO_DOTNET_STRINGS_CACHE_SIZE
+            value: {{ . | quote }}
+          {{- end }}
+          {{- with .Values.miggoRuntime.profiler.dotnet.stringsCacheTTL }}
+          - name: MIGGO_DOTNET_STRINGS_CACHE_TTL
+            value: {{ . | quote }}
+          {{- end }}
           {{- with .Values.extraEnvs }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
@@ -157,9 +188,10 @@ spec:
           - name: cgroupfs
             mountPath: /cgroup
             readOnly: true
-          {{- if .Values.miggoRuntime.profiler.enabled }}
-          - name: unix-socket
-            mountPath: /tmp/grpc
+          {{- if .Values.miggoRuntime.shield.config }}
+          - name: miggo-shield
+            mountPath: /etc/miggo
+            readOnly: true
           {{- end }}
           {{- with .Values.volumeMounts }}
           {{- toYaml . | nindent 10 }}
@@ -167,149 +199,9 @@ spec:
           {{- with .Values.miggoRuntime.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
-        {{- if .Values.miggoRuntime.profiler.enabled }}
-        - name: profiler
-          {{- if .Values.miggoRuntime.profiler.image.fullPath }}
-          image: "{{ .Values.miggoRuntime.profiler.image.fullPath }}"
-          {{- else }}
-          image: "{{ .Values.image.registry }}/{{ .Values.miggoRuntime.profiler.image.repository }}:{{ .Values.miggoRuntime.profiler.image.tag | default .Chart.AppVersion }}"
-          {{- end }}
-          imagePullPolicy: {{ .Values.miggoRuntime.profiler.image.pullPolicy | default .Values.image.pullPolicy }}
-          command:
-            - /root/ebpf-profiler
-          args:
-            - -collection-agent={{ (include "otlpProfilesEndpoint" .) }}
-            - -disable-tls=true
-            - -reporter-interval={{ .Values.miggoRuntime.profiler.reporterInterval }}
-            - -samples-per-second={{ .Values.miggoRuntime.profiler.samplesPerSecond }}
-            - -monitor-interval={{ .Values.miggoRuntime.profiler.monitorInterval }}
-            - -probabilistic-threshold={{ .Values.miggoRuntime.profiler.probabilisticThreshold }}
-            - -probabilistic-interval={{ .Values.miggoRuntime.profiler.probabilisticInterval }}
-            - -tracers={{ join "," .Values.miggoRuntime.profiler.enabledTracers }}
-            {{- if .Values.pprof.profilerPort }}
-            - -pprof=0.0.0.0:{{ .Values.pprof.profilerPort }}
-            {{- end }}
-          {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
-            {{- if kindIs "invalid" $value }}
-            - --{{ $key }}
-            {{- else }}
-            - --{{ $key }}={{ $value }}
-            {{- end }}
-          {{- end }}
-          env:
-          {{- if and .Values.miggoRuntime.profiler.useGOMEMLIMIT .Values.miggoRuntime.profiler.resources.limits.memory  }}
-            - name: GOMEMLIMIT
-              value: {{ include "gomemlimit" .Values.miggoRuntime.profiler.resources.limits.memory | quote }}
-          {{- end }}
-            - name: MIGGO_RUNTIME_ENABLE_CGROUP_FILTER
-              value: {{ .Values.miggoRuntime.profiler.enableNamespaceFiltering | quote }}
-            - name: MIGGO_RUNTIME_CLUSTER_NAME
-              value: {{ .Values.miggo.clusterName }}
-            - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
-              value: {{ (include "otlpEndpoint" .) }}
-            - name: MIGGO_RUNTIME_EXPORT_LOGS_ENDPOINT
-              value: {{ (include "otlpEndpoint" .) }}
-            - name: MIGGO_RUNTIME_EXPORT_METRICS_INTERVAL
-              value: {{ .Values.config.metrics.interval }}
-            - name: MIGGO_RUNTIME_NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-          {{- with .Values.miggoRuntime.profiler.dotnet.peCacheSize }}
-            - name: MIGGO_DOTNET_PE_CACHE_SIZE
-              value: {{ . | quote }}
-          {{- end }}
-          {{- with .Values.miggoRuntime.profiler.dotnet.peCacheTTL }}
-            - name: MIGGO_DOTNET_PE_CACHE_TTL
-              value: {{ . | quote }}
-          {{- end }}
-          {{- with .Values.miggoRuntime.profiler.dotnet.stringsCacheSize }}
-            - name: MIGGO_DOTNET_STRINGS_CACHE_SIZE
-              value: {{ . | quote }}
-          {{- end }}
-          {{- with .Values.miggoRuntime.profiler.dotnet.stringsCacheTTL }}
-            - name: MIGGO_DOTNET_STRINGS_CACHE_TTL
-              value: {{ . | quote }}
-          {{- end }}
-          {{- if .Values.miggoRuntime.shield.config }}
-            - name: MIGGO_RUNTIME_SHIELD_CONFIG
-              value: /etc/miggo/miggo-shield.yaml
-          {{- end }}
-          {{- with .Values.miggoRuntime.profiler.extraEnvs }}
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          resources:
-            {{- toYaml .Values.miggoRuntime.profiler.resources | nindent 12 }}
-          securityContext:
-            {{- toYaml .Values.miggoRuntime.profiler.securityContext | nindent 12 }}
-          volumeMounts:
-            - name: debugfs
-              mountPath: /sys/kernel/debug
-              readOnly: true
-            - name: tracefs
-              mountPath: /sys/kernel/tracing
-              readOnly: true
-            - name: cgroupfs
-              mountPath: /cgroup
-              readOnly: true
-            - name: unix-socket
-              mountPath: /tmp/grpc
-            {{- if .Values.miggoRuntime.shield.config }}
-            - name: miggo-shield
-              mountPath: /etc/miggo
-              readOnly: true
-            {{- end }}
-        {{- end }}
-        {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
-        - name: profiler-logs
-          {{- if .Values.miggoRuntime.fluentbit.image.fullPath }}
-          image: "{{ .Values.miggoRuntime.fluentbit.image.fullPath }}"
-          {{- else }}
-          image: "{{ .Values.miggoRuntime.fluentbit.image.repository }}:{{ .Values.miggoRuntime.fluentbit.image.tag }}"
-          {{- end }}
-          imagePullPolicy: {{ .Values.miggoRuntime.fluentbit.image.pullPolicy | default .Values.image.pullPolicy }}
-          env:
-            - name: POD_UID
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.uid
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-          command:
-            - /fluent-bit/bin/fluent-bit
-            - -c
-            - /fluent-bit/etc/fluent-bit.yaml
-          volumeMounts:
-            - name: host-var
-              mountPath: /var
-              readOnly: true
-            - name: fluent-bit-config
-              mountPath: /fluent-bit/etc
-          resources:
-            {{- toYaml .Values.miggoRuntime.fluentbit.resources | nindent 12 }}
-        {{- end }}
       hostIPC: {{ .Values.miggoRuntime.hostIPC }}
       hostPID: {{ .Values.miggoRuntime.hostPID }}
       volumes:
-      {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.fluentbit.enabled }}
-      - name: fluent-bit-config
-        configMap:
-          name: profiler-fluent-bit-config
-      - name: host-var
-        hostPath:
-          path: /var
-          type: Directory
-      {{- end }}
       - name: debugfs
         hostPath:
           path: /sys/kernel/debug

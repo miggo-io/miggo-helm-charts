@@ -44,30 +44,6 @@ data:
                 collection_interval: {{ .Values.pprof.cpu.interval }}
                 initial_delay: 10s
           {{- end }}
-          {{- if and .Values.miggoRuntime.profiler.enabled .Values.pprof.profilerPort }}
-          {{- if .Values.pprof.memory.enabled }}
-          pprof/profiler-heap:
-            rule: type == "pod" && labels["miggo.io/pprof-profiler-port"] != ""
-            resource_attributes:
-              component: 'miggo-profiler'
-            config:
-              remote:
-                endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-profiler-port\"]`/debug/pprof/heap"
-                collection_interval: {{ .Values.pprof.memory.interval }}
-                initial_delay: 10s
-          {{- end }}
-          {{- if .Values.pprof.cpu.enabled }}
-          pprof/profiler-cpu:
-            rule: type == "pod" && labels["miggo.io/pprof-profiler-port"] != ""
-            resource_attributes:
-              component: 'miggo-profiler'
-            config:
-              remote:
-                endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-profiler-port\"]`/debug/pprof/profile?seconds={{ .Values.pprof.cpu.period }}"
-                collection_interval: {{ .Values.pprof.cpu.interval }}
-                initial_delay: 10s
-          {{- end }}
-          {{- end }}
 
     processors:
       resource/diagnostics:
