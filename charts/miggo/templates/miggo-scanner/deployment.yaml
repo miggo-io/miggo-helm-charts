@@ -103,6 +103,10 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+            {{- with (include "miggo.chartReleaseDate" .) }}
+            - name: MIGGO_SCANNER_CHART_RELEASE_DATE
+              value: {{ . | quote }}
+            {{- end }}
             - name: MIGGO_SCANNER_NODE_NAME
               valueFrom:
                 fieldRef:

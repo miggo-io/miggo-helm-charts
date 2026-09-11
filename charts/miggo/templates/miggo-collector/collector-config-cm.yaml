@@ -85,6 +85,11 @@ data:
               - action: add_label
                 new_label: chart_version
                 new_value: {{ .Chart.Version }}
+              {{- with (include "miggo.chartReleaseDate" .) }}
+              - action: add_label
+                new_label: chart_release_date
+                new_value: {{ . }}
+              {{- end }}
 
       batch/metrics:
         timeout: 10s
