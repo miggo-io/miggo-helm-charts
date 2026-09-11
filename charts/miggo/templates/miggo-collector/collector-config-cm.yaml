@@ -85,6 +85,9 @@ data:
               - action: add_label
                 new_label: chart_version
                 new_value: {{ .Chart.Version }}
+              - action: add_label
+                new_label: component_version
+                new_value: {{ .Values.miggoCollector.image.tag | default .Chart.AppVersion }}
 
       batch/metrics:
         timeout: 10s
