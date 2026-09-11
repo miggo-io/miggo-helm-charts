@@ -113,6 +113,10 @@ spec:
           - name: GOMEMLIMIT
             value: {{ include "gomemlimit" .Values.miggoRuntime.resources.requests.memory | quote }}
           {{- end }}
+          {{- with (include "miggo.chartReleaseDate" .) }}
+          - name: MIGGO_RUNTIME_CHART_RELEASE_DATE
+            value: {{ . | quote }}
+          {{- end }}
           - name: MIGGO_RUNTIME_NODE_NAME
             valueFrom:
               fieldRef:
