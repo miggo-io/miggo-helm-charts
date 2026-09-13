@@ -906,6 +906,21 @@ entries:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/k8s-read-0.0.1/k8s-read-0.0.1.tgz
     version: 0.0.1
   miggo:
+  - annotations:
+      miggo.io/releaseDate: "2026-09-13T10:55:09Z"
+    apiVersion: v2
+    appVersion: v26.913.1
+    created: "2026-09-13T10:55:13.45700069Z"
+    description: A Helm chart for Miggo
+    digest: ef46c16a2b1f6d293dc9258e02bae98d82709a2f9ae1b2451f9352c24315ecce
+    maintainers:
+    - name: miggo-io
+      url: https://github.com/miggo-io
+    name: miggo
+    type: application
+    urls:
+    - https://github.com/miggo-io/miggo-helm-charts/releases/download/miggo-0.0.238/miggo-0.0.238.tgz
+    version: 0.0.238
   - apiVersion: v2
     appVersion: v26.905.1
     created: "2026-09-05T14:23:23.988942455Z"
@@ -3781,4 +3796,4 @@ entries:
     urls:
     - https://github.com/miggo-io/miggo-helm-charts/releases/download/static-sbom-0.0.1/static-sbom-0.0.1.tgz
     version: 0.0.1
-generated: "2026-09-12T14:29:57.641801579Z"
+generated: "2026-09-13T10:55:13.458387349Z"
