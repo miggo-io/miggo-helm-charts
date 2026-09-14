@@ -17,6 +17,3 @@ rules:
 - apiGroups: ["", "apps", "batch", "autoscaling", "coordination.k8s.io"]
   resources: ["*"]
   verbs: ["get", "list", "watch"]
-
-
-

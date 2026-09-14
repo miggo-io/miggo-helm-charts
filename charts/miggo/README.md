@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.238](https://img.shields.io/badge/Version-0.0.238-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.913.1](https://img.shields.io/badge/AppVersion-v26.913.1-informational?style=flat-square)
+![Version: 0.0.239](https://img.shields.io/badge/Version-0.0.239-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.913.1](https://img.shields.io/badge/AppVersion-v26.913.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -10,6 +10,7 @@ This Helm chart deploys Miggo's components, providing comprehensive monitoring, 
 - **Miggo Scanner**: Software Bill of Materials analysis for container images
 - **Miggo Runtime**: Runtime monitoring using eBPF technology
 - **Miggo Collector**: Centralized telemetry data collection and export
+- **Detections (Beta)**: Ties a process execution to the application call path that caused it
 
 ## Prerequisites
 
@@ -38,6 +39,23 @@ Uses eBPF technology to monitor runtime behavior of containers and system calls,
 ### Miggo Collector
 
 Collects telemetry data (metrics, traces, logs) using OpenTelemetry protocol and forwards it to Miggo's platform.
+
+## Detections (Beta)
+
+Detections correlate process executions observed in the kernel with profiler stack traces, so a finding shows **which application call path executed a payload** — not merely that a process ran.
+
+Turn the capability on with a single value:
+
+```yaml
+enableDetections: true
+
+miggoRuntime:
+  enabled: true
+```
+
+`enableDetections` configures Miggo Runtime and its profiler; it does not install them. It therefore requires `miggoRuntime.enabled: true` and has no effect on its own. Enabling it adds CPU work on the runtime and profiler containers, proportional to how often the watched workloads spawn processes.
+
+This capability is in **beta**. The value is stable, but its behaviour and resource profile may change between chart versions.
 
 ## Getting Started
 
@@ -85,6 +103,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | config.includeSystemNamespaces | bool | `false` | When set to true, includes system namespaces like kube-system etc. When false (default), automatically adds system namespaces to deniedNamespaces It's recommended to keep this false unless you specifically need to operate on system namespaces |
 | config.metrics.interval | string | `"60s"` | Interval for metrics collection |
 | config.platform | string | `""` | The Kubernetes platform acronym. Allowed values are: - gke: Google Kubernetes Engine - openshift: Red Hat OpenShift/OCP |
+| enableDetections | bool | `false` | Enable the detections capability (Beta): the runtime correlates process execs with profiler stack traces, so a detection shows which application call path executed a payload. Requires miggoRuntime.enabled. Adds per-exec work on the runtime and profiler. |
 | extraEnvs | list | `[]` | Additional environment variables for all containers |
 | extraEnvsFrom | list | `[]` | Additional environment variables from sources for all containers |
 | healthcheck.port | int | `6666` | Port number for health check endpoints |

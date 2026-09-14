@@ -13,14 +13,17 @@ data:
     config:
       accessKey: replace-with-your-access-key
       accessKeySecret: ""
+      allowedNamespaces: null
       apiUrl: https://api.miggo.io
       authUrl: https://auth.miggo.io
       clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
       collectorUrl: https://collector.miggo.io
+      deniedNamespaces: null
       includeSystemNamespaces: false
       metrics:
         interval: 60s
       platform: ""
+    enableDetections: false
     extraEnvs: []
     extraEnvsFrom: []
     healthcheck:
@@ -51,7 +54,10 @@ data:
       extraProcessorNames: []
       extraProcessors: {}
       image:
+        fullPath: null
+        pullPolicy: null
         repository: miggo/miggo-collector
+        tag: null
       initContainers: []
       instancePerNode: false
       labels: {}
@@ -100,6 +106,8 @@ data:
       fluentbit:
         enabled: true
         image:
+          fullPath: null
+          pullPolicy: null
           repository: fluent/fluent-bit
           tag: "5.0"
         resources:
@@ -112,7 +120,10 @@ data:
       hostIPC: true
       hostPID: true
       image:
+        fullPath: null
+        pullPolicy: null
         repository: miggo/miggo-runtime
+        tag: null
       kubernetesClusterDomain: ""
       nodeSelector:
         kubernetes.io/os: linux
@@ -121,7 +132,11 @@ data:
         failureThreshold: ""
         timeoutSeconds: ""
       profiler:
-        dotnet: {}
+        dotnet:
+          peCacheSize: null
+          peCacheTTL: null
+          stringsCacheSize: null
+          stringsCacheTTL: null
         enableNamespaceFiltering: true
         enabled: true
         enabledTracers:
@@ -132,7 +147,10 @@ data:
         - v8
         - go
         image:
+          fullPath: null
+          pullPolicy: null
           repository: miggo/miggo-profiler
+          tag: null
         monitorInterval: 5s
         probabilisticInterval: 1m0s
         probabilisticThreshold: 100
@@ -161,6 +179,8 @@ data:
           memory: 512Mi
       securityContext:
         privileged: true
+      shield:
+        config: {}
       tolerations: []
       useGOMEMLIMIT: true
       volumeMounts: []
@@ -181,7 +201,10 @@ data:
       extraEnvs: []
       extraEnvsFrom: []
       image:
+        fullPath: null
+        pullPolicy: null
         repository: miggo/miggo-scanner
+        tag: null
       imagePullSecretScanning:
         enabled: true
       labels: {}
@@ -218,7 +241,10 @@ data:
       extraEnvs: []
       extraEnvsFrom: []
       image:
+        fullPath: null
+        pullPolicy: null
         repository: miggo/miggo-watch
+        tag: null
       labels: {}
       nodeSelector:
         kubernetes.io/os: linux
@@ -272,5 +298,3 @@ data:
     tolerations: []
     volumeMounts: []
     volumes: []
-
-
