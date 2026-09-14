@@ -39,6 +39,22 @@ Uses eBPF technology to monitor runtime behavior of containers and system calls,
 
 Collects telemetry data (metrics, traces, logs) using OpenTelemetry protocol and forwards it to Miggo's platform.
 
+## Detections (Beta)
+
+Detections correlate process executions observed in the kernel with profiler stack traces, so a finding shows **which application call path executed a payload** — not merely that a process ran.
+
+Turn the capability on with a single value:
+
+```yaml
+config:
+  enableDetections: true
+
+miggoRuntime:
+  enabled: true
+```
+
+This capability is in **beta**. The value is stable, but its behaviour and resource profile may change between chart versions.
+
 ## Getting Started
 
 ### Add Helm Repository

@@ -1,0 +1,117 @@
+suite: detections capability
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-runtime/daemonset.yaml
+  - templates/miggo-runtime/fluent-bit-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: renders the detections flags off when enableDetections is unset
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-syscall-to-profile-correlation=false
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-web-app-process-exec-filtering=true
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "profiler")].args
+          content: --load-probe=false
+
+  - it: renders the detections flags on when enableDetections is true
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      config.enableDetections: true
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-syscall-to-profile-correlation=true
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-web-app-process-exec-filtering=false
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "profiler")].args
+          content: --load-probe=true
+
+  # The runtime parses with spf13/pflag, which is last-wins: an extraArgs entry only
+  # overrides the value enableDetections chose if it is rendered after it.
+  - it: places runtime extraArgs after the flags enableDetections renders
+    template: templates/miggo-runtime/daemonset.yaml
+    chart:
+      version: '1.0.0'
+      appVersion: '1.0.0'
+    set:
+      config.enableDetections: true
+      miggoRuntime.extraArgs.enable-syscall-to-profile-correlation: false
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          value:
+            - --cluster-name=detections-test
+            - --otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
+            - --collector-healthcheck-port=6666
+            - --tls-skip-verify=false
+            - --stdout=false
+            - --port=6666
+            - --metric-otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
+            - --metric-tls-skip-verify=false
+            - --metric-interval=60s
+            - --chart-version=1.0.0
+            - --disable-profiler=false
+            - --enable-network-tracing=false
+            - --enable-file-access-tracing=false
+            - --enable-web-app-process-detection=true
+            - --cgroup-registry-sync-interval=1m
+            - --cgroup-registry-clean-interval=1h
+            - --cgroup-root-dir=/cgroup
+            - --pprof-port=0
+            - --enable-syscall-to-profile-correlation=true
+            - --enable-web-app-process-exec-filtering=false
+            - --include-system-namespaces=false
+            - --denied-namespaces=miggo-space
+            - --enable-syscall-to-profile-correlation=false
+
+  # The profiler parses with the stdlib flag package, also last-wins.
+  - it: places profiler extraArgs after the flag enableDetections renders
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      config.enableDetections: true
+      miggoRuntime.profiler.extraArgs.load-probe: false
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "profiler")].args
+          value:
+            - -collection-agent=miggo-collector.miggo-space.svc.cluster.local:4317
+            - -disable-tls=true
+            - -reporter-interval=5s
+            - -samples-per-second=20
+            - -monitor-interval=5s
+            - -probabilistic-threshold=100
+            - -probabilistic-interval=1m0s
+            - -tracers=perl,php,python,hotspot,v8,go
+            - --load-probe=true
+            - --load-probe=false
+
+  - it: installs nothing when the runtime is disabled
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      config.enableDetections: true
+      miggoRuntime.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
