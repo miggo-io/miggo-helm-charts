@@ -17,11 +17,6 @@ miggo:
   # -- Name of the Kubernetes cluster
   clusterName: "kubernetes-cluster"
 
-# -- Enable the detections capability (Beta): the runtime correlates process execs with profiler
-# stack traces, so a detection shows which application call path executed a payload. Requires
-# miggoRuntime.enabled. Adds per-exec work on the runtime and profiler.
-enableDetections: false
-
 healthcheck:
   # -- Port number for health check endpoints
   port: 6666
@@ -54,6 +49,9 @@ probes:
   failureThreshold: 5
 
 config:
+  # -- Enable the detections capability (Beta). Requires miggoRuntime.enabled.
+  enableDetections: false
+
   # -- The Kubernetes platform acronym. Allowed values are:
   # - gke: Google Kubernetes Engine
   # - openshift: Red Hat OpenShift/OCP

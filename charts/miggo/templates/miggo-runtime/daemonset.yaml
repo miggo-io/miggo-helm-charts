@@ -93,8 +93,8 @@ spec:
             - --cgroup-registry-clean-interval={{ .Values.miggoRuntime.cgroupRegistryCleanInterval }}
             - --cgroup-root-dir=/cgroup
             - --pprof-port={{ .Values.pprof.port }}
-            - --enable-syscall-to-profile-correlation={{ .Values.enableDetections }}
-            - --enable-web-app-process-exec-filtering={{ not .Values.enableDetections }}
+            - --enable-syscall-to-profile-correlation={{ .Values.config.enableDetections }}
+            - --enable-web-app-process-exec-filtering={{ not .Values.config.enableDetections }}
             {{- include "namespace.flags" . | nindent 12 }}
           {{- range $key, $value := .Values.miggoRuntime.extraArgs }}
             {{- if kindIs "invalid" $value }}
@@ -195,7 +195,7 @@ spec:
             {{- if .Values.pprof.profilerPort }}
             - -pprof=0.0.0.0:{{ .Values.pprof.profilerPort }}
             {{- end }}
-            - --load-probe={{ .Values.enableDetections }}
+            - --load-probe={{ .Values.config.enableDetections }}
           {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
             {{- if kindIs "invalid" $value }}
             - --{{ $key }}

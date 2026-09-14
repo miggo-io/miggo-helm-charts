@@ -21,7 +21,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/values: 443c94a4faceea020553e0e5956d0d0629d7a9d061608074c1665c9b9a2e4395
+        checksum/values: 6a512aece151e50ca7494fde9fa89b632a52592e32de56ab418a785b49e7a67d
       labels:
         component: miggo-watch
         helm.sh/chart: miggo-0.0.239

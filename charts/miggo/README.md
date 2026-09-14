@@ -10,7 +10,6 @@ This Helm chart deploys Miggo's components, providing comprehensive monitoring, 
 - **Miggo Scanner**: Software Bill of Materials analysis for container images
 - **Miggo Runtime**: Runtime monitoring using eBPF technology
 - **Miggo Collector**: Centralized telemetry data collection and export
-- **Detections (Beta)**: Ties a process execution to the application call path that caused it
 
 ## Prerequisites
 
@@ -47,13 +46,12 @@ Detections correlate process executions observed in the kernel with profiler sta
 Turn the capability on with a single value:
 
 ```yaml
-enableDetections: true
+config:
+  enableDetections: true
 
 miggoRuntime:
   enabled: true
 ```
-
-`enableDetections` configures Miggo Runtime and its profiler; it does not install them. It therefore requires `miggoRuntime.enabled: true` and has no effect on its own. Enabling it adds CPU work on the runtime and profiler containers, proportional to how often the watched workloads spawn processes.
 
 This capability is in **beta**. The value is stable, but its behaviour and resource profile may change between chart versions.
 
@@ -100,10 +98,10 @@ The following table lists the configurable parameters of the miggo chart and the
 | config.clientId | string | `"P2UjsJwOFdIeUAtW0pGTJ5SeJAlq"` | Client ID for authentication |
 | config.collectorUrl | string | `"https://collector.miggo.io"` | Upstream URL where the in-cluster miggo-collector forwards OTel data. Takes precedence over the deprecated output.otlp.otlpEndpoint. |
 | config.deniedNamespaces | string | `nil` | List of namespaces that should be excluded from processing Takes precedence over allowedNamespaces - if a namespace is both allowed and denied, it will be denied Example: ["test", "deprecated"] |
+| config.enableDetections | bool | `false` | Enable the detections capability (Beta). Requires miggoRuntime.enabled. |
 | config.includeSystemNamespaces | bool | `false` | When set to true, includes system namespaces like kube-system etc. When false (default), automatically adds system namespaces to deniedNamespaces It's recommended to keep this false unless you specifically need to operate on system namespaces |
 | config.metrics.interval | string | `"60s"` | Interval for metrics collection |
 | config.platform | string | `""` | The Kubernetes platform acronym. Allowed values are: - gke: Google Kubernetes Engine - openshift: Red Hat OpenShift/OCP |
-| enableDetections | bool | `false` | Enable the detections capability (Beta): the runtime correlates process execs with profiler stack traces, so a detection shows which application call path executed a payload. Requires miggoRuntime.enabled. Adds per-exec work on the runtime and profiler. |
 | extraEnvs | list | `[]` | Additional environment variables for all containers |
 | extraEnvsFrom | list | `[]` | Additional environment variables from sources for all containers |
 | healthcheck.port | int | `6666` | Port number for health check endpoints |

@@ -30,7 +30,7 @@ tests:
   - it: renders the detections flags on when enableDetections is true
     template: templates/miggo-runtime/daemonset.yaml
     set:
-      enableDetections: true
+      config.enableDetections: true
     asserts:
       - isKind:
           of: DaemonSet
@@ -52,10 +52,8 @@ tests:
       version: '1.0.0'
       appVersion: '1.0.0'
     set:
-      enableDetections: true
-      miggoRuntime:
-        extraArgs:
-          enable-syscall-to-profile-correlation: false
+      config.enableDetections: true
+      miggoRuntime.extraArgs.enable-syscall-to-profile-correlation: false
     asserts:
       - isKind:
           of: DaemonSet
@@ -90,11 +88,8 @@ tests:
   - it: places profiler extraArgs after the flag enableDetections renders
     template: templates/miggo-runtime/daemonset.yaml
     set:
-      enableDetections: true
-      miggoRuntime:
-        profiler:
-          extraArgs:
-            load-probe: false
+      config.enableDetections: true
+      miggoRuntime.profiler.extraArgs.load-probe: false
     asserts:
       - isKind:
           of: DaemonSet
@@ -115,9 +110,8 @@ tests:
   - it: installs nothing when the runtime is disabled
     template: templates/miggo-runtime/daemonset.yaml
     set:
-      enableDetections: true
-      miggoRuntime:
-        enabled: false
+      config.enableDetections: true
+      miggoRuntime.enabled: false
     asserts:
       - hasDocuments:
           count: 0

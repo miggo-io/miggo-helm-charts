@@ -10,7 +10,6 @@ This Helm chart deploys Miggo's components, providing comprehensive monitoring, 
 - **Miggo Scanner**: Software Bill of Materials analysis for container images
 - **Miggo Runtime**: Runtime monitoring using eBPF technology
 - **Miggo Collector**: Centralized telemetry data collection and export
-- **Detections (Beta)**: Ties a process execution to the application call path that caused it
 
 ## Prerequisites
 
@@ -47,13 +46,12 @@ Detections correlate process executions observed in the kernel with profiler sta
 Turn the capability on with a single value:
 
 ```yaml
-enableDetections: true
+config:
+  enableDetections: true
 
 miggoRuntime:
   enabled: true
 ```
-
-`enableDetections` configures Miggo Runtime and its profiler; it does not install them. It therefore requires `miggoRuntime.enabled: true` and has no effect on its own. Enabling it adds CPU work on the runtime and profiler containers, proportional to how often the watched workloads spawn processes.
 
 This capability is in **beta**. The value is stable, but its behaviour and resource profile may change between chart versions.
 

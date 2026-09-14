@@ -19,11 +19,11 @@ data:
       clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
       collectorUrl: https://collector.miggo.io
       deniedNamespaces: null
+      enableDetections: false
       includeSystemNamespaces: false
       metrics:
         interval: 60s
       platform: ""
-    enableDetections: false
     extraEnvs: []
     extraEnvsFrom: []
     healthcheck:

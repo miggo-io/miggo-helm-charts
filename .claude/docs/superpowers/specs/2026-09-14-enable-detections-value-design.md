@@ -29,22 +29,24 @@ Defaults read from `k8s-integrations/dynamic-ebpf/internal/opts/opts.go` (`Initi
 
 | Decision | Choice |
 |---|---|
-| Value name and scope | top-level `enableDetections`, default `false` |
+| Value name and scope | `config.enableDetections`, default `false` |
 | Relationship to `miggoRuntime.enabled` | independent — `enableDetections` does **not** force the runtime on |
 | Off state | flags render explicitly in their off form, not omitted |
 | Precedence | chart flags render *before* the `extraArgs` ranges, so `extraArgs` still wins |
 | README | one values-table row marked Beta, plus a prose subsection; the three flags stay unnamed |
 | Sensor code | untouched |
 
-## Why top-level rather than `miggoRuntime.enableDetections`
+## Why `config` rather than `miggoRuntime.enableDetections`
 
-Detections is a product capability, not a runtime tuning knob, and the chart already keeps
-capability-shaped blocks at the top level (`pprof`, `manageSecurityContext`). A customer enabling a
-beta feature should not have to know which component implements it. The value sits directly after
-the `miggo:` block so it is next to `clusterName` — the first thing anyone edits.
+Detections is a product capability, not a runtime tuning knob, so a customer enabling a beta feature
+should not have to know which component implements it. `config` is the block a customer already
+edits — it holds `accessKey`, `allowedNamespaces`, `deniedNamespaces` — which makes it the section
+they read when deciding what the sensor does, and it keeps the capability off the component that
+merely happens to carry the flags. The value sits first in `config` for that reason.
 
-The cost is that `enableDetections: true` alone does nothing: the flags only reach a container that
-`miggoRuntime.enabled` created. The README states that requirement, and a unit test pins it.
+The cost is that `config.enableDetections: true` alone does nothing: the flags only reach a
+container that `miggoRuntime.enabled` created. The README states that requirement, and a unit test
+pins it.
 
 ## Why the off state renders explicitly
 
@@ -74,13 +76,12 @@ assertion.
 
 ## Implementation
 
-`charts/miggo/values.yaml` — after the `miggo:` block:
+`charts/miggo/values.yaml` — first entry in the `config` block:
 
 ```yaml
-# -- Enable the detections capability (Beta): the runtime correlates process execs with profiler
-# stack traces, so a detection shows which application call path executed a payload. Requires
-# miggoRuntime.enabled. Adds per-exec work on the runtime and profiler.
-enableDetections: false
+config:
+  # -- Enable the detections capability (Beta). Requires miggoRuntime.enabled.
+  enableDetections: false
 ```
 
 The `(Beta)` marker sits inside the sentence rather than leading the comment: helm-docs reads a
@@ -91,28 +92,28 @@ leading `# -- (word)` as a **type override**, which renders the values table's T
 `--pprof-port` / `namespace.flags` and before the `extraArgs` range:
 
 ```yaml
-- --enable-syscall-to-profile-correlation={{ .Values.enableDetections }}
-- --enable-web-app-process-exec-filtering={{ not .Values.enableDetections }}
+- --enable-syscall-to-profile-correlation={{ .Values.config.enableDetections }}
+- --enable-web-app-process-exec-filtering={{ not .Values.config.enableDetections }}
 ```
 
 and in the `profiler` container, after `-tracers=` / `-pprof=` and before its `extraArgs` range:
 
 ```yaml
-- --load-probe={{ .Values.enableDetections }}
+- --load-probe={{ .Values.config.enableDetections }}
 ```
 
-`charts/miggo/README.md.gotmpl` — a Features bullet and a `### Detections (Beta)` subsection.
-`README.md` is regenerated with helm-docs, never hand-edited.
+`charts/miggo/README.md.gotmpl` — a `## Detections (Beta)` section. It stays out of the Features
+list, which enumerates components. `README.md` is regenerated with helm-docs, never hand-edited.
 
 ## Tests
 
 New suite `charts/miggo/tests/detections/`:
 
 - the three flags render in their off form by default;
-- they render inverted when `enableDetections: true`;
+- they render inverted when `config.enableDetections: true`;
 - `miggoRuntime.extraArgs` overrides the runtime flag, and the chart's flag precedes it in `args`;
 - `miggoRuntime.profiler.extraArgs` overrides the profiler flag, same ordering assertion;
-- `enableDetections: true` with `miggoRuntime.enabled: false` renders no DaemonSet.
+- `config.enableDetections: true` with `miggoRuntime.enabled: false` renders no DaemonSet.
 
 Existing `charts/miggo/tests/runtime-profiler/test.yaml` full-`args` assertions gain the new entries
 in render order. Committed example snapshots under `charts/miggo/examples/default/rendered/` are
@@ -136,11 +137,11 @@ to `0.0.231` against a `0.0.238` chart. Regenerating here clears that backlog as
 - Sensor code in `k8s-integrations`, including the flag defaults themselves.
 - Migrating `detections-demo/sensor/values.yaml` off `extraArgs` onto `enableDetections`.
 - Any gitops change — nothing is rolled out by this work.
-- Making `enableDetections` imply `miggoRuntime.enabled`.
+- Making `config.enableDetections` imply `miggoRuntime.enabled`.
 
 ## Open question
 
-Whether `enableDetections` should eventually imply `miggoRuntime.enabled: true` once detections
+Whether `config.enableDetections` should eventually imply `miggoRuntime.enabled: true` once detections
 leaves beta. Deferred: today the runtime is a separately-priced capability that customers enable on
 its own for package-level reachability, and folding the two together would change what an existing
 `miggoRuntime.enabled: false` install gets.
