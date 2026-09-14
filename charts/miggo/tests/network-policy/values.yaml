@@ -1,0 +1,26 @@
+miggo:
+  clusterName: "networkpolicy-test"
+
+config:
+  accessKey: "test-key"
+
+networkPolicy:
+  enabled: true
+
+miggoWatch:
+  enabled: true
+
+miggoScanner:
+  enabled: true
+
+miggoRuntime:
+  enabled: true
+  profiler:
+    enabled: true
+
+miggoCollector:
+  enabled: true
+
+pprof:
+  port: 6050
+  profilerPort: 6051

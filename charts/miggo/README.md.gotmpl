@@ -198,7 +198,7 @@ curl http://localhost:6666/health
    - Review and adjust permissions as needed
 
 3. **Network Security**
-   - Configure appropriate network policies
+   - Set `networkPolicy.enabled: true` to render a NetworkPolicy per component, restricting each to the in-cluster traffic it actually needs.
    - Use TLS for OTLP communication
 
 4. **Pod Security Context** (`manageSecurityContext`, default `true`)

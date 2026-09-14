@@ -48,6 +48,11 @@ probes:
   # -- Failure threshold for liveness and readiness probes across all components
   failureThreshold: 5
 
+networkPolicy:
+  # -- Render a NetworkPolicy per component, restricting each to the in-cluster
+  # traffic it actually needs (Principle of Least Authority). 
+  enabled: false
+
 config:
   # -- The Kubernetes platform acronym. Allowed values are:
   # - gke: Google Kubernetes Engine
