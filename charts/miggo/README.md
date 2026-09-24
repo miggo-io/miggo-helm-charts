@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.237](https://img.shields.io/badge/Version-0.0.237-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.905.1](https://img.shields.io/badge/AppVersion-v26.905.1-informational?style=flat-square)
+![Version: 0.0.239](https://img.shields.io/badge/Version-0.0.239-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.913.1](https://img.shields.io/badge/AppVersion-v26.913.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -38,6 +38,22 @@ Uses eBPF technology to monitor runtime behavior of containers and system calls,
 ### Miggo Collector
 
 Collects telemetry data (metrics, traces, logs) using OpenTelemetry protocol and forwards it to Miggo's platform.
+
+## Detections (Beta)
+
+Detections correlate process executions observed in the kernel with profiler stack traces, so a finding shows **which application call path executed a payload** — not merely that a process ran.
+
+Turn the capability on with a single value:
+
+```yaml
+config:
+  enableDetections: true
+
+miggoRuntime:
+  enabled: true
+```
+
+This capability is in **beta**. The value is stable, but its behaviour and resource profile may change between chart versions.
 
 ## Getting Started
 
@@ -82,6 +98,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | config.clientId | string | `"P2UjsJwOFdIeUAtW0pGTJ5SeJAlq"` | Client ID for authentication |
 | config.collectorUrl | string | `"https://collector.miggo.io"` | Upstream URL where the in-cluster miggo-collector forwards OTel data. Takes precedence over the deprecated output.otlp.otlpEndpoint. |
 | config.deniedNamespaces | string | `nil` | List of namespaces that should be excluded from processing Takes precedence over allowedNamespaces - if a namespace is both allowed and denied, it will be denied Example: ["test", "deprecated"] |
+| config.enableDetections | bool | `false` | Enable the detections capability (Beta). Requires miggoRuntime.enabled. |
 | config.includeSystemNamespaces | bool | `false` | When set to true, includes system namespaces like kube-system etc. When false (default), automatically adds system namespaces to deniedNamespaces It's recommended to keep this false unless you specifically need to operate on system namespaces |
 | config.metrics.interval | string | `"60s"` | Interval for metrics collection |
 | config.platform | string | `""` | The Kubernetes platform acronym. Allowed values are: - gke: Google Kubernetes Engine - openshift: Red Hat OpenShift/OCP |

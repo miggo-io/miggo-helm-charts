@@ -1,0 +1,51 @@
+name: "Stamp chart release date"
+description: "Records the packaging timestamp in each chart's miggo.io/releaseDate annotation"
+
+inputs:
+  charts_dir:
+    description: The charts directory
+    required: false
+    default: charts
+
+outputs:
+  released_at:
+    description: "The timestamp stamped into every chart"
+    value: ${{ steps.stamp.outputs.released_at }}
+
+runs:
+  using: composite
+  steps:
+    - id: stamp
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        if ! command -v yq >/dev/null; then
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+        fi
+
+        released_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+        stamped=0
+        for chart_yaml in "${{ inputs.charts_dir }}"/*/Chart.yaml; do
+          [ -e "$chart_yaml" ] || continue
+          yq eval ".annotations.\"miggo.io/releaseDate\" = \"$released_at\"" -i "$chart_yaml"
+
+          # The sensors report this verbatim and the backend ages them by it, so a
+          # chart that leaves here without a readable stamp must fail the release.
+          written=$(yq eval '.annotations."miggo.io/releaseDate"' "$chart_yaml")
+          if [[ ! "$written" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
+            echo "::error::$chart_yaml has no usable miggo.io/releaseDate (got '$written')"
+            exit 1
+          fi
+          stamped=$((stamped + 1))
+        done
+
+        if [[ "$stamped" -eq 0 ]]; then
+          echo "::error::no Chart.yaml found under ${{ inputs.charts_dir }}"
+          exit 1
+        fi
+
+        echo "stamped $stamped chart(s) with $released_at"
+        echo "released_at=$released_at" >> "$GITHUB_OUTPUT"

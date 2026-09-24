@@ -49,6 +49,9 @@ probes:
   failureThreshold: 5
 
 config:
+  # -- Enable the detections capability (Beta). Requires miggoRuntime.enabled.
+  enableDetections: false
+
   # -- The Kubernetes platform acronym. Allowed values are:
   # - gke: Google Kubernetes Engine
   # - openshift: Red Hat OpenShift/OCP

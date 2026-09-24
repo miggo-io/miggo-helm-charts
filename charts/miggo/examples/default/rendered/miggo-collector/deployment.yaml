@@ -6,10 +6,10 @@ metadata:
   name: example-collector
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.231
+    helm.sh/chart: miggo-0.0.239
     app.kubernetes.io/name: miggo-collector
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.713.2"
+    app.kubernetes.io/version: "v26.913.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -23,16 +23,16 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: ba7de647f556a29e005e870d928071e8b95b9e5dc3705bc464dea9c252d00d32
+        checksum/config: c64b54c192c166cde79a698459795479e98f8f71fdffbb8a7e9dc32e90ce5243
         checksum/diagnostic-config: f10018e2f0aedf397986fdf6f108a44f8db53a9cc1ec6aa8865f85d03d5bdef8
         checksum/heartbeat-debug-config: d72c105d89be1b4ee6569477f8b4a8f7efdf00a2919169c9787d4df141da0d46
       labels:
         component: collector
         miggo.io/app: example-collector
-        helm.sh/chart: miggo-0.0.231
+        helm.sh/chart: miggo-0.0.239
         app.kubernetes.io/name: miggo-collector
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.713.2"
+        app.kubernetes.io/version: "v26.913.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -43,7 +43,7 @@ spec:
       serviceAccountName: example-collector
       initContainers:
         - name: collector-init-container
-          image: "registry.miggo.io/miggo/miggo-collector:v26.713.2"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.913.1"
           securityContext:
             runAsGroup: 65532
             runAsNonRoot: true
@@ -77,7 +77,7 @@ spec:
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
-          image: "registry.miggo.io/miggo/miggo-collector:v26.713.2"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.913.1"
           imagePullPolicy: IfNotPresent
           args:
             - --config
@@ -152,5 +152,3 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
-
-

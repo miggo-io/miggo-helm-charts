@@ -80,6 +80,8 @@ tests:
             - --cgroup-registry-clean-interval=1h
             - --cgroup-root-dir=/cgroup
             - --pprof-port=0
+            - --enable-syscall-to-profile-correlation=false
+            - --enable-web-app-process-exec-filtering=true
             - --include-system-namespaces=false
             - --denied-namespaces=miggo-space
       - equal:
@@ -118,6 +120,7 @@ tests:
             - -probabilistic-threshold=100
             - -probabilistic-interval=1m0s
             - -tracers=perl,php,python,hotspot,v8,go
+            - --load-probe=false
       - equal:
           path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
           value:
@@ -187,6 +190,7 @@ tests:
             - -probabilistic-threshold=1
             - -probabilistic-interval=1m0s
             - -tracers=perl,php,python,hotspot,v8,go
+            - --load-probe=false
 
   - it: should use pinned fluent-bit image by default
     template: templates/miggo-runtime/daemonset.yaml

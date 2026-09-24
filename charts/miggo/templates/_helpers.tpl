@@ -218,3 +218,8 @@ for one slot, or empty. Callers wrap the result in `with` so the key is omitted 
 {{- define "miggo.podSecurityContext.nonpriv" -}}
 {{- include "miggo.securityContext.resolve" (dict "ctx" . "global" .Values.podSecurityContext "managed" dict) -}}
 {{- end -}}
+
+{{/* Release timestamp stamped into Chart.yaml when the chart is packaged; empty for charts built outside the release pipeline. */}}
+{{- define "miggo.chartReleaseDate" -}}
+{{- index (.Chart.Annotations | default dict) "miggo.io/releaseDate" | default "" -}}
+{{- end -}}

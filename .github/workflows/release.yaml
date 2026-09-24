@@ -55,6 +55,11 @@ jobs:
         # produces it at package time so it never needs to be committed.
         run: cp charts/miggo/values.yaml charts/miggo/files/default-values.yaml
 
+      - name: Stamp chart release date
+        uses: ./.github/actions/stamp-release-date
+        with:
+          charts_dir: charts
+
       - name: Run chart-releaser
         id: release
         uses: ./.github/actions/helm-releaser
