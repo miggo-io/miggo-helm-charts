@@ -63,6 +63,7 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           value:
             - --cluster-name=simple-test
+            - --platform=kubernetes
             - --otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
             - --collector-healthcheck-port=6666
             - --tls-skip-verify=false
@@ -335,3 +336,14 @@ tests:
     asserts:
       - failedTemplate:
           errorMessage: 'miggoRuntime.shield.config is set, so miggoRuntime.profiler.enabledTracers must include both "python" and "hotspot": the blocker''s argv-capture programs reference both runtimes'' process maps, and the profiler refuses to start without them.'
+  - it: should pass the kubernetes platform to the runtime and profiler
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --platform=kubernetes
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "profiler")].env
+          content:
+            name: MIGGO_RUNTIME_PLATFORM
+            value: kubernetes
