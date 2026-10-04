@@ -46,6 +46,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
+            - --platform=kubernetes
             - --otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --collector-healthcheck-port=6666
             - --tls-skip-verify=false
@@ -139,6 +140,8 @@ spec:
               value: "true"
             - name: MIGGO_RUNTIME_CLUSTER_NAME
               value: my-cluster
+            - name: MIGGO_RUNTIME_PLATFORM
+              value: kubernetes
             - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
               value: http://miggo-collector.default.svc.cluster.local:4318
             - name: MIGGO_RUNTIME_EXPORT_LOGS_ENDPOINT
