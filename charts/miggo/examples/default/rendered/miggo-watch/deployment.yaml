@@ -45,6 +45,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
+            - --platform=kubernetes
             - --otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --collector-healthcheck-port=6666
             - --tls-skip-verify=false
