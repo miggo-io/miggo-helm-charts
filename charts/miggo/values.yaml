@@ -489,6 +489,9 @@ miggoRuntime:
   # expands to its own function lists) and watched_functions (names those lists
   # do not cover yet).
   #
+  # `scope:` entries map facet keys (k8s.namespace.name, k8s.workload, k8s.label) to allowed values;
+  # keys within an entry AND, values any-of, entries OR with each other and the shorthand.
+  #
   # There is deliberately no enable flag: a language section with no watched
   # functions arms nothing, so a config cannot look armed while enforcing
   # nothing. Parsing is strict - an unknown field or an unknown block_exec_from
@@ -504,6 +507,9 @@ miggoRuntime:
     #    - langflow
     #  watched_workloads:
     #    - deployment/langflow
+    #  scope:
+    #    - k8s.namespace.name: [billing]
+    #      k8s.label: [tier=web]
     #  python:
     #    watched_functions:
     #      - name: validate_code

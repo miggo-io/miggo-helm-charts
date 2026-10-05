@@ -76,6 +76,7 @@ spec:
           imagePullPolicy: {{ .Values.miggoRuntime.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
+            - --platform=kubernetes
             - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
@@ -212,6 +213,8 @@ spec:
               value: {{ .Values.miggoRuntime.profiler.enableNamespaceFiltering | quote }}
             - name: MIGGO_RUNTIME_CLUSTER_NAME
               value: {{ .Values.miggo.clusterName }}
+            - name: MIGGO_RUNTIME_PLATFORM
+              value: kubernetes
             - name: MIGGO_RUNTIME_EXPORT_METRICS_ENDPOINT
               value: {{ (include "otlpEndpoint" .) }}
             - name: MIGGO_RUNTIME_EXPORT_LOGS_ENDPOINT
