@@ -88,6 +88,9 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-scanner")].image
           pattern: registry.miggo.io/miggo/miggo-scanner:.*
       - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --platform=kubernetes
+      - contains:
           path: spec.template.spec.imagePullSecrets
           content:
             name: miggo-regcred

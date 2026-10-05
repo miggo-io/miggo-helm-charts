@@ -43,6 +43,7 @@ spec:
           image: "registry.miggo.io/miggo/miggo-scanner:v26.913.1"
           imagePullPolicy: IfNotPresent
           args:
+            - --platform=kubernetes
             - --cluster-name=my-cluster
             - --otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --collector-healthcheck-port=6666
