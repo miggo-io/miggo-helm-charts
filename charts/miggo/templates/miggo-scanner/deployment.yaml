@@ -69,6 +69,7 @@ spec:
           {{- end }}
           imagePullPolicy: {{ .Values.miggoScanner.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
+            - --platform=kubernetes
             - --cluster-name={{ .Values.miggo.clusterName }}
             - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
