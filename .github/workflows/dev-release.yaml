@@ -11,12 +11,6 @@ on:
       chart_version:
         description: 'Released chart version'
         value: ${{ jobs.release.outputs.chart_version }}
-  workflow_dispatch:
-    inputs:
-      app_version:
-        description: 'App version (appVersion in Chart.yaml)'
-        required: true
-        type: string
 
 permissions:
   contents: write
