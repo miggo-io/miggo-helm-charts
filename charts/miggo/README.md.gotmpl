@@ -217,10 +217,11 @@ curl http://localhost:6666/health
    - Configure appropriate network policies
    - Use TLS for OTLP communication
 
-4. **Pod Security Context** (`manageSecurityContext`, default `true`)
-   - The non-privileged components (collector, watch, scanner) run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff; the privileged runtime DaemonSet is pinned to an explicit `0:0` (it still requires `privileged`/`SYS_ADMIN`/`hostPID` for eBPF).
-   - Set `manageSecurityContext: false` to render no security context at all (full revert to implicit root).
-   - `podSecurityContext` / `securityContext` are **deprecated**. While `manageSecurityContext` is `true`, a populated value still overrides the managed block; when `false`, they are suppressed along with the managed block.
+4. **Pod Security Context** (`<component>.podSecurityContext` / `<component>.securityContext`)
+   - Collector, watch and scanner run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff.
+   - The runtime DaemonSet runs unprivileged as `0:0` with `hostPID`, and holds `IPC_LOCK`, `SYS_ADMIN`, `SYS_PTRACE` and `SYS_RESOURCE`; the profiler container adds `SYSLOG` for `/proc/kallsyms`.
+   - Values merge into these defaults, so `securityContext: {privileged: true}` keeps the capability list alongside it. Drop a default key by setting it to `null`, or set the whole block to `null` to render no security context at all.
+   - `seLinuxOptions.type: spc_t` is ignored on nodes that do not label containers, and is required on SELinux-enforcing nodes. Note that PodSecurity `baseline` rejects it, so such clusters need the sensor namespace exempt.
 
 ---
 

@@ -133,18 +133,6 @@ annotations: {}
 podAnnotations: {}
 # -- Pod labels to add to all pods
 podLabels: {}
-# -- Enable Miggo-managed security contexts for all sensor pods/containers. When true
-# (default): non-privileged components (collector/watch/scanner) run as 65532:65532 with
-# runAsNonRoot, the collector pod gets fsGroup 65532, and the privileged runtime pod is
-# pinned to an explicit 0:0. When false: no securityContext is rendered at all (the managed
-# values and the deprecated fields below are both suppressed) and pods fall back to implicit root.
-manageSecurityContext: true
-# -- DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a
-# populated value here overrides the managed pod security context for all pods.
-podSecurityContext: {}
-# -- DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a
-# populated value here overrides the managed container security context for all containers.
-securityContext: {}
 # -- Additional environment variables for all containers
 extraEnvs: []
 # -- Additional environment variables from sources for all containers
@@ -165,6 +153,13 @@ priorityClassName: ""
 miggoWatch:
   # -- Enable Miggo Watch component
   enabled: true
+  # -- Pod-level security context
+  podSecurityContext: {}
+  # -- Container-level security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65532
+    runAsGroup: 65532
   # -- Component-specific labels
   labels: {}
   # -- Component-specific annotations
@@ -229,6 +224,13 @@ miggoWatch:
 miggoScanner:
   # -- Enable Miggo Scanner component
   enabled: true
+  # -- Pod-level security context
+  podSecurityContext: {}
+  # -- Container-level security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65532
+    runAsGroup: 65532
   # -- Enable resolution of imagePullSecrets for scanning images from
   # -- private container registries. When enabled, the scanner's
   # -- ClusterRole grants get/list/watch on Kubernetes Secrets so it can
@@ -397,8 +399,25 @@ miggoRuntime:
     # -- Override global probes.failureThreshold for miggo-runtime
     failureThreshold: ""
 
+  # -- Pod-level security context. The eBPF agent runs as root.
+  podSecurityContext:
+    runAsUser: 0
+    runAsGroup: 0
+  # -- Container-level security context. SYS_ADMIN gates BPF object enumeration
+  # (the profiler tail-call lookup and the eBPF map metrics) and subsumes BPF and
+  # PERFMON; SYS_PTRACE resolves /proc for processes outside this container;
+  # IPC_LOCK and SYS_RESOURCE cover the perf ring buffers on nodes with a finite
+  # RLIMIT_MEMLOCK. seLinuxOptions applies only where the node labels containers.
   securityContext:
-    privileged: true
+    privileged: false
+    capabilities:
+      add:
+        - IPC_LOCK
+        - SYS_ADMIN
+        - SYS_PTRACE
+        - SYS_RESOURCE
+    seLinuxOptions:
+      type: spc_t
 
   # -- Use the host's pid namespace.
   hostPID: true
@@ -439,12 +458,19 @@ miggoRuntime:
         cpu: 500m
         memory: 512Mi
 
+    # -- Container-level security context. The runtime's capabilities plus SYSLOG,
+    # which /proc/kallsyms requires whenever kernel.perf_event_paranoid is above 1.
     securityContext:
-      privileged: true
-      allowPrivilegeEscalation: true
+      privileged: false
       capabilities:
         add:
+          - IPC_LOCK
           - SYS_ADMIN
+          - SYS_PTRACE
+          - SYS_RESOURCE
+          - SYSLOG
+      seLinuxOptions:
+        type: spc_t
 
     # -- Set the reporter's interval in seconds.
     reporterInterval: 5s
@@ -541,6 +567,15 @@ miggoRuntime:
 miggoCollector:
   # -- Enable Collector component
   enabled: true
+  # -- Pod-level security context. fsGroup lets the main container read the
+  # config the init container writes to the shared emptyDir.
+  podSecurityContext:
+    fsGroup: 65532
+  # -- Container-level security context, applied to the init and main containers
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65532
+    runAsGroup: 65532
   # -- Number of replicas to run (relevant only if instancePerNode: false)
   replicas: 1
   # -- Run an instance per node

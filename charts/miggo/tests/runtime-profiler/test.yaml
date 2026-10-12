@@ -88,7 +88,15 @@ tests:
       - equal:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
           value:
-            privileged: true
+            privileged: false
+            capabilities:
+              add:
+                - IPC_LOCK
+                - SYS_ADMIN
+                - SYS_PTRACE
+                - SYS_RESOURCE
+            seLinuxOptions:
+              type: spc_t
       - equal:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].volumeMounts
           value:
@@ -125,11 +133,16 @@ tests:
       - equal:
           path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
           value:
-            allowPrivilegeEscalation: true
-            privileged: true
+            privileged: false
             capabilities:
               add:
+                - IPC_LOCK
                 - SYS_ADMIN
+                - SYS_PTRACE
+                - SYS_RESOURCE
+                - SYSLOG
+            seLinuxOptions:
+              type: spc_t
       - equal:
           path: spec.template.spec.containers[?(@.name == "profiler")].volumeMounts
           value:

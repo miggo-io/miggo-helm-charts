@@ -33,7 +33,6 @@ data:
       registry: registry.miggo.io
     imagePullSecrets: []
     labels: {}
-    manageSecurityContext: true
     miggo:
       clusterName: my-cluster
     miggoCollector:
@@ -65,6 +64,8 @@ data:
         kubernetes.io/os: linux
       podAnnotations: {}
       podLabels: {}
+      podSecurityContext:
+        fsGroup: 65532
       priorityClassName: ""
       probes:
         failureThreshold: ""
@@ -77,6 +78,10 @@ data:
         requests:
           cpu: 10m
           memory: 200Mi
+      securityContext:
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
       service:
         annotations: {}
         labels: {}
@@ -127,6 +132,9 @@ data:
       kubernetesClusterDomain: ""
       nodeSelector:
         kubernetes.io/os: linux
+      podSecurityContext:
+        runAsGroup: 0
+        runAsUser: 0
       priorityClassName: ""
       probes:
         failureThreshold: ""
@@ -164,11 +172,16 @@ data:
             memory: 512Mi
         samplesPerSecond: 20
         securityContext:
-          allowPrivilegeEscalation: true
           capabilities:
             add:
+            - IPC_LOCK
             - SYS_ADMIN
-          privileged: true
+            - SYS_PTRACE
+            - SYS_RESOURCE
+            - SYSLOG
+          privileged: false
+          seLinuxOptions:
+            type: spc_t
         useGOMEMLIMIT: true
       resources:
         limits:
@@ -178,7 +191,15 @@ data:
           cpu: 100m
           memory: 512Mi
       securityContext:
-        privileged: true
+        capabilities:
+          add:
+          - IPC_LOCK
+          - SYS_ADMIN
+          - SYS_PTRACE
+          - SYS_RESOURCE
+        privileged: false
+        seLinuxOptions:
+          type: spc_t
       shield:
         config: {}
       tolerations: []
@@ -212,6 +233,7 @@ data:
         kubernetes.io/os: linux
       podAnnotations: {}
       podLabels: {}
+      podSecurityContext: {}
       probes:
         failureThreshold: ""
         timeoutSeconds: ""
@@ -224,6 +246,10 @@ data:
         requests:
           cpu: 1000m
           memory: 2Gi
+      securityContext:
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
       serviceAccount:
         annotations: {}
         name: ""
@@ -250,6 +276,7 @@ data:
         kubernetes.io/os: linux
       podAnnotations: {}
       podLabels: {}
+      podSecurityContext: {}
       probes:
         failureThreshold: ""
         timeoutSeconds: ""
@@ -260,6 +287,10 @@ data:
         requests:
           cpu: 10m
           memory: 256Mi
+      securityContext:
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
       useGOMEMLIMIT: true
       volumeMounts: []
       volumes: []
@@ -275,7 +306,6 @@ data:
       stdout: false
     podAnnotations: {}
     podLabels: {}
-    podSecurityContext: {}
     pprof:
       cpu:
         enabled: false
@@ -290,7 +320,6 @@ data:
     probes:
       failureThreshold: 5
       timeoutSeconds: 10
-    securityContext: {}
     serviceAccount:
       annotations: {}
       automount: true
