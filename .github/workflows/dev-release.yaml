@@ -7,6 +7,11 @@ on:
         description: 'App version (appVersion in Chart.yaml)'
         required: true
         type: string
+      chart_ref:
+        description: 'miggo-helm-charts ref to package the chart from'
+        required: false
+        type: string
+        default: 'main'
     outputs:
       chart_version:
         description: 'Released chart version'
@@ -49,7 +54,7 @@ jobs:
           show-progress: false
           fetch-depth: 0
           token: "${{ steps.set-token.outputs.checkout_token }}"
-          ref: 'main'
+          ref: ${{ inputs.chart_ref }}
       
       - name: Configure Git
         run: |
