@@ -11,12 +11,6 @@ on:
       chart_version:
         description: 'Released chart version'
         value: ${{ jobs.update.outputs.chart_version }}
-  workflow_dispatch:
-    inputs:
-      appVersion:
-        description: 'Unified App Version name'
-        type: string
-        required: true
 
 permissions:
   contents: write

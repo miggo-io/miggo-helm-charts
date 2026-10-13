@@ -71,6 +71,7 @@ spec:
           imagePullPolicy: {{ .Values.miggoWatch.image.pullPolicy | default .Values.image.pullPolicy }}
           args:
             - --cluster-name={{ .Values.miggo.clusterName }}
+            - --platform=kubernetes
             - --otlp-endpoint={{ (include "otlpEndpoint" .) }}
             - --collector-healthcheck-port={{ (include "otlpEndpointHealthCheckPort" .) }}
             - --tls-skip-verify={{ (include "otlpTlsSkipVerify" .) }}
@@ -98,6 +99,10 @@ spec:
           {{- toYaml . | nindent 10 }}
           {{- end }}
           env:
+            {{- with (include "miggo.chartReleaseDate" .) }}
+            - name: MIGGO_WATCH_CHART_RELEASE_DATE
+              value: {{ . | quote }}
+            {{- end }}
             - name: MIGGO_WATCH_NODE_NAME
               valueFrom:
                 fieldRef:

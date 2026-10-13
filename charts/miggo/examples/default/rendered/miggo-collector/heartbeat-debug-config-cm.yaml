@@ -64,4 +64,3 @@ data:
             - batch/heartbeat_traces
           exporters:
             - debug
-

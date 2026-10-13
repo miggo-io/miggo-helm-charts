@@ -11,12 +11,6 @@ on:
       chart_version:
         description: 'Released chart version'
         value: ${{ jobs.release.outputs.chart_version }}
-  workflow_dispatch:
-    inputs:
-      app_version:
-        description: 'App version (appVersion in Chart.yaml)'
-        required: true
-        type: string
 
 permissions:
   contents: write
@@ -82,6 +76,11 @@ jobs:
         # miggo-values-defaults ConfigMap template reads via .Files.Get. This step
         # produces it at package time so it never needs to be committed.
         run: cp charts/miggo/values.yaml charts/miggo/files/default-values.yaml
+
+      - name: Stamp chart release date
+        uses: ./.github/actions/stamp-release-date
+        with:
+          charts_dir: charts
 
       - name: Run chart-releaser
         uses: ./.github/actions/helm-releaser
