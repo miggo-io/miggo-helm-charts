@@ -153,9 +153,7 @@ priorityClassName: ""
 miggoWatch:
   # -- Enable Miggo Watch component
   enabled: true
-  # -- Pod-level security context
   podSecurityContext: {}
-  # -- Container-level security context
   securityContext:
     runAsNonRoot: true
     runAsUser: 65532
@@ -224,9 +222,7 @@ miggoWatch:
 miggoScanner:
   # -- Enable Miggo Scanner component
   enabled: true
-  # -- Pod-level security context
   podSecurityContext: {}
-  # -- Container-level security context
   securityContext:
     runAsNonRoot: true
     runAsUser: 65532
@@ -399,15 +395,9 @@ miggoRuntime:
     # -- Override global probes.failureThreshold for miggo-runtime
     failureThreshold: ""
 
-  # -- Pod-level security context. The eBPF agent runs as root.
   podSecurityContext:
     runAsUser: 0
     runAsGroup: 0
-  # -- Container-level security context. SYS_ADMIN gates BPF object enumeration
-  # (the profiler tail-call lookup and the eBPF map metrics) and subsumes BPF and
-  # PERFMON; SYS_PTRACE resolves /proc for processes outside this container;
-  # IPC_LOCK and SYS_RESOURCE cover the perf ring buffers on nodes with a finite
-  # RLIMIT_MEMLOCK. seLinuxOptions applies only where the node labels containers.
   securityContext:
     privileged: false
     capabilities:
@@ -458,8 +448,6 @@ miggoRuntime:
         cpu: 500m
         memory: 512Mi
 
-    # -- Container-level security context. The runtime's capabilities plus SYSLOG,
-    # which /proc/kallsyms requires whenever kernel.perf_event_paranoid is above 1.
     securityContext:
       privileged: false
       capabilities:
@@ -567,11 +555,8 @@ miggoRuntime:
 miggoCollector:
   # -- Enable Collector component
   enabled: true
-  # -- Pod-level security context. fsGroup lets the main container read the
-  # config the init container writes to the shared emptyDir.
   podSecurityContext:
     fsGroup: 65532
-  # -- Container-level security context, applied to the init and main containers
   securityContext:
     runAsNonRoot: true
     runAsUser: 65532

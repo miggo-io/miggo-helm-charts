@@ -136,13 +136,15 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoCollector.podLabels | object | `{}` | Component-specific pod labels |
-| miggoCollector.podSecurityContext | object | `{"fsGroup":65532}` | Pod-level security context. fsGroup lets the main container read the config the init container writes to the shared emptyDir. |
+| miggoCollector.podSecurityContext.fsGroup | int | `65532` |  |
 | miggoCollector.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
 | miggoCollector.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-collector |
 | miggoCollector.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-collector |
 | miggoCollector.replicas | int | `1` | Number of replicas to run (relevant only if instancePerNode: false) |
 | miggoCollector.resources | object | `{"limits":{"cpu":"100m","memory":"500Mi"},"requests":{"cpu":"10m","memory":"200Mi"}}` | Resource requirements |
-| miggoCollector.securityContext | object | `{"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532}` | Container-level security context, applied to the init and main containers |
+| miggoCollector.securityContext.runAsGroup | int | `65532` |  |
+| miggoCollector.securityContext.runAsNonRoot | bool | `true` |  |
+| miggoCollector.securityContext.runAsUser | int | `65532` |  |
 | miggoCollector.service.annotations | object | `{}` | Service annotations |
 | miggoCollector.service.labels | object | `{}` | Service labels |
 | miggoCollector.service.ports | list | `[{"name":"http","port":4318,"protocol":"TCP","targetPort":4318},{"name":"grpc","port":4317,"protocol":"TCP","targetPort":4317}]` | Service ports |
@@ -176,7 +178,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoRuntime.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
 | miggoRuntime.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector settings |
-| miggoRuntime.podSecurityContext | object | `{"runAsGroup":0,"runAsUser":0}` | Pod-level security context. The eBPF agent runs as root. |
+| miggoRuntime.podSecurityContext.runAsGroup | int | `0` |  |
+| miggoRuntime.podSecurityContext.runAsUser | int | `0` |  |
 | miggoRuntime.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
 | miggoRuntime.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-runtime |
 | miggoRuntime.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-runtime |
@@ -200,13 +203,24 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.resources.requests.cpu | string | `"200m"` |  |
 | miggoRuntime.profiler.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.profiler.samplesPerSecond | int | `20` | Set the frequency (in Hz) of stack trace sampling. |
-| miggoRuntime.profiler.securityContext | object | `{"capabilities":{"add":["IPC_LOCK","SYS_ADMIN","SYS_PTRACE","SYS_RESOURCE","SYSLOG"]},"privileged":false,"seLinuxOptions":{"type":"spc_t"}}` | Container-level security context. The runtime's capabilities plus SYSLOG, which /proc/kallsyms requires whenever kernel.perf_event_paranoid is above 1. |
+| miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"IPC_LOCK"` |  |
+| miggoRuntime.profiler.securityContext.capabilities.add[1] | string | `"SYS_ADMIN"` |  |
+| miggoRuntime.profiler.securityContext.capabilities.add[2] | string | `"SYS_PTRACE"` |  |
+| miggoRuntime.profiler.securityContext.capabilities.add[3] | string | `"SYS_RESOURCE"` |  |
+| miggoRuntime.profiler.securityContext.capabilities.add[4] | string | `"SYSLOG"` |  |
+| miggoRuntime.profiler.securityContext.privileged | bool | `false` |  |
+| miggoRuntime.profiler.securityContext.seLinuxOptions.type | string | `"spc_t"` |  |
 | miggoRuntime.profiler.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
 | miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
 | miggoRuntime.resources.requests.memory | string | `"512Mi"` |  |
-| miggoRuntime.securityContext | object | `{"capabilities":{"add":["IPC_LOCK","SYS_ADMIN","SYS_PTRACE","SYS_RESOURCE"]},"privileged":false,"seLinuxOptions":{"type":"spc_t"}}` | Container-level security context. SYS_ADMIN gates BPF object enumeration (the profiler tail-call lookup and the eBPF map metrics) and subsumes BPF and PERFMON; SYS_PTRACE resolves /proc for processes outside this container; IPC_LOCK and SYS_RESOURCE cover the perf ring buffers on nodes with a finite RLIMIT_MEMLOCK. seLinuxOptions applies only where the node labels containers. |
+| miggoRuntime.securityContext.capabilities.add[0] | string | `"IPC_LOCK"` |  |
+| miggoRuntime.securityContext.capabilities.add[1] | string | `"SYS_ADMIN"` |  |
+| miggoRuntime.securityContext.capabilities.add[2] | string | `"SYS_PTRACE"` |  |
+| miggoRuntime.securityContext.capabilities.add[3] | string | `"SYS_RESOURCE"` |  |
+| miggoRuntime.securityContext.privileged | bool | `false` |  |
+| miggoRuntime.securityContext.seLinuxOptions.type | string | `"spc_t"` |  |
 | miggoRuntime.shield.config | object | `{}` | The `config:` body of the MiggoShield document, passed through verbatim (the chart adds only the kind/version envelope), so keys are the sensor's own snake_case and policy can be copied from its docs unchanged. Empty ships no policy and arms nothing. Requires the `python` and `hotspot` tracers. |
 | miggoRuntime.tolerations | list | `[]` | Tolerations for the miggo-runtime DaemonSet.  Global tolerations specified in .Values.tolerations will be merged with this list. |
 | miggoRuntime.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
@@ -232,7 +246,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoScanner.podLabels | object | `{}` | Component-specific pod labels |
-| miggoScanner.podSecurityContext | object | `{}` | Pod-level security context |
+| miggoScanner.podSecurityContext | object | `{}` |  |
 | miggoScanner.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-scanner |
 | miggoScanner.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-scanner |
 | miggoScanner.registryCredentials | object | `{"secretName":""}` | falling back to imagePullSecrets-derived and anonymous auth. |
@@ -240,7 +254,9 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.resources.limits.memory | string | `"4Gi"` |  |
 | miggoScanner.resources.requests.cpu | string | `"1000m"` |  |
 | miggoScanner.resources.requests.memory | string | `"2Gi"` |  |
-| miggoScanner.securityContext | object | `{"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532}` | Container-level security context |
+| miggoScanner.securityContext.runAsGroup | int | `65532` |  |
+| miggoScanner.securityContext.runAsNonRoot | bool | `true` |  |
+| miggoScanner.securityContext.runAsUser | int | `65532` |  |
 | miggoScanner.serviceAccount.annotations | object | `{}` | Annotations to add to the chart-created ServiceAccount. Ignored when name is set (pre-existing SA). |
 | miggoScanner.serviceAccount.name | string | `""` | Name of a pre-existing ServiceAccount to use. When empty (default), the chart creates its own ServiceAccount. When set, the chart skips creation and uses this name — for when your IaC (e.g. Terraform + IRSA / EKS Pod Identity) owns the ServiceAccount lifecycle. |
 | miggoScanner.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
@@ -262,14 +278,16 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-watch pods. Merged with global nodeSelector. |
 | miggoWatch.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoWatch.podLabels | object | `{}` | Component-specific pod labels |
-| miggoWatch.podSecurityContext | object | `{}` | Pod-level security context |
+| miggoWatch.podSecurityContext | object | `{}` |  |
 | miggoWatch.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-watch |
 | miggoWatch.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-watch |
 | miggoWatch.resources.limits.cpu | string | `"100m"` |  |
 | miggoWatch.resources.limits.memory | string | `"256Mi"` |  |
 | miggoWatch.resources.requests.cpu | string | `"10m"` |  |
 | miggoWatch.resources.requests.memory | string | `"256Mi"` |  |
-| miggoWatch.securityContext | object | `{"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532}` | Container-level security context |
+| miggoWatch.securityContext.runAsGroup | int | `65532` |  |
+| miggoWatch.securityContext.runAsNonRoot | bool | `true` |  |
+| miggoWatch.securityContext.runAsUser | int | `65532` |  |
 | miggoWatch.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoWatch.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoWatch.volumes | list | `[]` | Additional volumes |
