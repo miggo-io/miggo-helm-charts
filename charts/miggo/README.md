@@ -219,6 +219,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.securityContext.capabilities.add[1] | string | `"SYS_ADMIN"` |  |
 | miggoRuntime.securityContext.capabilities.add[2] | string | `"SYS_PTRACE"` |  |
 | miggoRuntime.securityContext.capabilities.add[3] | string | `"SYS_RESOURCE"` |  |
+| miggoRuntime.securityContext.capabilities.add[4] | string | `"SYSLOG"` |  |
 | miggoRuntime.securityContext.privileged | bool | `false` |  |
 | miggoRuntime.securityContext.seLinuxOptions.type | string | `"spc_t"` |  |
 | miggoRuntime.shield.config | object | `{}` | The `config:` body of the MiggoShield document, passed through verbatim (the chart adds only the kind/version envelope), so keys are the sensor's own snake_case and policy can be copied from its docs unchanged. Empty ships no policy and arms nothing. Requires the `python` and `hotspot` tracers. |

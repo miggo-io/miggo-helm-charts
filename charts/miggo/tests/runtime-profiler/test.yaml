@@ -95,6 +95,7 @@ tests:
                 - SYS_ADMIN
                 - SYS_PTRACE
                 - SYS_RESOURCE
+                - SYSLOG
             seLinuxOptions:
               type: spc_t
       - equal:

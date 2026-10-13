@@ -197,6 +197,7 @@ data:
           - SYS_ADMIN
           - SYS_PTRACE
           - SYS_RESOURCE
+          - SYSLOG
         privileged: false
         seLinuxOptions:
           type: spc_t
