@@ -89,13 +89,6 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
           value:
             privileged: true
-            capabilities:
-              add:
-                - IPC_LOCK
-                - SYS_ADMIN
-                - SYS_PTRACE
-                - SYS_RESOURCE
-                - SYSLOG
             seccompProfile:
               type: RuntimeDefault
       - equal:
@@ -135,13 +128,6 @@ tests:
           path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
           value:
             privileged: true
-            capabilities:
-              add:
-                - IPC_LOCK
-                - SYS_ADMIN
-                - SYS_PTRACE
-                - SYS_RESOURCE
-                - SYSLOG
             seccompProfile:
               type: RuntimeDefault
       - equal:

@@ -400,13 +400,6 @@ miggoRuntime:
     runAsGroup: 0
   securityContext:
     privileged: true
-    capabilities:
-      add:
-        - IPC_LOCK
-        - SYS_ADMIN
-        - SYS_PTRACE
-        - SYS_RESOURCE
-        - SYSLOG
     seccompProfile:
       type: RuntimeDefault
 
@@ -451,13 +444,6 @@ miggoRuntime:
 
     securityContext:
       privileged: true
-      capabilities:
-        add:
-          - IPC_LOCK
-          - SYS_ADMIN
-          - SYS_PTRACE
-          - SYS_RESOURCE
-          - SYSLOG
       seccompProfile:
         type: RuntimeDefault
 

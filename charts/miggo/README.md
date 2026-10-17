@@ -203,11 +203,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.resources.requests.cpu | string | `"200m"` |  |
 | miggoRuntime.profiler.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.profiler.samplesPerSecond | int | `20` | Set the frequency (in Hz) of stack trace sampling. |
-| miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"IPC_LOCK"` |  |
-| miggoRuntime.profiler.securityContext.capabilities.add[1] | string | `"SYS_ADMIN"` |  |
-| miggoRuntime.profiler.securityContext.capabilities.add[2] | string | `"SYS_PTRACE"` |  |
-| miggoRuntime.profiler.securityContext.capabilities.add[3] | string | `"SYS_RESOURCE"` |  |
-| miggoRuntime.profiler.securityContext.capabilities.add[4] | string | `"SYSLOG"` |  |
 | miggoRuntime.profiler.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.profiler.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | miggoRuntime.profiler.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
@@ -215,11 +210,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
 | miggoRuntime.resources.requests.memory | string | `"512Mi"` |  |
-| miggoRuntime.securityContext.capabilities.add[0] | string | `"IPC_LOCK"` |  |
-| miggoRuntime.securityContext.capabilities.add[1] | string | `"SYS_ADMIN"` |  |
-| miggoRuntime.securityContext.capabilities.add[2] | string | `"SYS_PTRACE"` |  |
-| miggoRuntime.securityContext.capabilities.add[3] | string | `"SYS_RESOURCE"` |  |
-| miggoRuntime.securityContext.capabilities.add[4] | string | `"SYSLOG"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | miggoRuntime.shield.config | object | `{}` | The `config:` body of the MiggoShield document, passed through verbatim (the chart adds only the kind/version envelope), so keys are the sensor's own snake_case and policy can be copied from its docs unchanged. Empty ships no policy and arms nothing. Requires the `python` and `hotspot` tracers. |
@@ -449,9 +439,9 @@ curl http://localhost:6666/health
 
 4. **Pod Security Context** (`<component>.podSecurityContext` / `<component>.securityContext`)
    - Collector, watch and scanner run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff.
-   - The runtime DaemonSet and its profiler run as `0:0` with `hostPID` and `privileged`, and declare the capability set the sensor actually uses: `IPC_LOCK`, `SYS_ADMIN`, `SYS_PTRACE`, `SYS_RESOURCE` and `SYSLOG`.
-   - Values merge into these defaults, so `securityContext: {privileged: false}` keeps the capability list alongside it. Drop a default key by setting it to `null`, or set the whole block to `null` to render no security context at all.
-   - `seccompProfile.type: RuntimeDefault` has no effect while `privileged` is true — Kubernetes always runs privileged containers `Unconfined`. It applies once `privileged` is `false`, where the declared capabilities unlock the syscalls the runtime's default profile gates.
+   - The runtime DaemonSet and its profiler run as `0:0` with `hostPID` and `privileged`, which grants the full capability set; an explicit `capabilities.add` is only meaningful once `privileged` is `false`.
+   - Values merge into these defaults, so one key can be overridden on its own. Drop a default key by setting it to `null`, or set the whole block to `null` to render no security context at all.
+   - `seccompProfile.type: RuntimeDefault` has no effect while `privileged` is true — Kubernetes always runs privileged containers `Unconfined`. It applies once `privileged` is `false`, where `SYS_ADMIN` and `SYS_PTRACE` unlock the syscalls the runtime's default profile gates behind them.
    - SELinux-enforcing nodes need `seLinuxOptions.type` set to an unconfined type once `privileged` is `false`: `spc_t` where container-selinux is loaded, `super_t` on Bottlerocket. PodSecurity `baseline` rejects both, so those clusters need the sensor namespace exempt.
 
 ---

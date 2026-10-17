@@ -219,9 +219,9 @@ curl http://localhost:6666/health
 
 4. **Pod Security Context** (`<component>.podSecurityContext` / `<component>.securityContext`)
    - Collector, watch and scanner run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff.
-   - The runtime DaemonSet and its profiler run as `0:0` with `hostPID` and `privileged`, and declare the capability set the sensor actually uses: `IPC_LOCK`, `SYS_ADMIN`, `SYS_PTRACE`, `SYS_RESOURCE` and `SYSLOG`.
-   - Values merge into these defaults, so `securityContext: {privileged: false}` keeps the capability list alongside it. Drop a default key by setting it to `null`, or set the whole block to `null` to render no security context at all.
-   - `seccompProfile.type: RuntimeDefault` has no effect while `privileged` is true — Kubernetes always runs privileged containers `Unconfined`. It applies once `privileged` is `false`, where the declared capabilities unlock the syscalls the runtime's default profile gates.
+   - The runtime DaemonSet and its profiler run as `0:0` with `hostPID` and `privileged`, which grants the full capability set; an explicit `capabilities.add` is only meaningful once `privileged` is `false`.
+   - Values merge into these defaults, so one key can be overridden on its own. Drop a default key by setting it to `null`, or set the whole block to `null` to render no security context at all.
+   - `seccompProfile.type: RuntimeDefault` has no effect while `privileged` is true — Kubernetes always runs privileged containers `Unconfined`. It applies once `privileged` is `false`, where `SYS_ADMIN` and `SYS_PTRACE` unlock the syscalls the runtime's default profile gates behind them.
    - SELinux-enforcing nodes need `seLinuxOptions.type` set to an unconfined type once `privileged` is `false`: `spc_t` where container-selinux is loaded, `super_t` on Bottlerocket. PodSecurity `baseline` rejects both, so those clusters need the sensor namespace exempt.
 
 ---

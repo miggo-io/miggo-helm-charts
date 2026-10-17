@@ -41,13 +41,6 @@ spec:
       containers:
         - name: miggo-runtime
           securityContext:
-            capabilities:
-              add:
-              - IPC_LOCK
-              - SYS_ADMIN
-              - SYS_PTRACE
-              - SYS_RESOURCE
-              - SYSLOG
             privileged: true
             seccompProfile:
               type: RuntimeDefault
@@ -169,13 +162,6 @@ spec:
               cpu: 200m
               memory: 512Mi
           securityContext:
-            capabilities:
-              add:
-              - IPC_LOCK
-              - SYS_ADMIN
-              - SYS_PTRACE
-              - SYS_RESOURCE
-              - SYSLOG
             privileged: true
             seccompProfile:
               type: RuntimeDefault

@@ -84,13 +84,6 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
           value:
             privileged: true
-            capabilities:
-              add:
-                - IPC_LOCK
-                - SYS_ADMIN
-                - SYS_PTRACE
-                - SYS_RESOURCE
-                - SYSLOG
             seccompProfile:
               type: RuntimeDefault
 
@@ -101,13 +94,6 @@ tests:
           path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
           value:
             privileged: true
-            capabilities:
-              add:
-                - IPC_LOCK
-                - SYS_ADMIN
-                - SYS_PTRACE
-                - SYS_RESOURCE
-                - SYSLOG
             seccompProfile:
               type: RuntimeDefault
 
@@ -157,10 +143,11 @@ tests:
           path: spec.template.spec.securityContext.fsGroup
           value: 2000
 
-  - it: the runtime container can be made unprivileged, keeping its capabilities
+  - it: the runtime container can be made unprivileged with its own capabilities
     template: templates/miggo-runtime/daemonset.yaml
     set:
       miggoRuntime.securityContext.privileged: false
+      miggoRuntime.securityContext.capabilities.add: [SYS_ADMIN]
     asserts:
       - equal:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext.privileged
@@ -168,6 +155,9 @@ tests:
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext.capabilities.add
           content: SYS_ADMIN
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext.seccompProfile.type
+          value: RuntimeDefault
 
   # --- opting out ---
 
