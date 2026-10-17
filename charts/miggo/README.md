@@ -110,7 +110,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | image.registry | string | `"registry.miggo.io"` | Registry host for all images |
 | imagePullSecrets | list | `[]` |  |
 | labels | object | `{}` | Global labels to add to all resources |
-| manageSecurityContext | bool | `true` | Enable Miggo-managed security contexts for all sensor pods/containers. When true (default): non-privileged components (collector/watch/scanner) run as 65532:65532 with runAsNonRoot, the collector pod gets fsGroup 65532, and the privileged runtime pod is pinned to an explicit 0:0. When false: no securityContext is rendered at all (the managed values and the deprecated fields below are both suppressed) and pods fall back to implicit root. |
 | miggo.clusterName | string | `"kubernetes-cluster"` | Name of the Kubernetes cluster |
 | miggoCollector.accessKeyMountLocation | string | `"/etc/miggo-access-key"` | An internal locaiton to mount the access key file within the container |
 | miggoCollector.annotations | object | `{}` | Component-specific annotations |
@@ -137,11 +136,15 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoCollector.podLabels | object | `{}` | Component-specific pod labels |
+| miggoCollector.podSecurityContext.fsGroup | int | `65532` |  |
 | miggoCollector.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
 | miggoCollector.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-collector |
 | miggoCollector.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-collector |
 | miggoCollector.replicas | int | `1` | Number of replicas to run (relevant only if instancePerNode: false) |
 | miggoCollector.resources | object | `{"limits":{"cpu":"100m","memory":"500Mi"},"requests":{"cpu":"10m","memory":"200Mi"}}` | Resource requirements |
+| miggoCollector.securityContext.runAsGroup | int | `65532` |  |
+| miggoCollector.securityContext.runAsNonRoot | bool | `true` |  |
+| miggoCollector.securityContext.runAsUser | int | `65532` |  |
 | miggoCollector.service.annotations | object | `{}` | Service annotations |
 | miggoCollector.service.labels | object | `{}` | Service labels |
 | miggoCollector.service.ports | list | `[{"name":"http","port":4318,"protocol":"TCP","targetPort":4318},{"name":"grpc","port":4317,"protocol":"TCP","targetPort":4317}]` | Service ports |
@@ -175,6 +178,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoRuntime.kubernetesClusterDomain | string | `""` | Kubernetes cluster domain |
 | miggoRuntime.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector settings |
+| miggoRuntime.podSecurityContext.runAsGroup | int | `0` |  |
+| miggoRuntime.podSecurityContext.runAsUser | int | `0` |  |
 | miggoRuntime.priorityClassName | string | `""` | Priority class name (defaults to global priorityClassName or system-node-critical) |
 | miggoRuntime.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-runtime |
 | miggoRuntime.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-runtime |
@@ -198,15 +203,27 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.resources.requests.cpu | string | `"200m"` |  |
 | miggoRuntime.profiler.resources.requests.memory | string | `"512Mi"` |  |
 | miggoRuntime.profiler.samplesPerSecond | int | `20` | Set the frequency (in Hz) of stack trace sampling. |
-| miggoRuntime.profiler.securityContext.allowPrivilegeEscalation | bool | `true` |  |
-| miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"SYS_ADMIN"` |  |
+| miggoRuntime.profiler.securityContext.capabilities.add[0] | string | `"IPC_LOCK"` |  |
+| miggoRuntime.profiler.securityContext.capabilities.add[1] | string | `"SYS_ADMIN"` |  |
+| miggoRuntime.profiler.securityContext.capabilities.add[2] | string | `"SYS_PTRACE"` |  |
+| miggoRuntime.profiler.securityContext.capabilities.add[3] | string | `"SYS_RESOURCE"` |  |
+| miggoRuntime.profiler.securityContext.capabilities.add[4] | string | `"SYSLOG"` |  |
 | miggoRuntime.profiler.securityContext.privileged | bool | `true` |  |
+| miggoRuntime.profiler.securityContext.seLinuxOptions.type | string | `"spc_t"` |  |
+| miggoRuntime.profiler.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | miggoRuntime.profiler.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
 | miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
 | miggoRuntime.resources.requests.memory | string | `"512Mi"` |  |
+| miggoRuntime.securityContext.capabilities.add[0] | string | `"IPC_LOCK"` |  |
+| miggoRuntime.securityContext.capabilities.add[1] | string | `"SYS_ADMIN"` |  |
+| miggoRuntime.securityContext.capabilities.add[2] | string | `"SYS_PTRACE"` |  |
+| miggoRuntime.securityContext.capabilities.add[3] | string | `"SYS_RESOURCE"` |  |
+| miggoRuntime.securityContext.capabilities.add[4] | string | `"SYSLOG"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
+| miggoRuntime.securityContext.seLinuxOptions.type | string | `"spc_t"` |  |
+| miggoRuntime.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | miggoRuntime.shield.config | object | `{}` | The `config:` body of the MiggoShield document, passed through verbatim (the chart adds only the kind/version envelope), so keys are the sensor's own snake_case and policy can be copied from its docs unchanged. Empty ships no policy and arms nothing. Requires the `python` and `hotspot` tracers. |
 | miggoRuntime.tolerations | list | `[]` | Tolerations for the miggo-runtime DaemonSet.  Global tolerations specified in .Values.tolerations will be merged with this list. |
 | miggoRuntime.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
@@ -232,6 +249,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-scanner pods. Merged with global nodeSelector. |
 | miggoScanner.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoScanner.podLabels | object | `{}` | Component-specific pod labels |
+| miggoScanner.podSecurityContext | object | `{}` |  |
 | miggoScanner.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-scanner |
 | miggoScanner.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-scanner |
 | miggoScanner.registryCredentials | object | `{"secretName":""}` | falling back to imagePullSecrets-derived and anonymous auth. |
@@ -239,6 +257,9 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoScanner.resources.limits.memory | string | `"4Gi"` |  |
 | miggoScanner.resources.requests.cpu | string | `"1000m"` |  |
 | miggoScanner.resources.requests.memory | string | `"2Gi"` |  |
+| miggoScanner.securityContext.runAsGroup | int | `65532` |  |
+| miggoScanner.securityContext.runAsNonRoot | bool | `true` |  |
+| miggoScanner.securityContext.runAsUser | int | `65532` |  |
 | miggoScanner.serviceAccount.annotations | object | `{}` | Annotations to add to the chart-created ServiceAccount. Ignored when name is set (pre-existing SA). |
 | miggoScanner.serviceAccount.name | string | `""` | Name of a pre-existing ServiceAccount to use. When empty (default), the chart creates its own ServiceAccount. When set, the chart skips creation and uses this name — for when your IaC (e.g. Terraform + IRSA / EKS Pod Identity) owns the ServiceAccount lifecycle. |
 | miggoScanner.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
@@ -260,12 +281,16 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoWatch.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-watch pods. Merged with global nodeSelector. |
 | miggoWatch.podAnnotations | object | `{}` | Component-specific pod annotations |
 | miggoWatch.podLabels | object | `{}` | Component-specific pod labels |
+| miggoWatch.podSecurityContext | object | `{}` |  |
 | miggoWatch.probes.failureThreshold | string | `""` | Override global probes.failureThreshold for miggo-watch |
 | miggoWatch.probes.timeoutSeconds | string | `""` | Override global probes.timeoutSeconds for miggo-watch |
 | miggoWatch.resources.limits.cpu | string | `"100m"` |  |
 | miggoWatch.resources.limits.memory | string | `"256Mi"` |  |
 | miggoWatch.resources.requests.cpu | string | `"10m"` |  |
 | miggoWatch.resources.requests.memory | string | `"256Mi"` |  |
+| miggoWatch.securityContext.runAsGroup | int | `65532` |  |
+| miggoWatch.securityContext.runAsNonRoot | bool | `true` |  |
+| miggoWatch.securityContext.runAsUser | int | `65532` |  |
 | miggoWatch.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoWatch.volumeMounts | list | `[]` | Additional volume mounts |
 | miggoWatch.volumes | list | `[]` | Additional volumes |
@@ -278,7 +303,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | output.stdout | bool | `false` | Enable stdout logging (for debugging) |
 | podAnnotations | object | `{}` | Pod annotations to add to all pods |
 | podLabels | object | `{}` | Pod labels to add to all pods |
-| podSecurityContext | object | `{}` | DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a populated value here overrides the managed pod security context for all pods. |
 | pprof.cpu.enabled | bool | `false` | Enable CPU profile scraping by the Collector's diagnostic pipeline |
 | pprof.cpu.interval | string | `"1m"` | How often to trigger a CPU profile collection |
 | pprof.cpu.period | int | `10` | Duration of each blocking CPU profile collection in seconds (passed as ?seconds=N to the pprof HTTP endpoint). Must be an integer. |
@@ -289,7 +313,6 @@ The following table lists the configurable parameters of the miggo chart and the
 | priorityClassName | string | `""` | Priority class name for all pods |
 | probes.failureThreshold | int | `5` | Failure threshold for liveness and readiness probes across all components |
 | probes.timeoutSeconds | int | `10` | Timeout seconds for liveness and readiness probes across all components |
-| securityContext | object | `{}` | DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a populated value here overrides the managed container security context for all containers. |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.automount | bool | `true` | Automatically mount API credentials for the service account |
 | serviceAccount.name | string | `""` | Name of the service account. If not set, a name is generated |
@@ -426,10 +449,12 @@ curl http://localhost:6666/health
    - Configure appropriate network policies
    - Use TLS for OTLP communication
 
-4. **Pod Security Context** (`manageSecurityContext`, default `true`)
-   - The non-privileged components (collector, watch, scanner) run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff; the privileged runtime DaemonSet is pinned to an explicit `0:0` (it still requires `privileged`/`SYS_ADMIN`/`hostPID` for eBPF).
-   - Set `manageSecurityContext: false` to render no security context at all (full revert to implicit root).
-   - `podSecurityContext` / `securityContext` are **deprecated**. While `manageSecurityContext` is `true`, a populated value still overrides the managed block; when `false`, they are suppressed along with the managed block.
+4. **Pod Security Context** (`<component>.podSecurityContext` / `<component>.securityContext`)
+   - Collector, watch and scanner run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff.
+   - The runtime DaemonSet and its profiler run as `0:0` with `hostPID` and `privileged`, and declare the capability set the sensor actually uses: `IPC_LOCK`, `SYS_ADMIN`, `SYS_PTRACE`, `SYS_RESOURCE` and `SYSLOG`.
+   - Values merge into these defaults, so `securityContext: {privileged: false}` keeps the capability list alongside it. Drop a default key by setting it to `null`, or set the whole block to `null` to render no security context at all.
+   - `seccompProfile.type: RuntimeDefault` has no effect while `privileged` is true — Kubernetes always runs privileged containers `Unconfined`. It applies once `privileged` is `false`, where the declared capabilities unlock the syscalls the runtime's default profile gates.
+   - `seLinuxOptions.type: spc_t` is required on SELinux-enforcing nodes and ignored on nodes that do not label containers. PodSecurity `baseline` rejects it, so those clusters need the sensor namespace exempt, and nodes whose policy does not define `spc_t` (Bottlerocket) need it overridden.
 
 ---
 
