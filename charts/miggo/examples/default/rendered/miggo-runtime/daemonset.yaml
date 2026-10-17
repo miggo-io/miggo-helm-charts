@@ -49,8 +49,6 @@ spec:
               - SYS_RESOURCE
               - SYSLOG
             privileged: true
-            seLinuxOptions:
-              type: spc_t
             seccompProfile:
               type: RuntimeDefault
           image: "registry.miggo.io/miggo/miggo-runtime:v26.1011.1"
@@ -179,8 +177,6 @@ spec:
               - SYS_RESOURCE
               - SYSLOG
             privileged: true
-            seLinuxOptions:
-              type: spc_t
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:

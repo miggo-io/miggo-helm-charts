@@ -180,8 +180,6 @@ data:
             - SYS_RESOURCE
             - SYSLOG
           privileged: true
-          seLinuxOptions:
-            type: spc_t
           seccompProfile:
             type: RuntimeDefault
         useGOMEMLIMIT: true
@@ -201,8 +199,6 @@ data:
           - SYS_RESOURCE
           - SYSLOG
         privileged: true
-        seLinuxOptions:
-          type: spc_t
         seccompProfile:
           type: RuntimeDefault
       shield:

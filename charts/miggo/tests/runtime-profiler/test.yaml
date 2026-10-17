@@ -96,8 +96,6 @@ tests:
                 - SYS_PTRACE
                 - SYS_RESOURCE
                 - SYSLOG
-            seLinuxOptions:
-              type: spc_t
             seccompProfile:
               type: RuntimeDefault
       - equal:
@@ -144,8 +142,6 @@ tests:
                 - SYS_PTRACE
                 - SYS_RESOURCE
                 - SYSLOG
-            seLinuxOptions:
-              type: spc_t
             seccompProfile:
               type: RuntimeDefault
       - equal:
