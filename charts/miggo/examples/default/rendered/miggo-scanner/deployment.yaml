@@ -56,7 +56,7 @@ spec:
             - --chart-version=0.0.239
             - --queue-size=10000
             
-            - --cache-flush-interval=168h
+            - --cache-flush-interval=24h
             - --cache-cleanup-interval=15m
             - --cache-size=10000
             
@@ -104,7 +104,20 @@ spec:
               memory: 2Gi
           volumeMounts:
           
+          
+          - name: access-key
+            mountPath: /etc/miggo-access-key
+            readOnly: true
+          
       volumes:
+      
+      
+      - name: access-key
+        secret:
+          secretName: access-key-secret
+          items:
+            - key: ACCESS_KEY
+              path: ACCESS_KEY
       
       nodeSelector:
         kubernetes.io/os: linux
