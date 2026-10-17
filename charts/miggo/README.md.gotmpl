@@ -217,10 +217,12 @@ curl http://localhost:6666/health
    - Configure appropriate network policies
    - Use TLS for OTLP communication
 
-4. **Pod Security Context** (`manageSecurityContext`, default `true`)
-   - The non-privileged components (collector, watch, scanner) run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff; the privileged runtime DaemonSet is pinned to an explicit `0:0` (it still requires `privileged`/`SYS_ADMIN`/`hostPID` for eBPF).
-   - Set `manageSecurityContext: false` to render no security context at all (full revert to implicit root).
-   - `podSecurityContext` / `securityContext` are **deprecated**. While `manageSecurityContext` is `true`, a populated value still overrides the managed block; when `false`, they are suppressed along with the managed block.
+4. **Pod Security Context** (`<component>.podSecurityContext` / `<component>.securityContext`)
+   - Collector, watch and scanner run as `65532:65532` with `runAsNonRoot`; the collector pod sets `fsGroup: 65532` for its config handoff.
+   - The runtime DaemonSet and its profiler run as `0:0` with `hostPID` and `privileged`, which grants the full capability set; an explicit `capabilities.add` is only meaningful once `privileged` is `false`.
+   - Values merge into these defaults, so one key can be overridden on its own. Drop a default key by setting it to `null`, or set the whole block to `null` to render no security context at all.
+   - `seccompProfile.type: RuntimeDefault` has no effect while `privileged` is true — Kubernetes always runs privileged containers `Unconfined`. It applies once `privileged` is `false`, where `SYS_ADMIN` and `SYS_PTRACE` unlock the syscalls the runtime's default profile gates behind them.
+   - SELinux-enforcing nodes need `seLinuxOptions.type` set to an unconfined type once `privileged` is `false`: `spc_t` where container-selinux is loaded, `super_t` on Bottlerocket. PodSecurity `baseline` rejects both, so those clusters need the sensor namespace exempt.
 
 ---
 

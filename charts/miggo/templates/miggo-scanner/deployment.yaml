@@ -52,15 +52,15 @@ spec:
         {{- end }}
         {{- include "miggoImagePullSecrets" . | nindent 8 }}
       serviceAccountName: {{ include "miggo-scanner.serviceAccountName" . }}
-      {{- with (include "miggo.podSecurityContext.nonpriv" .) }}
+      {{- with .Values.miggoScanner.podSecurityContext }}
       securityContext:
-        {{- . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: miggo-scanner
-          {{- with (include "miggo.containerSecurityContext" .) }}
+          {{- with .Values.miggoScanner.securityContext }}
           securityContext:
-            {{- . | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- if .Values.miggoScanner.image.fullPath }}
           image: "{{ .Values.miggoScanner.image.fullPath }}"
