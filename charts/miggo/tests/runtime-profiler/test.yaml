@@ -89,6 +89,8 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
           value:
             privileged: true
+            seccompProfile:
+              type: RuntimeDefault
       - equal:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].volumeMounts
           value:
@@ -125,11 +127,9 @@ tests:
       - equal:
           path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
           value:
-            allowPrivilegeEscalation: true
             privileged: true
-            capabilities:
-              add:
-                - SYS_ADMIN
+            seccompProfile:
+              type: RuntimeDefault
       - equal:
           path: spec.template.spec.containers[?(@.name == "profiler")].volumeMounts
           value:
