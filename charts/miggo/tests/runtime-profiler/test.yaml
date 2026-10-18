@@ -10,7 +10,6 @@ templates:
   - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
   - templates/miggo-collector/heartbeat-debug-config-cm.yaml
   - templates/miggo-runtime/daemonset.yaml
-  - templates/miggo-runtime/fluent-bit-cm.yaml
   - templates/miggo-runtime/miggo-shield-cm.yaml
 
 values:
@@ -51,7 +50,49 @@ tests:
           pattern: |
             (?s).*pipelines:.*profiles:\s+receivers:\s+-\s+otlp\s+exporters:\s+-\s+otlp_http\s.*
 
-  - it: should add both miggo-runtime and profiler containers to the DaemonSet spec
+  # miggoRuntime.profiler.enabled has no effect: the profiler runs inside the runtime,
+  # so the collector's profiles path follows miggoRuntime.enabled alone.
+  - it: should keep the profiles pipeline when the runtime is enabled, even with profiler.enabled false
+    template: templates/miggo-collector/collector-config-cm.yaml
+    set:
+      miggoRuntime.profiler.enabled: false
+    asserts:
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: |
+            (?s).*pipelines:.*profiles:\s+receivers:\s+-\s+otlp\s+exporters:\s+-\s+otlp_http\s.*
+
+  - it: should keep the profilesSupport feature gate when the runtime is enabled, even with profiler.enabled false
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      miggoRuntime.profiler.enabled: false
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].args
+          content: service.profilesSupport
+
+  - it: should drop the profiles pipeline when the runtime is disabled, even with profiler.enabled true
+    template: templates/miggo-collector/collector-config-cm.yaml
+    set:
+      miggoRuntime.enabled: false
+      miggoRuntime.profiler.enabled: true
+    asserts:
+      - notMatchRegex:
+          path: data["config-template.yaml"]
+          pattern: |
+            (?s).*pipelines:.*profiles:\s+receivers:.*
+
+  - it: should drop the profilesSupport feature gate when the runtime is disabled, even with profiler.enabled true
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      miggoRuntime.enabled: false
+      miggoRuntime.profiler.enabled: true
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].args
+          content: service.profilesSupport
+
+  - it: should run the profiler inside the miggo-runtime container
     template: templates/miggo-runtime/daemonset.yaml
     chart:
       version: '1.0.0'
@@ -59,6 +100,12 @@ tests:
     asserts:
       - isKind:
           of: DaemonSet
+      - lengthEqual:
+          path: spec.template.spec.containers
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].name
+          value: miggo-runtime
       - equal:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           value:
@@ -73,7 +120,6 @@ tests:
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
             - --chart-version=1.0.0
-            - --disable-profiler=false
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
             - --enable-web-app-process-detection=true
@@ -83,6 +129,14 @@ tests:
             - --pprof-port=0
             - --enable-syscall-to-profile-correlation=false
             - --enable-web-app-process-exec-filtering=true
+            - --profiles-otlp-endpoint=miggo-collector.miggo-space.svc.cluster.local:4317
+            - --profiler-reporter-interval=5s
+            - --profiler-samples-per-second=20
+            - --profiler-monitor-interval=5s
+            - --profiler-probabilistic-threshold=100
+            - --profiler-probabilistic-interval=1m0s
+            - --profiler-tracers=perl,php,python,hotspot,v8,go
+            - --profiler-load-probe=false
             - --include-system-namespaces=false
             - --denied-namespaces=miggo-space
       - equal:
@@ -103,74 +157,64 @@ tests:
             - mountPath: /cgroup
               name: cgroupfs
               readOnly: true
-            - name: unix-socket
-              mountPath: /tmp/grpc
-      - matchRegex:
-          path: spec.template.spec.containers[?(@.name == "profiler")].image
-          pattern: "registry.miggo.io/miggo/miggo-profiler:.*"
-      - equal:
-          path: spec.template.spec.containers[?(@.name == "profiler")].command
-          value:
-            - /root/ebpf-profiler
-      - equal:
-          path: spec.template.spec.containers[?(@.name == "profiler")].args
-          value:
-            - -collection-agent=miggo-collector.miggo-space.svc.cluster.local:4317
-            - -disable-tls=true
-            - -reporter-interval=5s
-            - -samples-per-second=20
-            - -monitor-interval=5s
-            - -probabilistic-threshold=100
-            - -probabilistic-interval=1m0s
-            - -tracers=perl,php,python,hotspot,v8,go
-            - --load-probe=false
-      - equal:
-          path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
-          value:
-            privileged: true
-            seccompProfile:
-              type: RuntimeDefault
-      - equal:
-          path: spec.template.spec.containers[?(@.name == "profiler")].volumeMounts
-          value:
-            - name: debugfs
-              mountPath: /sys/kernel/debug
-              readOnly: true
-            - mountPath: /sys/kernel/tracing
-              name: tracefs
-              readOnly: true
-            - name: cgroupfs
-              mountPath: /cgroup
-              readOnly: true
-            - name: unix-socket
-              mountPath: /tmp/grpc
       - equal:
           path: spec.template.spec.volumes
           value:
-            - configMap:
-                name: profiler-fluent-bit-config
-              name: fluent-bit-config
-            - hostPath:
-                path: /var
-                type: Directory
-              name: host-var
             - name: debugfs
               hostPath:
                 path: /sys/kernel/debug
             - name: tracefs
               hostPath:
                 path: /sys/kernel/tracing
-            - name: unix-socket
-              emptyDir: { }
             - name: cgroupfs
               hostPath:
                 path: /sys/fs/cgroup
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env
+          content:
+            name: MIGGO_RUNTIME_ENABLE_CGROUP_FILTER
+            value: "true"
       - equal:
           path: spec.template.spec.hostPID
           value: true
       - equal:
           path: spec.template.spec.hostIPC
           value: true
+
+  # The runtime ignores --disable-profiler: if the runtime runs, the profiler runs.
+  - it: should not pass --disable-profiler, whatever profiler.enabled says
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime.profiler.enabled: false
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --disable-profiler=true
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --disable-profiler=false
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --profiles-otlp-endpoint=miggo-collector.miggo-space.svc.cluster.local:4317
+
+  - it: should default the runtime to 700Mi of memory, with GOMEMLIMIT at 80% of it
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].resources
+          value:
+            requests:
+              cpu: 100m
+              memory: 700Mi
+            limits:
+              cpu: 500m
+              memory: 700Mi
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env
+          content:
+            name: GOMEMLIMIT
+            value: "560MiB"
+
   - it: should enable Off-CPU profiler
     template: templates/miggo-runtime/daemonset.yaml
     set:
@@ -180,57 +224,25 @@ tests:
     asserts:
       - isKind:
           of: DaemonSet
-      - equal:
-          path: spec.template.spec.containers[?(@.name == "profiler")].args
-          value:
-            - -collection-agent=miggo-collector.miggo-space.svc.cluster.local:4317
-            - -disable-tls=true
-            - -reporter-interval=5s
-            - -samples-per-second=20
-            - -monitor-interval=5s
-            - -probabilistic-threshold=1
-            - -probabilistic-interval=1m0s
-            - -tracers=perl,php,python,hotspot,v8,go
-            - --load-probe=false
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --profiler-probabilistic-threshold=1
 
-  - it: should use pinned fluent-bit image by default
-    template: templates/miggo-runtime/daemonset.yaml
-    asserts:
-      - isKind:
-          of: DaemonSet
-      - equal:
-          path: spec.template.spec.containers[?(@.name == "profiler-logs")].image
-          value: fluent/fluent-bit:5.0
-
-  - it: should honour fluent-bit image repository and tag overrides
+  - it: should send the profiles to the configured collector when the bundled one is disabled
     template: templates/miggo-runtime/daemonset.yaml
     set:
-      miggoRuntime:
-        fluentbit:
-          image:
-            repository: my-registry.io/fluent-bit
-            tag: "6.0.0"
+      miggoCollector.enabled: false
+      config.collectorUrl: https://collector.example.com
     asserts:
-      - isKind:
-          of: DaemonSet
-      - equal:
-          path: spec.template.spec.containers[?(@.name == "profiler-logs")].image
-          value: my-registry.io/fluent-bit:6.0.0
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --profiles-otlp-endpoint=https://collector.example.com
 
-  - it: should let fluent-bit image fullPath win over repository and tag
+  - it: should render no fluent-bit sidecar
     template: templates/miggo-runtime/daemonset.yaml
-    set:
-      miggoRuntime:
-        fluentbit:
-          image:
-            fullPath: custom/img:special
-            tag: ignored
     asserts:
-      - isKind:
-          of: DaemonSet
-      - equal:
-          path: spec.template.spec.containers[?(@.name == "profiler-logs")].image
-          value: custom/img:special
+      - notExists:
+          path: spec.template.spec.containers[?(@.name == "profiler-logs")]
 
   # MiggoShield: no enable flag, so an empty config must leave the blocker
   # entirely unwired rather than mounted-but-inert.
@@ -240,11 +252,11 @@ tests:
       - hasDocuments:
           count: 0
 
-  - it: should leave the profiler container untouched when no MiggoShield policy is configured
+  - it: should leave the runtime container untouched when no MiggoShield policy is configured
     template: templates/miggo-runtime/daemonset.yaml
     asserts:
       - notContains:
-          path: spec.template.spec.containers[?(@.name == "profiler")].env
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env
           content:
             name: MIGGO_RUNTIME_SHIELD_CONFIG
             value: /etc/miggo/miggo-shield.yaml
@@ -291,7 +303,7 @@ tests:
           path: data["miggo-shield.yaml"]
           pattern: 'watched_functions:\n    - name: validate_code'
 
-  - it: should mount the MiggoShield policy into the profiler when one is configured
+  - it: should mount the MiggoShield policy into the runtime when one is configured
     template: templates/miggo-runtime/daemonset.yaml
     set:
       miggoRuntime:
@@ -302,12 +314,12 @@ tests:
                 - name: validate_code
     asserts:
       - contains:
-          path: spec.template.spec.containers[?(@.name == "profiler")].env
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env
           content:
             name: MIGGO_RUNTIME_SHIELD_CONFIG
             value: /etc/miggo/miggo-shield.yaml
       - contains:
-          path: spec.template.spec.containers[?(@.name == "profiler")].volumeMounts
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].volumeMounts
           content:
             name: miggo-shield
             mountPath: /etc/miggo
@@ -318,6 +330,21 @@ tests:
             name: miggo-shield
             configMap:
               name: profiler-miggo-shield
+
+  - it: should render the MiggoShield policy whatever profiler.enabled says
+    template: templates/miggo-runtime/miggo-shield-cm.yaml
+    set:
+      miggoRuntime:
+        profiler:
+          enabled: false
+        shield:
+          config:
+            python:
+              watched_functions:
+                - name: validate_code
+    asserts:
+      - hasDocuments:
+          count: 1
 
   # The blocker's argv-capture programs reference both runtimes' process maps, so
   # the profiler refuses to start without both tracers. Fail at install time
@@ -336,14 +363,14 @@ tests:
     asserts:
       - failedTemplate:
           errorMessage: 'miggoRuntime.shield.config is set, so miggoRuntime.profiler.enabledTracers must include both "python" and "hotspot": the blocker''s argv-capture programs reference both runtimes'' process maps, and the profiler refuses to start without them.'
-  - it: should pass the kubernetes platform to the runtime and profiler
+  - it: should pass the kubernetes platform to the runtime
     template: templates/miggo-runtime/daemonset.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           content: --platform=kubernetes
       - contains:
-          path: spec.template.spec.containers[?(@.name == "profiler")].env
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env
           content:
             name: MIGGO_RUNTIME_PLATFORM
             value: kubernetes

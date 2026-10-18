@@ -13,7 +13,6 @@ templates:
   - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
   - templates/miggo-collector/heartbeat-debug-config-cm.yaml
   - templates/image-pull-secret.yaml
-  - templates/miggo-runtime/fluent-bit-cm.yaml
 
 values:
   - values.yaml

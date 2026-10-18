@@ -8,7 +8,6 @@ templates:
   - templates/miggo-watch/deployment.yaml
   - templates/miggo-scanner/deployment.yaml
   - templates/miggo-runtime/daemonset.yaml
-  - templates/miggo-runtime/fluent-bit-cm.yaml
   - templates/miggo-collector/deployment.yaml
   - templates/miggo-collector/collector-config-cm.yaml
   - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
@@ -53,16 +52,16 @@ tests:
           path: spec.template.metadata.labels["miggo.io/pprof-port"]
           value: "6060"
 
-  - it: should add pprof-profiler-port label to runtime pod when profilerPort is set
+  # The profiler runs inside the runtime, so pprof.port covers it and profilerPort is unused.
+  - it: should not add pprof-profiler-port label even when profilerPort is set
     template: templates/miggo-runtime/daemonset.yaml
     set:
       pprof.port: 6060
       pprof.profilerPort: 6061
       miggoRuntime.profiler.enabled: true
     asserts:
-      - equal:
+      - notExists:
           path: spec.template.metadata.labels["miggo.io/pprof-profiler-port"]
-          value: "6061"
 
   - it: should not add pprof-profiler-port label when profiler is disabled
     template: templates/miggo-runtime/daemonset.yaml
@@ -102,15 +101,21 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           content: "--pprof-port=6060"
 
-  - it: should pass -pprof arg to profiler sidecar when profilerPort is set
+  - it: should render only the runtime's pprof port when profilerPort is set
     template: templates/miggo-runtime/daemonset.yaml
     set:
       pprof.port: 6060
       pprof.profilerPort: 6061
       miggoRuntime.profiler.enabled: true
     asserts:
+      - lengthEqual:
+          path: spec.template.spec.containers
+          count: 1
       - contains:
-          path: spec.template.spec.containers[?(@.name == "profiler")].args
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: "--pprof-port=6060"
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           content: "-pprof=0.0.0.0:6061"
 
   # --- collector deployment args ---
@@ -202,7 +207,7 @@ tests:
           path: data["diagnostic-pprof.yaml"]
           pattern: "node:"
 
-  - it: should include profiler receivers in diagnostic config when profilerPort is set
+  - it: should not include profiler receivers in diagnostic config even when profilerPort is set
     template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
     set:
       pprof.port: 6060
@@ -210,12 +215,12 @@ tests:
       pprof.cpu.enabled: true
       miggoRuntime.profiler.enabled: true
     asserts:
+      - notMatchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "pprof/profiler"
       - matchRegex:
           path: data["diagnostic-pprof.yaml"]
-          pattern: "pprof/profiler-cpu"
-      - matchRegex:
-          path: data["diagnostic-pprof.yaml"]
-          pattern: "pprof/profiler-heap"
+          pattern: "pprof/cpu"
 
   - it: should not include profiler receivers when profilerPort is 0
     template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml

@@ -22,7 +22,6 @@ templates:
   - templates/miggo-collector/heartbeat-debug-config-cm.yaml
   - templates/access-key-secret.yaml
   - templates/image-pull-secret.yaml
-  - templates/miggo-runtime/fluent-bit-cm.yaml
 
 values:
   - values.yaml

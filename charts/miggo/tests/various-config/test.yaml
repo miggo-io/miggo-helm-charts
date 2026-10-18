@@ -12,7 +12,6 @@ templates:
   - templates/miggo-collector/collector-config-cm.yaml
   - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
   - templates/miggo-collector/heartbeat-debug-config-cm.yaml
-  - templates/miggo-runtime/fluent-bit-cm.yaml
 
 values:
   - values.yaml
@@ -60,6 +59,7 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           content: --metric-interval=1h
 
+  # GOMEMLIMIT follows miggoRuntime.useGOMEMLIMIT and resources; the profiler's own keys no longer apply.
   - it: miggo-runtime useGOMEMLIMIT
     template: templates/miggo-runtime/daemonset.yaml
     set:
@@ -71,8 +71,24 @@ tests:
     asserts:
       - notExists:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env[?(@.name == "GOMEMLIMIT")]
-      - exists:
-          path: spec.template.spec.containers[?(@.name == "profiler")].env[?(@.name == "GOMEMLIMIT")]
+
+  - it: miggo-runtime GOMEMLIMIT is 80% of the runtime's memory request
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime:
+        resources:
+          requests:
+            memory: 1Gi
+        profiler:
+          resources:
+            requests:
+              memory: 256Mi
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].env
+          content:
+            name: GOMEMLIMIT
+            value: "819MiB"
 
   - it: miggo-watch denies its own install namespace by default
     template: templates/miggo-watch/deployment.yaml
