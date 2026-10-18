@@ -26,7 +26,7 @@ spec:
   template:
     metadata:
       annotations:
-        {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.shield.config }}
+        {{- if .Values.miggoRuntime.shield.config }}
         checksum/miggo-shield: {{ include (print $.Template.BasePath "/miggo-runtime/miggo-shield-cm.yaml") . | sha256sum }}
         {{- end }}
       {{- with .Values.podAnnotations }}
@@ -109,9 +109,9 @@ spec:
           {{- end }}
           {{- range $key, $value := .Values.miggoRuntime.profiler.extraArgs }}
             {{- if kindIs "invalid" $value }}
-            - --{{ $key }}
+            - --profiler-{{ $key }}
             {{- else }}
-            - --{{ $key }}={{ $value }}
+            - --profiler-{{ $key }}={{ $value }}
             {{- end }}
           {{- end }}
           
@@ -163,7 +163,7 @@ spec:
           - name: MIGGO_DOTNET_STRINGS_CACHE_TTL
             value: {{ . | quote }}
           {{- end }}
-          {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.shield.config }}
+          {{- if .Values.miggoRuntime.shield.config }}
           - name: MIGGO_RUNTIME_SHIELD_CONFIG
             value: /etc/miggo/miggo-shield.yaml
           {{- end }}
@@ -204,7 +204,7 @@ spec:
           - name: cgroupfs
             mountPath: /cgroup
             readOnly: true
-          {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.shield.config }}
+          {{- if .Values.miggoRuntime.shield.config }}
           - name: miggo-shield
             mountPath: /etc/miggo
             readOnly: true
@@ -227,7 +227,7 @@ spec:
       - name: cgroupfs
         hostPath:
           path: /sys/fs/cgroup
-      {{- if and .Values.miggoRuntime.profiler.enabled .Values.miggoRuntime.shield.config }}
+      {{- if .Values.miggoRuntime.shield.config }}
       - name: miggo-shield
         configMap:
           name: profiler-miggo-shield
