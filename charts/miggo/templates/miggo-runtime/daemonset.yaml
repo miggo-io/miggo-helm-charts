@@ -54,14 +54,16 @@ spec:
         {{- end }}
         {{- include "miggoImagePullSecrets" . | nindent 8 }}
       serviceAccountName: {{ include "miggo.serviceAccountName" . }}-runtime
-      {{- with (include "miggo.podSecurityContext.runtime" .) }}
+      {{- with .Values.miggoRuntime.podSecurityContext }}
       securityContext:
-        {{- . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: miggo-runtime
+          {{- with .Values.miggoRuntime.securityContext }}
           securityContext:
-            {{- toYaml .Values.miggoRuntime.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- if .Values.miggoRuntime.image.fullPath }}
           image: "{{ .Values.miggoRuntime.image.fullPath }}"
           {{- else }}

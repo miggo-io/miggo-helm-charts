@@ -133,18 +133,6 @@ annotations: {}
 podAnnotations: {}
 # -- Pod labels to add to all pods
 podLabels: {}
-# -- Enable Miggo-managed security contexts for all sensor pods/containers. When true
-# (default): non-privileged components (collector/watch/scanner) run as 65532:65532 with
-# runAsNonRoot, the collector pod gets fsGroup 65532, and the privileged runtime pod is
-# pinned to an explicit 0:0. When false: no securityContext is rendered at all (the managed
-# values and the deprecated fields below are both suppressed) and pods fall back to implicit root.
-manageSecurityContext: true
-# -- DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a
-# populated value here overrides the managed pod security context for all pods.
-podSecurityContext: {}
-# -- DEPRECATED: superseded by manageSecurityContext. While manageSecurityContext is true, a
-# populated value here overrides the managed container security context for all containers.
-securityContext: {}
 # -- Additional environment variables for all containers
 extraEnvs: []
 # -- Additional environment variables from sources for all containers
@@ -165,6 +153,11 @@ priorityClassName: ""
 miggoWatch:
   # -- Enable Miggo Watch component
   enabled: true
+  podSecurityContext: {}
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65532
+    runAsGroup: 65532
   # -- Component-specific labels
   labels: {}
   # -- Component-specific annotations
@@ -229,6 +222,11 @@ miggoWatch:
 miggoScanner:
   # -- Enable Miggo Scanner component
   enabled: true
+  podSecurityContext: {}
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65532
+    runAsGroup: 65532
   # -- Enable resolution of imagePullSecrets for scanning images from
   # -- private container registries. When enabled, the scanner's
   # -- ClusterRole grants get/list/watch on Kubernetes Secrets so it can
@@ -397,8 +395,13 @@ miggoRuntime:
     # -- Override global probes.failureThreshold for miggo-runtime
     failureThreshold: ""
 
+  podSecurityContext:
+    runAsUser: 0
+    runAsGroup: 0
   securityContext:
     privileged: true
+    seccompProfile:
+      type: RuntimeDefault
 
   # -- Use the host's pid namespace.
   hostPID: true
@@ -441,10 +444,8 @@ miggoRuntime:
 
     securityContext:
       privileged: true
-      allowPrivilegeEscalation: true
-      capabilities:
-        add:
-          - SYS_ADMIN
+      seccompProfile:
+        type: RuntimeDefault
 
     # -- Set the reporter's interval in seconds.
     reporterInterval: 5s
@@ -541,6 +542,12 @@ miggoRuntime:
 miggoCollector:
   # -- Enable Collector component
   enabled: true
+  podSecurityContext:
+    fsGroup: 65532
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65532
+    runAsGroup: 65532
   # -- Number of replicas to run (relevant only if instancePerNode: false)
   replicas: 1
   # -- Run an instance per node
