@@ -13,12 +13,10 @@ data:
     config:
       accessKey: replace-with-your-access-key
       accessKeySecret: ""
-      allowedNamespaces: null
       apiUrl: https://api.miggo.io
       authUrl: https://auth.miggo.io
       clientId: P2UjsJwOFdIeUAtW0pGTJ5SeJAlq
       collectorUrl: https://collector.miggo.io
-      deniedNamespaces: null
       enableDetections: false
       includeSystemNamespaces: false
       metrics:
@@ -53,10 +51,7 @@ data:
       extraProcessorNames: []
       extraProcessors: {}
       image:
-        fullPath: null
-        pullPolicy: null
         repository: miggo/miggo-collector
-        tag: null
       initContainers: []
       instancePerNode: false
       labels: {}
@@ -111,8 +106,6 @@ data:
       fluentbit:
         enabled: true
         image:
-          fullPath: null
-          pullPolicy: null
           repository: fluent/fluent-bit
           tag: "5.0"
         resources:
@@ -125,10 +118,7 @@ data:
       hostIPC: true
       hostPID: true
       image:
-        fullPath: null
-        pullPolicy: null
         repository: miggo/miggo-runtime
-        tag: null
       kubernetesClusterDomain: ""
       nodeSelector:
         kubernetes.io/os: linux
@@ -140,11 +130,7 @@ data:
         failureThreshold: ""
         timeoutSeconds: ""
       profiler:
-        dotnet:
-          peCacheSize: null
-          peCacheTTL: null
-          stringsCacheSize: null
-          stringsCacheTTL: null
+        dotnet: {}
         enableNamespaceFiltering: true
         enabled: true
         enabledTracers:
@@ -155,10 +141,7 @@ data:
         - v8
         - go
         image:
-          fullPath: null
-          pullPolicy: null
           repository: miggo/miggo-profiler
-          tag: null
         monitorInterval: 5s
         probabilisticInterval: 1m0s
         probabilisticThreshold: 100
@@ -209,10 +192,7 @@ data:
       extraEnvs: []
       extraEnvsFrom: []
       image:
-        fullPath: null
-        pullPolicy: null
         repository: miggo/miggo-scanner
-        tag: null
       imagePullSecretScanning:
         enabled: true
       labels: {}
@@ -254,10 +234,7 @@ data:
       extraEnvs: []
       extraEnvsFrom: []
       image:
-        fullPath: null
-        pullPolicy: null
         repository: miggo/miggo-watch
-        tag: null
       labels: {}
       nodeSelector:
         kubernetes.io/os: linux
@@ -314,3 +291,5 @@ data:
     tolerations: []
     volumeMounts: []
     volumes: []
+
+

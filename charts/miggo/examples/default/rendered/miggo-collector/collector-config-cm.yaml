@@ -578,3 +578,5 @@ data:
             - batch/logs
           exporters:
             - otlp_http
+
+

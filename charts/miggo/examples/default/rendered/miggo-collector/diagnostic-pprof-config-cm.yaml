@@ -64,3 +64,4 @@ data:
             - resource/diagnostics
           exporters:
             - otlp_http/diagnostics
+

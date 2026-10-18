@@ -152,3 +152,5 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
+
+

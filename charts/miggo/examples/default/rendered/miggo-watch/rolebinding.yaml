@@ -12,3 +12,4 @@ roleRef:
   kind: ClusterRole
   name: miggo-watch-cluster-role
   apiGroup: rbac.authorization.k8s.io
+
