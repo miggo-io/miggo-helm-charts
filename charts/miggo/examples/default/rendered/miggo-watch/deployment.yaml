@@ -21,7 +21,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/values: 00399c35160bf17b4ace5da0feeffaa87444c326e4795900c59ea4d0226fdda6
+        checksum/values: a99a70ba908eba3b24885928efb0adb652e44ccab2bfb21202ec2096af83ba92
       labels:
         component: miggo-watch
         helm.sh/chart: miggo-0.0.240
@@ -115,3 +115,5 @@ spec:
           name: miggo-values-defaults
       nodeSelector:
         kubernetes.io/os: linux
+
+

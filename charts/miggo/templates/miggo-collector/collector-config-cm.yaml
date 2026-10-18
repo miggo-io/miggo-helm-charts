@@ -199,7 +199,7 @@ data:
         - {{ . }}
         {{- end }}
       pipelines:
-        {{- if .Values.miggoRuntime.profiler.enabled }}
+        {{- if .Values.miggoRuntime.enabled }}
         profiles:
           receivers:
             - otlp

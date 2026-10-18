@@ -8,7 +8,6 @@ templates:
   - templates/miggo-watch/deployment.yaml
   - templates/miggo-scanner/deployment.yaml
   - templates/miggo-runtime/daemonset.yaml
-  - templates/miggo-runtime/fluent-bit-cm.yaml
   - templates/miggo-collector/deployment.yaml
   - templates/miggo-collector/collector-config-cm.yaml
   - templates/miggo-collector/diagnostic-pprof-config-cm.yaml

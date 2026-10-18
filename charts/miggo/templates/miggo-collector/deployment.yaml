@@ -136,7 +136,7 @@ spec:
             - --config
             - /etc/collector/diagnostic-pprof.yaml
             {{- end }}
-            {{- if or .Values.miggoRuntime.profiler.enabled .Values.pprof.port }}
+            {{- if or .Values.miggoRuntime.enabled .Values.pprof.port }}
             - --feature-gates
             - service.profilesSupport
             {{- end }}

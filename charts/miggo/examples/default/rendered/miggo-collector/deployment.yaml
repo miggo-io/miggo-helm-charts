@@ -24,7 +24,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 306dd4bcae6e9b272ba56ab888da47317f606e0cec87750326ecd5eb7dcd203a
-        checksum/diagnostic-config: f10018e2f0aedf397986fdf6f108a44f8db53a9cc1ec6aa8865f85d03d5bdef8
+        checksum/diagnostic-config: fed45add5b0386b56cee8d20b6783667bc5dae0c3876c1f5450afea25f6518be
         checksum/heartbeat-debug-config: d72c105d89be1b4ee6569477f8b4a8f7efdf00a2919169c9787d4df141da0d46
       labels:
         component: collector
@@ -152,3 +152,5 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
+
+

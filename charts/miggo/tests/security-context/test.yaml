@@ -12,7 +12,6 @@ templates:
   - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
   - templates/miggo-collector/heartbeat-debug-config-cm.yaml
   - templates/miggo-runtime/daemonset.yaml
-  - templates/miggo-runtime/fluent-bit-cm.yaml
 
 values:
   - values.yaml
@@ -87,11 +86,17 @@ tests:
             seccompProfile:
               type: RuntimeDefault
 
-  - it: profiler container carries the same capabilities as the runtime
+  # The profiler runs inside miggo-runtime, so profiler.securityContext no longer applies.
+  - it: profiler.securityContext does not change the runtime container
     template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime.profiler.securityContext.privileged: false
     asserts:
+      - lengthEqual:
+          path: spec.template.spec.containers
+          count: 1
       - equal:
-          path: spec.template.spec.containers[?(@.name == "profiler")].securityContext
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
           value:
             privileged: true
             seccompProfile:
@@ -187,5 +192,3 @@ tests:
           path: spec.template.spec.securityContext
       - notExists:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].securityContext
-      - notExists:
-          path: spec.template.spec.containers[?(@.name == "profiler")].securityContext

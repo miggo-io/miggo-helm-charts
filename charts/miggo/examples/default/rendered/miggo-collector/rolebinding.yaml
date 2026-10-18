@@ -13,3 +13,5 @@ roleRef:
   kind: Role
   name: collector-role
   apiGroup: rbac.authorization.k8s.io
+
+

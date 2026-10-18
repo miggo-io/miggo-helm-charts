@@ -17,15 +17,13 @@ permissions:
 
 jobs:
   helm-lint:
-    needs: verify-and-bump
     uses: ./.github/workflows/helm-lint.yaml
 
   helm-test:
-    needs: generate-helm-docs
     uses: ./.github/workflows/run-unittests.yaml
 
   report-commit-status:
-    needs: [verify-and-bump, generate-helm-docs, helm-lint, helm-test]
+    needs: [helm-lint, helm-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
@@ -42,7 +40,7 @@ jobs:
             const finalSha = await github.rest.git.getRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'heads/${{ github.head_ref }}'
+              ref: `heads/${context.payload.pull_request.head.ref}`
             });
 
             await github.rest.repos.createCommitStatus({
