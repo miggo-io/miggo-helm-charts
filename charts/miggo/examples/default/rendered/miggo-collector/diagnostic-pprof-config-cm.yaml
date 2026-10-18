@@ -29,15 +29,6 @@ data:
                 endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-port\"]`/debug/pprof/heap"
                 collection_interval: 1m
                 initial_delay: 10s
-          pprof/profiler-heap:
-            rule: type == "pod" && labels["miggo.io/pprof-profiler-port"] != ""
-            resource_attributes:
-              component: 'miggo-profiler'
-            config:
-              remote:
-                endpoint: "http://`endpoint`:`labels[\"miggo.io/pprof-profiler-port\"]`/debug/pprof/heap"
-                collection_interval: 1m
-                initial_delay: 10s
 
     processors:
       resource/diagnostics:

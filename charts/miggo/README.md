@@ -188,7 +188,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.dotnet.stringsCacheSize | string | `nil` | Max entries in the PE strings LRU cache (MIGGO_DOTNET_STRINGS_CACHE_SIZE). Leave empty to use the profiler default. |
 | miggoRuntime.profiler.dotnet.stringsCacheTTL | string | `nil` | TTL for entries in the PE strings LRU cache (MIGGO_DOTNET_STRINGS_CACHE_TTL), e.g. "10m". Leave empty to use the profiler default. |
 | miggoRuntime.profiler.enableNamespaceFiltering | bool | `true` | Enables namespace-based filtering for the profiler. When enabled, the profiler applies allowedNamespaces and deniedNamespaces configuration to selectively collect profiles based on Kubernetes namespace membership. Note: This feature only works on cgroupv2 systems. |
-| miggoRuntime.profiler.enabled | bool | `true` | Install profiler on each cluster node to provide function-level reachability analysis and other runtime insights. |
+| miggoRuntime.profiler.enabled | bool | `true` | Has no effect. The profiler runs inside miggo-runtime, so profiling runs whenever miggoRuntime.enabled is true. Kept so existing values files stay valid. |
 | miggoRuntime.profiler.enabledTracers | list | `["perl","php","python","hotspot","v8","go"]` | Specifies which tracers should be enabled in the profiler. The following tracers are currently supported: `perl`, `php`, `python`, `hotspot`, `ruby`, `v8`, `dotnet`, `go`, `labels` |
 | miggoRuntime.profiler.image.fullPath | string | `nil` | Optional full image path override. If set, takes precedence over registry/repository/tag settings. Useful for local development with Minikube or when needing to specify a complete custom image path |
 | miggoRuntime.profiler.image.pullPolicy | string | `nil` | Image pull policy. Specifies when Kubernetes should pull the container image |
@@ -207,9 +207,9 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.profiler.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | miggoRuntime.profiler.useGOMEMLIMIT | bool | `true` | When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured resources.limits.memory. If no resources.limits.memory are defined then enabling does nothing. It is HIGHLY recommend to enable this setting and set a value for resources.limits.memory. |
 | miggoRuntime.resources.limits.cpu | string | `"500m"` |  |
-| miggoRuntime.resources.limits.memory | string | `"512Mi"` |  |
+| miggoRuntime.resources.limits.memory | string | `"700Mi"` |  |
 | miggoRuntime.resources.requests.cpu | string | `"100m"` |  |
-| miggoRuntime.resources.requests.memory | string | `"512Mi"` |  |
+| miggoRuntime.resources.requests.memory | string | `"700Mi"` |  |
 | miggoRuntime.securityContext.privileged | bool | `true` |  |
 | miggoRuntime.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | miggoRuntime.shield.config | object | `{}` | The `config:` body of the MiggoShield document, passed through verbatim (the chart adds only the kind/version envelope), so keys are the sensor's own snake_case and policy can be copied from its docs unchanged. Empty ships no policy and arms nothing. Requires the `python` and `hotspot` tracers. |

@@ -384,10 +384,10 @@ miggoRuntime:
   resources:
     requests:
       cpu: 100m
-      memory: 512Mi
+      memory: 700Mi
     limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 700Mi
 
   probes:
     # -- Override global probes.timeoutSeconds for miggo-runtime
@@ -409,8 +409,8 @@ miggoRuntime:
   hostIPC: true
 
   profiler:
-    # -- Install profiler on each cluster node to provide function-level
-    # reachability analysis and other runtime insights.
+    # -- Has no effect. The profiler runs inside miggo-runtime, so profiling runs
+    # whenever miggoRuntime.enabled is true. Kept so existing values files stay valid.
     enabled: true
     image:
       # -- Image repository
