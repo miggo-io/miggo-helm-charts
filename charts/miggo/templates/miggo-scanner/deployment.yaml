@@ -90,6 +90,7 @@ spec:
             {{ if .Values.miggoScanner.config.cache.configMap.enabled }}
             - --cache-cm-name={{ include "miggo-scanner.configMapCacheName" . }}
             - --cache-cm-namespace={{ include "miggo.namespace" . }}
+            - --cache-generation={{ include "miggo-scanner.cacheGeneration" . }}
             {{ end }}
             {{ if .Values.miggoScanner.registryCredentials.secretName }}
             - --registry-credentials-path=/etc/registry-credentials/.dockerconfigjson
