@@ -62,6 +62,7 @@ spec:
             
             - --cache-cm-name=example-cache
             - --cache-cm-namespace=default
+            - --cache-generation=collector-deployment
             
             
             - --pprof-port=6050

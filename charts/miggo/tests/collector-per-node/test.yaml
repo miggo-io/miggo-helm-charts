@@ -82,26 +82,26 @@ tests:
           path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
           content: --cache-generation=collector-daemonset
 
-  - it: global collector passes no scanner cache generation
+  - it: scanner cache generation follows a global collector
     template: templates/miggo-scanner/deployment.yaml
     set:
       miggoCollector:
         instancePerNode: false
     asserts:
-      - notContains:
+      - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
-          content: --cache-generation=collector-daemonset
+          content: --cache-generation=collector-deployment
 
-  - it: disabled collector passes no scanner cache generation
+  - it: scanner cache generation ignores instancePerNode with the collector disabled
     template: templates/miggo-scanner/deployment.yaml
     set:
       miggoCollector:
         enabled: false
         instancePerNode: true
     asserts:
-      - notContains:
+      - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
-          content: --cache-generation=collector-daemonset
+          content: --cache-generation=collector-disabled
 
   - it: disabled configmap cache passes no scanner cache generation
     template: templates/miggo-scanner/deployment.yaml

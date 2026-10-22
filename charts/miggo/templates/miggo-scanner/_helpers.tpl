@@ -22,6 +22,19 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- default (printf "%s-cache" (include "miggo.fullname" .)) .Values.miggoScanner.config.cache.configMap.name }}
 {{- end }}
 
+{{/*
+The collector topology the scanner's sboms are sent through; a change makes the scanner clear its image cache.
+*/}}
+{{- define "miggo-scanner.cacheGeneration" -}}
+{{- if not .Values.miggoCollector.enabled -}}
+collector-disabled
+{{- else if .Values.miggoCollector.instancePerNode -}}
+collector-daemonset
+{{- else -}}
+collector-deployment
+{{- end -}}
+{{- end }}
+
 {{- define "miggo-scanner.serviceAccountName" -}}
 {{- if .Values.miggoScanner.serviceAccount.name -}}
 {{- .Values.miggoScanner.serviceAccount.name -}}

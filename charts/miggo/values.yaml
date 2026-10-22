@@ -550,7 +550,7 @@ miggoCollector:
     runAsGroup: 65532
   # -- Number of replicas to run (relevant only if instancePerNode: false)
   replicas: 1
-  # -- Run an instance per node. With the scanner's ConfigMap cache on, changing it restarts Miggo Scanner with an empty image cache, so it rescans every image
+  # -- Run an instance per node
   instancePerNode: false
   # -- Priority class name (defaults to global priorityClassName or system-node-critical)
   priorityClassName: ""
