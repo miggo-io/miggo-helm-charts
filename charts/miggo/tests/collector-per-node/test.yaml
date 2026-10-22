@@ -10,6 +10,7 @@ templates:
   - templates/miggo-collector/collector-config-cm.yaml
   - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
   - templates/miggo-collector/heartbeat-debug-config-cm.yaml
+  - templates/miggo-scanner/deployment.yaml
 
 values:
   - values.yaml
@@ -70,3 +71,49 @@ tests:
     asserts:
       - isNull:
           path: spec.internalTrafficPolicy
+
+  - it: scanner cache generation follows a collector per node
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      miggoCollector:
+        instancePerNode: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --cache-generation=collector-daemonset
+
+  - it: global collector passes no scanner cache generation
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      miggoCollector:
+        instancePerNode: false
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --cache-generation=collector-daemonset
+
+  - it: disabled collector passes no scanner cache generation
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      miggoCollector:
+        enabled: false
+        instancePerNode: true
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --cache-generation=collector-daemonset
+
+  - it: disabled configmap cache passes no scanner cache generation
+    template: templates/miggo-scanner/deployment.yaml
+    set:
+      miggoCollector:
+        instancePerNode: true
+      miggoScanner:
+        config:
+          cache:
+            configMap:
+              enabled: false
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --cache-generation=collector-daemonset

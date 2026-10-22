@@ -131,7 +131,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.image.repository | string | `"miggo/miggo-collector"` | Image repository |
 | miggoCollector.image.tag | string | `nil` | Image tag (defaults to Chart appVersion if not set) |
 | miggoCollector.initContainers | list | `[]` | InitContainers to initialize the pod |
-| miggoCollector.instancePerNode | bool | `false` | Run an instance per node |
+| miggoCollector.instancePerNode | bool | `false` | Run an instance per node. With the scanner's ConfigMap cache on, changing it restarts Miggo Scanner with an empty image cache, so it rescans every image |
 | miggoCollector.labels | object | `{}` | Component-specific labels |
 | miggoCollector.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for miggo-collector pods. Merged with global nodeSelector. |
 | miggoCollector.podAnnotations | object | `{}` | Component-specific pod annotations |
