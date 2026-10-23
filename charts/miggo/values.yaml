@@ -502,7 +502,7 @@ miggoRuntime:
     # -- The `config:` body of the MiggoShield document, passed through verbatim
     # (the chart adds only the kind/version envelope), so keys are the sensor's own
     # snake_case and policy can be copied from its docs unchanged. Empty ships no
-    # policy and arms nothing. Requires the `python` and `hotspot` tracers.
+    # policy and arms nothing. Requires the `python` and `hotspot` tracers, and `php` for a php section.
     config: {}
     #  watched_namespaces:
     #    - langflow
@@ -516,6 +516,9 @@ miggoRuntime:
     #      - name: validate_code
     #    block_exec_from:
     #      - ssti
+    #  php:
+    #    block_exec_from:
+    #      - php2shell
 
   fluentbit:
     # -- Install fluent-bit on each cluster node to forward the profiler logs to the Collector
