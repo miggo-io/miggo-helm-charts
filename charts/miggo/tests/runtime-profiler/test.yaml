@@ -363,6 +363,34 @@ tests:
     asserts:
       - failedTemplate:
           errorMessage: 'miggoRuntime.shield.config is set, so miggoRuntime.profiler.enabledTracers must include both "python" and "hotspot": the blocker''s argv-capture programs reference both runtimes'' process maps, and the profiler refuses to start without them.'
+  - it: should render a php2shell policy under php block_exec_from
+    template: templates/miggo-runtime/miggo-shield-cm.yaml
+    set:
+      miggoRuntime:
+        shield:
+          config:
+            php:
+              block_exec_from:
+                - php2shell
+    asserts:
+      - matchRegex:
+          path: data["miggo-shield.yaml"]
+          pattern: 'php:\n    block_exec_from:\n    - php2shell'
+  # The PHP blocker reads the php tracer's process map; without it the profiler refuses to start.
+  - it: should refuse a php MiggoShield policy without the php tracer
+    template: templates/miggo-runtime/miggo-shield-cm.yaml
+    set:
+      miggoRuntime:
+        profiler:
+          enabledTracers: [python, hotspot]
+        shield:
+          config:
+            php:
+              block_exec_from:
+                - php2shell
+    asserts:
+      - failedTemplate:
+          errorMessage: 'miggoRuntime.shield.config.php is set, so miggoRuntime.profiler.enabledTracers must include "php": the PHP blocker reads the php tracer''s process map, and the profiler refuses to start without it.'
   - it: should pass the kubernetes platform to the runtime
     template: templates/miggo-runtime/daemonset.yaml
     asserts:
