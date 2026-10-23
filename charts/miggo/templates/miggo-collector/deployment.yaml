@@ -184,6 +184,10 @@ spec:
           - name: heartbeat-debug-config
             mountPath: /etc/collector/heartbeat-debug.yaml
             subPath: heartbeat-debug.yaml
+          {{- if .Values.miggoCollector.debuginfodSymbolizer.enabled }}
+          - name: debuginfod-cache
+            mountPath: {{ include "miggo-collector.debuginfodCacheDir" . }}
+          {{- end }}
           {{- if .Values.pprof.port }}
           - name: diagnostic-pprof-config
             mountPath: /etc/collector/diagnostic-pprof.yaml
@@ -209,6 +213,10 @@ spec:
       - name: heartbeat-debug-config
         configMap:
           name: heartbeat-debug-config-cm
+      {{- if .Values.miggoCollector.debuginfodSymbolizer.enabled }}
+      - name: debuginfod-cache
+        emptyDir: {}
+      {{- end }}
       {{- if .Values.pprof.port }}
       - name: diagnostic-pprof-config
         configMap:

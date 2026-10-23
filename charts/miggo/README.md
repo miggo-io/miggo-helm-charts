@@ -116,6 +116,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.config.heartbeatInterval | string | `"2m"` | Batch timeout for the heartbeat debug pipelines (logs/metrics/profiles/traces). Controls how often the `debug` exporter prints a counts-only summary line. |
 | miggoCollector.config.internalLogVerbosity | string | `"INFO"` | Telemetry log verbosity level (`INFO`, `DEBUG`, `WARN` or `ERROR`) |
 | miggoCollector.config.logVerbosity | string | `"basic"` | Log verbosity level (`detailed`, `normal`, or `basic`) |
+| miggoCollector.debuginfodSymbolizer.enabled | bool | `false` | Name native frames in profiles from a debuginfod server. Sends the GNU build-ids of profiled native binaries to `url`. Needs a collector image that includes the debuginfodsymbolizer processor. |
+| miggoCollector.debuginfodSymbolizer.url | string | `"https://debuginfod.elfutils.org"` | debuginfod server to fetch symbols from |
 | miggoCollector.enabled | bool | `true` | Enable Collector component |
 | miggoCollector.extraEnvs | list | `[]` | Additional environment variables |
 | miggoCollector.extraEnvsFrom | list | `[]` | Additional environment variables from sources |

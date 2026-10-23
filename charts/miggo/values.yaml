@@ -605,6 +605,14 @@ miggoCollector:
   #     processors: [batch/traces, resource/prod, attributes/prod]
   #     exporters: [otlphttp/prod]
 
+  debuginfodSymbolizer:
+    # -- Name native frames in profiles from a debuginfod server. Sends the GNU
+    # build-ids of profiled native binaries to `url`. Needs a collector image
+    # that includes the debuginfodsymbolizer processor.
+    enabled: false
+    # -- debuginfod server to fetch symbols from
+    url: https://debuginfod.elfutils.org
+
   # -- An internal locaiton to mount the access key file within the container
   accessKeyMountLocation: /etc/miggo-access-key
 

@@ -1,0 +1,78 @@
+suite: miggoCollector.debuginfodSymbolizer — names native profile frames
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+  - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+  - templates/miggo-collector/heartbeat-debug-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: should leave the profiles pipeline without processors by default
+    template: templates/miggo-collector/collector-config-cm.yaml
+    asserts:
+      - notMatchRegex:
+          path: data["config-template.yaml"]
+          pattern: "debuginfodsymbolizer"
+
+  - it: should add no cache volume by default
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - notContains:
+          path: spec.template.spec.volumes
+          content:
+            name: debuginfod-cache
+            emptyDir: {}
+
+  - it: should configure the processor with the default server and cache dir
+    template: templates/miggo-collector/collector-config-cm.yaml
+    set:
+      miggoCollector.debuginfodSymbolizer.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)processors:.*debuginfodsymbolizer:\\s+debuginfod_url: https://debuginfod.elfutils.org\\s+cache_dir: /tmp/debuginfod-cache"
+
+  - it: should run the processor in the profiles pipeline only
+    template: templates/miggo-collector/collector-config-cm.yaml
+    set:
+      miggoCollector.debuginfodSymbolizer.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)profiles:\\s+receivers:\\s+- otlp\\s+processors:\\s+- debuginfodsymbolizer\\s+exporters:"
+      - notMatchRegex:
+          path: data["config-template.yaml"]
+          pattern: "(?s)traces:\\s+receivers:\\s+- otlp\\s+processors:\\s+- debuginfodsymbolizer"
+
+  - it: should use a custom debuginfod server
+    template: templates/miggo-collector/collector-config-cm.yaml
+    set:
+      miggoCollector.debuginfodSymbolizer.enabled: true
+      miggoCollector.debuginfodSymbolizer.url: https://debuginfod.example.internal
+    asserts:
+      - matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "debuginfod_url: https://debuginfod.example.internal"
+
+  - it: should mount a writable cache dir into the collector
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      miggoCollector.debuginfodSymbolizer.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: debuginfod-cache
+            emptyDir: {}
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-collector")].volumeMounts
+          content:
+            name: debuginfod-cache
+            mountPath: /tmp/debuginfod-cache

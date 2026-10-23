@@ -17,3 +17,10 @@ Selector labels
 app.kubernetes.io/name: {{ include "miggo.name" . }}-collector
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Where the debuginfod symbolizer caches downloaded symbol files
+*/}}
+{{- define "miggo-collector.debuginfodCacheDir" -}}
+/tmp/debuginfod-cache
+{{- end }}

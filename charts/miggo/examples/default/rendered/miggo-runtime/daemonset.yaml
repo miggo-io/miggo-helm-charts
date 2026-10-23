@@ -6,10 +6,10 @@ metadata:
   name: example-runtime
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.241
+    helm.sh/chart: miggo-0.0.242
     app.kubernetes.io/name: miggo
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.1019.2"
+    app.kubernetes.io/version: "v26.1022.3"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -22,10 +22,10 @@ spec:
       annotations:
       labels:
         component: miggo-runtime
-        helm.sh/chart: miggo-0.0.241
+        helm.sh/chart: miggo-0.0.242
         app.kubernetes.io/name: miggo-runtime
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.1019.2"
+        app.kubernetes.io/version: "v26.1022.3"
         app.kubernetes.io/managed-by: Helm
         miggo.io/pprof-port: "6050"
     spec:
@@ -42,7 +42,7 @@ spec:
             privileged: true
             seccompProfile:
               type: RuntimeDefault
-          image: "registry.miggo.io/miggo/miggo-runtime:v26.1019.2"
+          image: "registry.miggo.io/miggo/miggo-runtime:v26.1022.3"
           imagePullPolicy: IfNotPresent
           args:
             - --cluster-name=my-cluster
@@ -55,7 +55,7 @@ spec:
             - --metric-otlp-endpoint=http://miggo-collector.default.svc.cluster.local:4318
             - --metric-tls-skip-verify=false
             - --metric-interval=60s
-            - --chart-version=0.0.241
+            - --chart-version=0.0.242
             - --enable-network-tracing=false
             - --enable-file-access-tracing=false
             - --enable-web-app-process-detection=true

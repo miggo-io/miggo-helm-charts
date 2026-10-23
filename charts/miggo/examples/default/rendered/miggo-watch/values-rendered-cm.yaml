@@ -40,6 +40,9 @@ data:
         heartbeatInterval: 2m
         internalLogVerbosity: INFO
         logVerbosity: basic
+      debuginfodSymbolizer:
+        enabled: false
+        url: https://debuginfod.elfutils.org
       enabled: true
       extraEnvs: []
       extraEnvsFrom: []

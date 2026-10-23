@@ -141,6 +141,13 @@ data:
               - set(attributes["type"], "applog")
               - set(attributes["miggo-name"], "{{ .Values.miggo.clusterName }}")
 
+      {{- if .Values.miggoCollector.debuginfodSymbolizer.enabled }}
+
+      debuginfodsymbolizer:
+        debuginfod_url: {{ .Values.miggoCollector.debuginfodSymbolizer.url }}
+        cache_dir: {{ include "miggo-collector.debuginfodCacheDir" . }}
+      {{- end }}
+
       {{- with .Values.miggoCollector.extraProcessors }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
@@ -203,6 +210,10 @@ data:
         profiles:
           receivers:
             - otlp
+          {{- if .Values.miggoCollector.debuginfodSymbolizer.enabled }}
+          processors:
+            - debuginfodsymbolizer
+          {{- end }}
           exporters:
             - otlp_http
             {{- range .Values.miggoCollector.extraExporterNames }}
