@@ -13,6 +13,7 @@ data:
         observe_pods: true
         observe_nodes: false
         observe_services: false
+        node: "${env:NODE_NAME}"
         namespaces:
           - default
 

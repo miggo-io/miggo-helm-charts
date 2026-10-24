@@ -8,6 +8,8 @@ metadata:
 spec:
   type: ClusterIP
   
+  internalTrafficPolicy: Local
+  
   selector:
     miggo.io/app: example-collector
   ports:

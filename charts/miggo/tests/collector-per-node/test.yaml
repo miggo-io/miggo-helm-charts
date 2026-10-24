@@ -16,7 +16,29 @@ values:
   - values.yaml
 
 tests:
-  
+
+  - it: collector per node by default
+    template: templates/miggo-collector/deployment.yaml
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - isNull:
+          path: spec.replicas
+
+  - it: collector per node service by default
+    template: templates/miggo-collector/service.yaml
+    asserts:
+      - equal:
+          path: spec.internalTrafficPolicy
+          value: Local
+
+  - it: scanner cache generation follows the default collector per node
+    template: templates/miggo-scanner/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-scanner")].args
+          content: --cache-generation=collector-daemonset
+
   - it: collector per node
     template: templates/miggo-collector/deployment.yaml
     set:
