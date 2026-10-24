@@ -20,7 +20,7 @@ tests:
     template: templates/miggo-collector/deployment.yaml
     asserts:
       - isKind:
-          of: Deployment
+          of: DaemonSet
       - equal:
           path: spec.template.spec.containers[?(@.name == "miggo-collector")].args
           value:

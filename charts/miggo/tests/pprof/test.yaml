@@ -202,6 +202,7 @@ tests:
     template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
     set:
       pprof.port: 6060
+      miggoCollector.instancePerNode: false
     asserts:
       - notMatchRegex:
           path: data["diagnostic-pprof.yaml"]

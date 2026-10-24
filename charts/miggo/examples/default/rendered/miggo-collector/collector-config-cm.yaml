@@ -391,7 +391,7 @@ data:
                 - target_label: "node-name"
                   replacement: "${env:NODE_NAME}"
                 - target_label: "deployment-type"
-                  replacement: "deployment"
+                  replacement: "daemonset"
 
       k8s_cluster:
         k8s_leader_elector: k8s_leader_elector
