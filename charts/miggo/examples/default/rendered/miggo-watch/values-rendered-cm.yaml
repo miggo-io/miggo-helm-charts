@@ -53,7 +53,7 @@ data:
       image:
         repository: miggo/miggo-collector
       initContainers: []
-      instancePerNode: false
+      instancePerNode: true
       labels: {}
       nodeSelector:
         kubernetes.io/os: linux

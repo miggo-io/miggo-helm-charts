@@ -554,7 +554,7 @@ miggoCollector:
   # -- Number of replicas to run (relevant only if instancePerNode: false)
   replicas: 1
   # -- Run an instance per node
-  instancePerNode: false
+  instancePerNode: true
   # -- Priority class name (defaults to global priorityClassName or system-node-critical)
   priorityClassName: ""
   # -- Component-specific labels
