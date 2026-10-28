@@ -1,6 +1,6 @@
 # Miggo Helm Chart
 
-![Version: 0.0.244](https://img.shields.io/badge/Version-0.0.244-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.1026.1](https://img.shields.io/badge/AppVersion-v26.1026.1-informational?style=flat-square)
+![Version: 0.0.245](https://img.shields.io/badge/Version-0.0.245-informational?style=flat-square)  ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)  ![AppVersion: v26.1026.1](https://img.shields.io/badge/AppVersion-v26.1026.1-informational?style=flat-square)
 
 This Helm chart deploys Miggo's components, providing comprehensive monitoring, security, and observability capabilities for your Kubernetes clusters.
 
@@ -101,6 +101,12 @@ The following table lists the configurable parameters of the miggo chart and the
 | config.enableDetections | bool | `false` | Enable the detections capability (Beta). Requires miggoRuntime.enabled. |
 | config.includeSystemNamespaces | bool | `false` | When set to true, includes system namespaces like kube-system etc. When false (default), automatically adds system namespaces to deniedNamespaces It's recommended to keep this false unless you specifically need to operate on system namespaces |
 | config.metrics.interval | string | `"60s"` | Interval for metrics collection |
+| config.mtls | object | `{"enabled":false,"secret":{"create":false,"crt":"","key":"","name":""}}` | mTLS settings for communication from collector to Miggo |
+| config.mtls.enabled | bool | `false` | Main enable switch (only applies when miggoCollector.enabled is true) |
+| config.mtls.secret.create | bool | `false` | If true, chart creates the TLS secret from crt and key below. If false, set name to an existing Secret in the release namespace. |
+| config.mtls.secret.crt | string | `""` | PEM encoded client TLS certificate |
+| config.mtls.secret.key | string | `""` | PEM encoded client TLS key |
+| config.mtls.secret.name | string | `""` | Name of the TLS Secret to create (when create is true and name is set) or to mount (required when create is false). |
 | config.platform | string | `""` | The Kubernetes platform acronym. Allowed values are: - gke: Google Kubernetes Engine - openshift: Red Hat OpenShift/OCP |
 | extraEnvs | list | `[]` | Additional environment variables for all containers |
 | extraEnvsFrom | list | `[]` | Additional environment variables from sources for all containers |

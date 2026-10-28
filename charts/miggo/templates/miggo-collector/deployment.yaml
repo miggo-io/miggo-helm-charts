@@ -32,6 +32,9 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/miggo-collector/collector-config-cm.yaml") . | sha256sum }}
         checksum/diagnostic-config: {{ include (print $.Template.BasePath "/miggo-collector/diagnostic-pprof-config-cm.yaml") . | sha256sum }}
         checksum/heartbeat-debug-config: {{ include (print $.Template.BasePath "/miggo-collector/heartbeat-debug-config-cm.yaml") . | sha256sum }}
+        {{ if and .Values.config.mtls.enabled .Values.config.mtls.secret.create }}
+        checksum/mtls: {{ include (print $.Template.BasePath "/mtls-secret.yaml") . | sha256sum }}
+        {{- end }}
         {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
@@ -194,6 +197,11 @@ spec:
             mountPath: {{ .Values.miggoCollector.accessKeyMountLocation }}
             subPath: ACCESS_KEY
           {{- end }}
+          {{ if .Values.config.mtls.enabled }}
+          - name: mtls
+            mountPath: /etc/collector/mtls
+            readOnly: true
+          {{- end }}
           {{- with .Values.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
@@ -221,6 +229,12 @@ spec:
           items:
           - key: ACCESS_KEY
             path: ACCESS_KEY
+      {{- end }}
+      {{ if .Values.config.mtls.enabled }}
+      - name: mtls
+        secret:
+          secretName: {{ include "miggo.secret.mtls" . }}
+          defaultMode: 0o444
       {{- end }}
       {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
