@@ -181,6 +181,14 @@ Namespace configuration flags
 {{- printf "%dMiB" (divf $memlimitBytes 0x1p20 | floor | int64) -}}
 {{- end }}
 
+{{/* Collector exporter queue size in bytes: percent of the collector memory limit; empty when either is unset. */}}
+{{- define "miggo.collectorQueueBytes" -}}
+{{- $mem := ((.Values.miggoCollector.resources).limits).memory -}}
+{{- if and $mem .percent -}}
+{{- include "convertMemToBytes" $mem | mulf (divf .percent 100) | floor | int64 -}}
+{{- end -}}
+{{- end }}
+
 {{/* Release timestamp stamped into Chart.yaml when the chart is packaged; empty for charts built outside the release pipeline. */}}
 {{- define "miggo.chartReleaseDate" -}}
 {{- index (.Chart.Annotations | default dict) "miggo.io/releaseDate" | default "" -}}

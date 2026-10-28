@@ -159,6 +159,11 @@ data:
         profiles_endpoint: {{ include "collectorUrl" . }}/v1development/profiles
         auth:
           authenticator: oauth2client
+        {{- with include "miggo.collectorQueueBytes" (dict "Values" .Values "percent" .Values.miggoCollector.sendingQueue.memoryPercent) }}
+        sending_queue:
+          sizer: bytes
+          queue_size: {{ . }}
+        {{- end }}
 
       {{- with .Values.miggoCollector.extraExporters }}
       {{- toYaml . | nindent 6 }}

@@ -491,6 +491,9 @@ data:
         profiles_endpoint: https://collector.miggo.io/v1development/profiles
         auth:
           authenticator: oauth2client
+        sending_queue:
+          sizer: bytes
+          queue_size: 15728640
 
     service:
       telemetry:

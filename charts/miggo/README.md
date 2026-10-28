@@ -145,6 +145,8 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoCollector.securityContext.runAsGroup | int | `65532` |  |
 | miggoCollector.securityContext.runAsNonRoot | bool | `true` |  |
 | miggoCollector.securityContext.runAsUser | int | `65532` |  |
+| miggoCollector.sendingQueue.diagnosticsMemoryPercent | int | `1` | Same as memoryPercent, for the diagnostics profiles queue. |
+| miggoCollector.sendingQueue.memoryPercent | int | `3` | Bounds each otlp_http signal queue (traces, metrics, logs, profiles) in bytes, as this percentage of resources.limits.memory, so a slow backend drops data instead of OOMing the collector. Queued data takes about 3x its encoded size in memory. 0, or no resources.limits.memory, keeps the exporter default of 1000 requests. |
 | miggoCollector.service.annotations | object | `{}` | Service annotations |
 | miggoCollector.service.labels | object | `{}` | Service labels |
 | miggoCollector.service.ports | list | `[{"name":"http","port":4318,"protocol":"TCP","targetPort":4318},{"name":"grpc","port":4317,"protocol":"TCP","targetPort":4317}]` | Service ports |
