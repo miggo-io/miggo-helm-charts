@@ -77,6 +77,9 @@ data:
         runAsGroup: 65532
         runAsNonRoot: true
         runAsUser: 65532
+      sendingQueue:
+        diagnosticsMemoryPercent: 1
+        memoryPercent: 3
       service:
         annotations: {}
         labels: {}
