@@ -128,7 +128,7 @@ data:
             resource_attributes:
               - key: origin
                 value: "selflogs"
-      
+
       transform/collector-self-logs:
         log_statements:
           - context: resource
@@ -159,6 +159,12 @@ data:
         profiles_endpoint: {{ include "collectorUrl" . }}/v1development/profiles
         auth:
           authenticator: oauth2client
+        {{- if .Values.config.mtls.enabled }}
+        tls:
+          cert_file: /etc/collector/mtls/tls.crt
+          key_file: /etc/collector/mtls/tls.key
+          insecure_skip_verify: true
+        {{- end }}
 
       {{- with .Values.miggoCollector.extraExporters }}
       {{- toYaml . | nindent 6 }}

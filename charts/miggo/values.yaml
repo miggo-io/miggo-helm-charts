@@ -97,6 +97,20 @@ config:
   # It's recommended to keep this false unless you specifically need to operate on system namespaces
   includeSystemNamespaces: false
 
+  # -- mTLS settings for communication from collector to Miggo
+  mtls:
+    # -- Main enable switch (only applies when miggoCollector.enabled is true)
+    enabled: false
+    secret:
+      # -- If true, chart creates the TLS secret from crt and key below. If false, set name to an existing Secret in the release namespace.
+      create: false
+      # -- Name of the TLS Secret to create (when create is true and name is set) or to mount (required when create is false).
+      name: ""
+      # -- PEM encoded client TLS certificate
+      crt: ""
+      # -- PEM encoded client TLS key
+      key: ""
+
 output:
   # -- Enable stdout logging (for debugging)
   stdout: false

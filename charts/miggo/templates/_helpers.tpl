@@ -76,6 +76,14 @@ access-key-secret
 {{- end -}}
 {{- end -}}
 
+{{- define "miggo.secret.mtls" -}}
+{{- if .Values.config.mtls.secret.name -}}
+{{- .Values.config.mtls.secret.name -}}
+{{- else -}}
+{{- printf "%s-mtls" (include "miggo.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "collectorUrl" -}}
 {{- .Values.config.collectorUrl | default .Values.output.otlp.otlpEndpoint -}}
 {{- end -}}
