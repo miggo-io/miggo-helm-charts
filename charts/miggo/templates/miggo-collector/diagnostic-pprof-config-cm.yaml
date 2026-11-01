@@ -69,6 +69,11 @@ data:
         profiles_endpoint: {{ include "collectorUrl" . }}/v1development/profiles
         auth:
           authenticator: oauth2client
+        {{- with include "miggo.collectorQueueBytes" (dict "Values" .Values "percent" .Values.miggoCollector.sendingQueue.diagnosticsMemoryPercent) }}
+        sending_queue:
+          sizer: bytes
+          queue_size: {{ . }}
+        {{- end }}
 
     service:
       pipelines:

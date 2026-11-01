@@ -55,6 +55,9 @@ data:
         profiles_endpoint: https://collector.miggo.io/v1development/profiles
         auth:
           authenticator: oauth2client
+        sending_queue:
+          sizer: bytes
+          queue_size: 5242880
 
     service:
       pipelines:

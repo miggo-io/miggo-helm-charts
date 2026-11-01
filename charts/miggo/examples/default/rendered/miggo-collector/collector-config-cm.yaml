@@ -425,7 +425,7 @@ data:
                 new_value: Miggo Collector
               - action: add_label
                 new_label: chart_version
-                new_value: "0.0.242"
+                new_value: "0.0.244"
 
       batch/metrics:
         timeout: 10s
@@ -491,6 +491,9 @@ data:
         profiles_endpoint: https://collector.miggo.io/v1development/profiles
         auth:
           authenticator: oauth2client
+        sending_queue:
+          sizer: bytes
+          queue_size: 52428800
 
     service:
       telemetry:
