@@ -640,10 +640,9 @@ miggoCollector:
   sendingQueue:
     # -- Bounds each otlp_http signal queue (traces, metrics, logs, profiles) in
     # bytes, as this percentage of resources.limits.memory, so a slow backend
-    # drops data instead of OOMing the collector. Queued data takes about 3x its
-    # encoded size in memory. 0, or no resources.limits.memory, keeps the
-    # exporter default of 1000 requests.
-    memoryPercent: 3
+    # drops data instead of OOMing the collector. 0, or no resources.limits.memory,
+    # keeps the exporter default of 1000 requests.
+    memoryPercent: 10
     # -- Same as memoryPercent, for the diagnostics profiles queue.
     diagnosticsMemoryPercent: 1
 

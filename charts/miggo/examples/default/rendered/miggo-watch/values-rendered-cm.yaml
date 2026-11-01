@@ -79,7 +79,7 @@ data:
         runAsUser: 65532
       sendingQueue:
         diagnosticsMemoryPercent: 1
-        memoryPercent: 3
+        memoryPercent: 10
       service:
         annotations: {}
         labels: {}

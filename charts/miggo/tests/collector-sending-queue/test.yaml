@@ -8,12 +8,12 @@ values:
   - values.yaml
 
 tests:
-  - it: sizes the otlp_http queue at 3% of the default 500Mi limit
+  - it: sizes the otlp_http queue at 10% of the default 500Mi limit
     template: templates/miggo-collector/collector-config-cm.yaml
     asserts:
       - matchRegex:
           path: data["config-template.yaml"]
-          pattern: "(?s)otlp_http:.*?sending_queue:\\n\\s+sizer: bytes\\n\\s+queue_size: 15728640\\n"
+          pattern: "(?s)otlp_http:.*?sending_queue:\\n\\s+sizer: bytes\\n\\s+queue_size: 52428800\\n"
 
   - it: sizes the otlp_http queue from a binary-unit limit
     template: templates/miggo-collector/collector-config-cm.yaml
@@ -25,7 +25,7 @@ tests:
     asserts:
       - matchRegex:
           path: data["config-template.yaml"]
-          pattern: "(?s)otlp_http:.*?sending_queue:\\n\\s+sizer: bytes\\n\\s+queue_size: 64424509\\n"
+          pattern: "(?s)otlp_http:.*?sending_queue:\\n\\s+sizer: bytes\\n\\s+queue_size: 214748364\\n"
 
   - it: sizes the otlp_http queue from a decimal-unit limit and a custom percentage
     template: templates/miggo-collector/collector-config-cm.yaml
@@ -35,11 +35,11 @@ tests:
           limits:
             memory: 1G
         sendingQueue:
-          memoryPercent: 10
+          memoryPercent: 5
     asserts:
       - matchRegex:
           path: data["config-template.yaml"]
-          pattern: "(?s)otlp_http:.*?sending_queue:\\n\\s+sizer: bytes\\n\\s+queue_size: 100000000\\n"
+          pattern: "(?s)otlp_http:.*?sending_queue:\\n\\s+sizer: bytes\\n\\s+queue_size: 50000000\\n"
 
   - it: sizes the diagnostics queue from the memory limit
     template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
