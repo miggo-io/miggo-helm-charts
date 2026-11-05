@@ -1,0 +1,182 @@
+suite: collector mTLS to Miggo upstream
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/mtls-secret.yaml
+  - templates/miggo-collector/deployment.yaml
+  - templates/miggo-collector/collector-config-cm.yaml
+  - templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+  - templates/miggo-collector/heartbeat-debug-config-cm.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: does not render mtls resources when disabled
+    asserts:
+      - template: templates/mtls-secret.yaml
+        hasDocuments:
+          count: 0
+      - template: templates/miggo-collector/deployment.yaml
+        notContains:
+          path: spec.template.spec.volumes
+          content:
+            name: mtls
+      - template: templates/miggo-collector/deployment.yaml
+        notContains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: mtls
+      - template: templates/miggo-collector/collector-config-cm.yaml
+        notMatchRegex:
+          path: data["config-template.yaml"]
+          pattern: "cert_file:"
+
+  - it: creates tls secret and wires collector when chart-managed
+    set:
+      config:
+        mtls:
+          enabled: true
+          secret:
+            create: true
+            crt: "-----BEGIN CERTIFICATE-----\nTEST-CERT\n-----END CERTIFICATE-----\n"
+            key: "-----BEGIN PRIVATE KEY-----\nTEST-KEY\n-----END PRIVATE KEY-----\n"
+      labels:
+        team: platform
+    asserts:
+      - template: templates/mtls-secret.yaml
+        hasDocuments:
+          count: 1
+      - template: templates/mtls-secret.yaml
+        equal:
+          path: metadata.name
+          value: miggo-mtls
+      - template: templates/mtls-secret.yaml
+        equal:
+          path: type
+          value: kubernetes.io/tls
+      - template: templates/mtls-secret.yaml
+        equal:
+          path: data["tls.crt"]
+          value: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClRFU1QtQ0VSVAotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+      - template: templates/mtls-secret.yaml
+        equal:
+          path: data["tls.key"]
+          value: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tClRFU1QtS0VZCi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+      - template: templates/mtls-secret.yaml
+        equal:
+          path: metadata.labels.team
+          value: platform
+      - template: templates/miggo-collector/deployment.yaml
+        contains:
+          path: spec.template.spec.volumes
+          content:
+            name: mtls
+            secret:
+              defaultMode: 292
+              secretName: miggo-mtls
+      - template: templates/miggo-collector/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: mtls
+            mountPath: /etc/collector/mtls
+            readOnly: true
+      - template: templates/miggo-collector/collector-config-cm.yaml
+        matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "cert_file: /etc/collector/mtls/tls\\.crt"
+      - template: templates/miggo-collector/collector-config-cm.yaml
+        matchRegex:
+          path: data["config-template.yaml"]
+          pattern: "insecure_skip_verify: true"
+
+  - it: consumes an existing secret by name without creating one
+    set:
+      config:
+        mtls:
+          enabled: true
+          secret:
+            create: false
+            name: customer-mtls-cert
+    asserts:
+      - template: templates/mtls-secret.yaml
+        hasDocuments:
+          count: 0
+      - template: templates/miggo-collector/deployment.yaml
+        contains:
+          path: spec.template.spec.volumes
+          content:
+            name: mtls
+            secret:
+              defaultMode: 292
+              secretName: customer-mtls-cert
+
+  - it: uses explicit secret name when creating
+    set:
+      config:
+        mtls:
+          enabled: true
+          secret:
+            create: true
+            name: my-managed-mtls
+            crt: cert-pem
+            key: key-pem
+    asserts:
+      - template: templates/mtls-secret.yaml
+        equal:
+          path: metadata.name
+          value: my-managed-mtls
+      - template: templates/miggo-collector/deployment.yaml
+        contains:
+          path: spec.template.spec.volumes
+          content:
+            name: mtls
+            secret:
+              defaultMode: 292
+              secretName: my-managed-mtls
+
+  - it: should refuse chart-managed mtls without crt and key
+    template: templates/miggo-collector/deployment.yaml
+    set:
+      config:
+        mtls:
+          enabled: true
+          secret:
+            create: true
+    asserts:
+      - failedTemplate:
+          errorMessage: "config.mtls.secret.crt and config.mtls.secret.key are required when config.mtls.secret.create is true"
+
+  - it: should refuse external mtls secret without name
+    template: templates/mtls-secret.yaml
+    set:
+      config:
+        mtls:
+          enabled: true
+          secret:
+            create: false
+            name: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "config.mtls.secret.name is required when config.mtls.secret.create is false"
+
+  - it: ignores mtls when collector is disabled
+    set:
+      miggoCollector:
+        enabled: false
+      config:
+        mtls:
+          enabled: true
+          secret:
+            create: true
+    asserts:
+      - template: templates/mtls-secret.yaml
+        hasDocuments:
+          count: 0
+      - template: templates/miggo-collector/deployment.yaml
+        hasDocuments:
+          count: 0

@@ -1,0 +1,5 @@
+miggo:
+  clusterName: "mtls-test"
+
+miggoCollector:
+  enabled: true

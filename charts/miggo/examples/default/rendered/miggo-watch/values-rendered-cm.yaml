@@ -21,6 +21,13 @@ data:
       includeSystemNamespaces: false
       metrics:
         interval: 60s
+      mtls:
+        enabled: false
+        secret:
+          create: false
+          crt: ""
+          key: ""
+          name: ""
       platform: ""
     extraEnvs: []
     extraEnvsFrom: []

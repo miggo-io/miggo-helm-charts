@@ -425,7 +425,7 @@ data:
                 new_value: Miggo Collector
               - action: add_label
                 new_label: chart_version
-                new_value: "0.0.242"
+                new_value: "0.0.245"
 
       batch/metrics:
         timeout: 10s
@@ -464,7 +464,7 @@ data:
             resource_attributes:
               - key: origin
                 value: "selflogs"
-      
+
       transform/collector-self-logs:
         log_statements:
           - context: resource

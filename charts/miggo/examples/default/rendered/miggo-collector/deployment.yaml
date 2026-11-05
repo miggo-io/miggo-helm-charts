@@ -6,10 +6,10 @@ metadata:
   name: example-collector
   namespace: default
   labels:
-    helm.sh/chart: miggo-0.0.242
+    helm.sh/chart: miggo-0.0.245
     app.kubernetes.io/name: miggo-collector
     app.kubernetes.io/instance: example
-    app.kubernetes.io/version: "v26.1022.3"
+    app.kubernetes.io/version: "v26.1026.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
@@ -21,16 +21,17 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 021d7b8f68c02b75bfd274a417bbb1ed7d50b637e4020c4e6f559b0871c2fe51
+        checksum/config: 9daf527d6fec9dbbfc839d6c83edff6c9dab324ea74b5a618bd5f860bb5e4993
         checksum/diagnostic-config: 9cfe823f631c9d66a40e80ec1c850b6cf269578a34b184b8ba388a6d9e6e45ea
         checksum/heartbeat-debug-config: d72c105d89be1b4ee6569477f8b4a8f7efdf00a2919169c9787d4df141da0d46
+        
       labels:
         component: collector
         miggo.io/app: example-collector
-        helm.sh/chart: miggo-0.0.242
+        helm.sh/chart: miggo-0.0.245
         app.kubernetes.io/name: miggo-collector
         app.kubernetes.io/instance: example
-        app.kubernetes.io/version: "v26.1022.3"
+        app.kubernetes.io/version: "v26.1026.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       imagePullSecrets:
@@ -41,7 +42,7 @@ spec:
       serviceAccountName: example-collector
       initContainers:
         - name: collector-init-container
-          image: "registry.miggo.io/miggo/miggo-collector:v26.1022.3"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.1026.1"
           securityContext:
             runAsGroup: 65532
             runAsNonRoot: true
@@ -75,7 +76,7 @@ spec:
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
-          image: "registry.miggo.io/miggo/miggo-collector:v26.1022.3"
+          image: "registry.miggo.io/miggo/miggo-collector:v26.1026.1"
           imagePullPolicy: IfNotPresent
           args:
             - --config
@@ -128,6 +129,7 @@ spec:
           - name: access-key
             mountPath: /etc/miggo-access-key
             subPath: ACCESS_KEY
+          
       volumes:
       - name: collector-config
         emptyDir: {}
@@ -147,6 +149,7 @@ spec:
           items:
           - key: ACCESS_KEY
             path: ACCESS_KEY
+      
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
