@@ -1,0 +1,44 @@
+suite: miggo-runtime RBAC
+
+release:
+  name: miggo
+  namespace: miggo-space
+
+templates:
+  - templates/miggo-runtime/role.yaml
+
+values:
+  - values.yaml
+
+tests:
+  - it: runtime ClusterRole watches pods
+    documentIndex: 0
+    asserts:
+      - isKind:
+          of: ClusterRole
+      - equal:
+          path: rules[0].resources
+          value: ["pods"]
+      - equal:
+          path: rules[0].verbs
+          value: ["get", "watch", "list"]
+
+  - it: runtime ClusterRole can get jobs to resolve a CronJob owner
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: rules[1].apiGroups
+          value: ["batch"]
+      - equal:
+          path: rules[1].resources
+          value: ["jobs"]
+      - equal:
+          path: rules[1].verbs
+          value: ["get"]
+
+  - it: no runtime ClusterRole when the runtime is disabled
+    set:
+      miggoRuntime.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
