@@ -90,7 +90,7 @@ spec:
             - --cgroup-root-dir=/cgroup
             - --pprof-port={{ .Values.pprof.port }}
             - --enable-syscall-to-profile-correlation={{ .Values.config.enableDetections }}
-            - --enable-web-app-process-exec-filtering={{ not .Values.config.enableDetections }}
+            - --enable-web-app-process-exec-filtering={{ .Values.miggoRuntime.enableWebAppProcessExecFiltering }}
             
             - --profiles-otlp-endpoint={{ (include "otlpProfilesEndpoint" .) }}
             - --profiler-reporter-interval={{ .Values.miggoRuntime.profiler.reporterInterval }}

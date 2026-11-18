@@ -354,6 +354,8 @@ miggoRuntime:
   enableFileAccessTracing: false
   # -- Enable web app process detection.
   enableWebAppProcessDetection: true
+  # -- Report exec, fork and connect events only from web app processes and their children.
+  enableWebAppProcessExecFiltering: true
   # -- Interval between full cgroup state syncs from the Runtime to the Profiler
   cgroupRegistrySyncInterval: 1m
   # -- Interval between sweeps to remove cgroups whose paths no longer exist on the filesystem
