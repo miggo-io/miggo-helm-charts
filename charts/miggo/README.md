@@ -53,6 +53,8 @@ miggoRuntime:
   enabled: true
 ```
 
+Detections see web app processes and every process they start. To see all processes on the node, also set `miggoRuntime.enableWebAppProcessExecFiltering: false`; this raises runtime CPU on nodes that start many short-lived processes, such as build nodes.
+
 This capability is in **beta**. The value is stable, but its behaviour and resource profile may change between chart versions.
 
 ## Getting Started
@@ -164,6 +166,7 @@ The following table lists the configurable parameters of the miggo chart and the
 | miggoRuntime.enableFileAccessTracing | bool | `false` | Enable tracing file access. |
 | miggoRuntime.enableNetworkTracing | bool | `false` | Enable tracing network connections. |
 | miggoRuntime.enableWebAppProcessDetection | bool | `true` | Enable web app process detection. |
+| miggoRuntime.enableWebAppProcessExecFiltering | bool | `true` | Report exec, fork and connect events only from web app processes and their children. |
 | miggoRuntime.enabled | bool | `false` | Install eBPF agent on each cluster node to provide package-level reachability analysis and other runtime insights. |
 | miggoRuntime.extraEnvs | list | `[]` | Additional environment variables |
 | miggoRuntime.extraEnvsFrom | list | `[]` | Additional environment variables from sources |

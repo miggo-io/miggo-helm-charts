@@ -21,9 +21,6 @@ tests:
           content: --enable-syscall-to-profile-correlation=false
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
-          content: --enable-web-app-process-exec-filtering=true
-      - contains:
-          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           content: --profiler-load-probe=false
 
   - it: renders the detections flags on when enableDetections is true
@@ -33,6 +30,50 @@ tests:
     asserts:
       - isKind:
           of: DaemonSet
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-syscall-to-profile-correlation=true
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --profiler-load-probe=true
+
+  - it: renders web app exec filtering on by default
+    template: templates/miggo-runtime/daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-web-app-process-exec-filtering=true
+
+  - it: keeps web app exec filtering on when enableDetections is true
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      config.enableDetections: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-web-app-process-exec-filtering=true
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-web-app-process-exec-filtering=false
+
+  - it: turns web app exec filtering off when the value is false
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      miggoRuntime.enableWebAppProcessExecFiltering: false
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-web-app-process-exec-filtering=false
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          content: --enable-web-app-process-exec-filtering=true
+
+  - it: combines detections with web app exec filtering off
+    template: templates/miggo-runtime/daemonset.yaml
+    set:
+      config.enableDetections: true
+      miggoRuntime.enableWebAppProcessExecFiltering: false
+    asserts:
       - contains:
           path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
           content: --enable-syscall-to-profile-correlation=true
@@ -78,7 +119,7 @@ tests:
             - --cgroup-root-dir=/cgroup
             - --pprof-port=0
             - --enable-syscall-to-profile-correlation=true
-            - --enable-web-app-process-exec-filtering=false
+            - --enable-web-app-process-exec-filtering=true
             - --profiles-otlp-endpoint=miggo-collector.miggo-space.svc.cluster.local:4317
             - --profiler-reporter-interval=5s
             - --profiler-samples-per-second=20
@@ -125,7 +166,7 @@ tests:
             - --cgroup-root-dir=/cgroup
             - --pprof-port=0
             - --enable-syscall-to-profile-correlation=true
-            - --enable-web-app-process-exec-filtering=false
+            - --enable-web-app-process-exec-filtering=true
             - --profiles-otlp-endpoint=miggo-collector.miggo-space.svc.cluster.local:4317
             - --profiler-reporter-interval=5s
             - --profiler-samples-per-second=20
@@ -137,6 +178,52 @@ tests:
             - --include-system-namespaces=false
             - --denied-namespaces=miggo-space
             - --profiler-load-probe=false
+
+  - it: places an exec-filtering extraArgs override after the chart flag
+    template: templates/miggo-runtime/daemonset.yaml
+    chart:
+      version: '1.0.0'
+      appVersion: '1.0.0'
+    set:
+      config.enableDetections: true
+      miggoRuntime.extraArgs.enable-web-app-process-exec-filtering: false
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "miggo-runtime")].args
+          value:
+            - --cluster-name=detections-test
+            - --platform=kubernetes
+            - --otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
+            - --collector-healthcheck-port=6666
+            - --tls-skip-verify=false
+            - --stdout=false
+            - --port=6666
+            - --metric-otlp-endpoint=http://miggo-collector.miggo-space.svc.cluster.local:4318
+            - --metric-tls-skip-verify=false
+            - --metric-interval=60s
+            - --chart-version=1.0.0
+            - --enable-network-tracing=false
+            - --enable-file-access-tracing=false
+            - --enable-web-app-process-detection=true
+            - --cgroup-registry-sync-interval=1m
+            - --cgroup-registry-clean-interval=1h
+            - --cgroup-root-dir=/cgroup
+            - --pprof-port=0
+            - --enable-syscall-to-profile-correlation=true
+            - --enable-web-app-process-exec-filtering=true
+            - --profiles-otlp-endpoint=miggo-collector.miggo-space.svc.cluster.local:4317
+            - --profiler-reporter-interval=5s
+            - --profiler-samples-per-second=20
+            - --profiler-monitor-interval=5s
+            - --profiler-probabilistic-threshold=100
+            - --profiler-probabilistic-interval=1m0s
+            - --profiler-tracers=perl,php,python,hotspot,v8,go
+            - --profiler-load-probe=true
+            - --include-system-namespaces=false
+            - --denied-namespaces=miggo-space
+            - --enable-web-app-process-exec-filtering=false
 
   - it: installs nothing when the runtime is disabled
     template: templates/miggo-runtime/daemonset.yaml

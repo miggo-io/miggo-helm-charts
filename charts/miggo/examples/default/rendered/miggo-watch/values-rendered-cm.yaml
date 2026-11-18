@@ -107,6 +107,7 @@ data:
       enableFileAccessTracing: false
       enableNetworkTracing: false
       enableWebAppProcessDetection: true
+      enableWebAppProcessExecFiltering: true
       enabled: true
       extraEnvs: []
       extraEnvsFrom: []
