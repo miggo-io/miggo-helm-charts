@@ -53,6 +53,8 @@ miggoRuntime:
   enabled: true
 ```
 
+Detections see web app processes and every process they start. To see all processes on the node, also set `miggoRuntime.enableWebAppProcessExecFiltering: false`; this raises runtime CPU on nodes that start many short-lived processes, such as build nodes.
+
 This capability is in **beta**. The value is stable, but its behaviour and resource profile may change between chart versions.
 
 ## Getting Started
