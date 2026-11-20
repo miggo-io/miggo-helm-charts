@@ -78,6 +78,7 @@ data:
             match_type: strict
             new_name: miggo_component_status
             action: combine
+            aggregation_type: max
             operations:
               - action: add_label
                 new_label: component
