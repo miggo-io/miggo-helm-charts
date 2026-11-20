@@ -34,6 +34,10 @@ tests:
         notMatchRegex:
           path: data["config-template.yaml"]
           pattern: "cert_file:"
+      - template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+        notMatchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "cert_file:"
 
   - it: creates tls secret and wires collector when chart-managed
     set:
@@ -180,3 +184,19 @@ tests:
       - template: templates/miggo-collector/deployment.yaml
         hasDocuments:
           count: 0
+
+  - it: sends the client certificate from the diagnostics profiles exporter
+    template: templates/miggo-collector/diagnostic-pprof-config-cm.yaml
+    set:
+      pprof:
+        port: 6060
+      config:
+        mtls:
+          enabled: true
+          secret:
+            create: false
+            name: customer-mtls-cert
+    asserts:
+      - matchRegex:
+          path: data["diagnostic-pprof.yaml"]
+          pattern: "otlp_http/diagnostics:[\\s\\S]*tls:\\s+cert_file: /etc/collector/mtls/tls\\.crt\\s+key_file: /etc/collector/mtls/tls\\.key\\s+insecure_skip_verify: true"
