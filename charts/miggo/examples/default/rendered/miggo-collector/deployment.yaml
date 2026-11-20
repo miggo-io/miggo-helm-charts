@@ -21,7 +21,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 778d794a8b032c8a16c9e7155a7764dd03ea38f3f95be38c8cce9c916261f58d
+        checksum/config: ad02c0158df2cda750752c091feadf1cd98b0c270dc8deb699553aaee2b85175
         checksum/diagnostic-config: 9cfe823f631c9d66a40e80ec1c850b6cf269578a34b184b8ba388a6d9e6e45ea
         checksum/heartbeat-debug-config: d72c105d89be1b4ee6569477f8b4a8f7efdf00a2919169c9787d4df141da0d46
         
